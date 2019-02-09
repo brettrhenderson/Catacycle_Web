@@ -1,0 +1,30 @@
+Image
+1. Arrow heads occur on the main axes but the center of the gap should occur on the main axes
+    (see two step cycle)
+2. Arrow thickness limit and step size should scale with circumference
+3. The little white lines between arrows
+4. If user does not specify a reverse rate, default should make it irreversible (also right now if input is 0.0, the arrow is not reversible(
+
+Scaling:
+    current fig size is good for up to maybe 4 steps, in general, the range of arrows doesn't have to change with number of steps
+    figure size shoudl scale with number of steps included
+    one step: max raw 0.8, rate, min 0.06
+    two: max 0.7, min 0.06
+    three: max 0.6, min 0.06
+    four: max 0.5, min 0.06
+
+    best looking arrow size falls on 0.25, ideally, this applies to the median rate
+
+Website User input:
+    1. Number of steps
+        -leads to a quick&dirty default cat cycle: irreversible arrows in black
+
+    2. Per step
+    rates (0 = irreversible), incoming/outgoing arrows (same colour & of stoichiometric thickness rel. to main arrow), colour
+        -allows user to cuztomize their cycle
+
+    3. Extra arrow generator
+        -for user to generate scheme of a side reaction outside of catalytic cylce
+
+    4. option to generate multiple cycles from the same arrow scaling
+        -rather than rescaling arrows for each cycle, they can have a slow cycle next to a fast cycle in the same paper with consisten arrow size for comparison
