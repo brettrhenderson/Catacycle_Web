@@ -1,0 +1,14 @@
+<div class="container">
+    <form action="" method="post" nonvalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.f_rate1.label }}<br>
+            {{ form.f_rate1() }}
+        </p>
+        <p>
+            {{ form.r_rate1.label }}<br>
+            {{ form.r_rate1() }}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+</div>

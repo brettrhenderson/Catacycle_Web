@@ -1,0 +1,79 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}Oboros{% endblock %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet"
+      href="{{url_for('.static', filename='css/graphs.css')}}">
+{% endblock %}
+
+{% block content %}
+    <div class="container page-header">
+        <h1>Catalytic Cycle</h1>
+    </div>
+    <div role="tabpanel" class="tab-pane container-fluid">
+        <div class="row display-flex">
+            <div class="col-md-6 flex-col">
+                <div class="panel panel-primary vertCenter" style="display: inline">
+                    <div class="panel-heading">
+                            <h3 class="panel-title">Cycle Rates</h3>
+                    </div>
+                    <form action="" method="post" nonvalidate>
+                        {{ form.hidden_tag() }}
+                        <table class="rates-list table table-hover table-striped" style="width:100%">
+                            <thead>
+                                <tr>
+                                    {% for header in ['Step', 'Forward Rate', 'Reverse Rate'] %}
+                                    <th>
+                                        {{ header }}
+                                    </th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in range(rows) %}
+                                <tr>
+                                    <td>{{ i+1 }}</td>
+                                    <td><input id="f_rate{{ i+1 }}" class="form-control" type="text" name="f_rate{{ i+1 }}" value={{ form_values["f_rate{}".format(i+1)] }}></td>
+                                    <td><input id="r_rate{{ i+1 }}" class="form-control" type="text" name="r_rate{{ i+1 }}" value={{ form_values["r_rate{}".format(i+1)] }}></td>
+                                    <td class="col-sm-2"><a class="deleteRow"></a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td>
+                                        <button type="button" class="btn btn-primary" id="addrow">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                        </button>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" style="text-align: left;">
+                                        <input type="submit" class="form-control btn btn-default" value="Graph">
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-6 flex-col">
+                <img class="img-fluid" src='{{ graph1 }}' style="border: 5px solid; max-width: 100%; height: auto;"></img>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+<script src="{{url_for('.static', filename='js/graphs.js')}}"></script>
+<script type="text/javascript">
+    $(document).ready(addrow({{ rows|tojson }}))
+</script>
+{% endblock %}
