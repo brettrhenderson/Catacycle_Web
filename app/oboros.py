@@ -131,7 +131,7 @@ def draw(data=None):
             ax.add_patch(tri3)
             ax.add_patch(tri4)
 
-        if rev_rates[i] == "0":
+        if rev_rates[i] == 0.0:
 
             col = fcolours[i]
             Curve = mpatches.Arc((0,0),height=6-radial_offsets_f[i],width=6-radial_offsets_f[i],angle=1,
