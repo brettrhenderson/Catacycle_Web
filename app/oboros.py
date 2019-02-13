@@ -3,7 +3,8 @@
 # Set up for a 8x8 inch figure
 # Still needs scale for real kinetic data. Transform to 0.1 to 1 for clean image.
 
-
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import math
@@ -11,32 +12,38 @@ import random
 import io
 import base64
 
+fcolours = "#4286f4 #e2893b #de5eed #dd547d #4ee5ce #4286f4 #dd547d #4ee5ce #4286f4 #dd547d #4ee5ce".split()
+rcolours = "#82abed #efb683 #edb2f4 #ef92ae #91f2e3 #82abed #ef92ae #91f2e3 #82abed #ef92ae #91f2e3".split()
 
-def draw():
+
+def draw(data=None):
     img = io.BytesIO()
-    # Data storage
+
     forward_rates = []
     rev_rates = []
-    fcolours = []
-    rcolours = []
 
-    gap = 5 #default gap without settings
-    scale = 23.9  #will scale pending on image size -- connects graph space to figure space
+    gap = 5  # default gap without settings
+    scale = 23.9   # will scale pending on image size -- connects graph space to figure space
+
     # Different image size scale will need to be coded in using "transformed_point = ax.transData.transform((x,y))"
+    if data is None:
+        data = open("data.dat", 'r')
+        for line in data:
+            if "f_rate" in line:
+                forward_rates.append(line.split()[2])
+            if "r_rate" in line:
+                rev_rates.append(line.split()[2])
+            if "gap" in line:
+                gap = float(line.split()[2])
 
+    else:
+        for i in range(1,11):
+            f_rate = data['f_rate{}'.format(i)]
+            if f_rate > 0.0:
+                forward_rates.append(f_rate)
+                rev_rates.append(data['r_rate{}'.format(i)])
 
-    data = open("data.dat",'r')
-    for line in data:
-    	if "f_rate" in line:
-    		forward_rates.append(line.split()[2])
-    		fcolours.append(line.split()[3])
-    	if "r_rate" in line:
-    		rev_rates.append(line.split()[2])
-    		rcolours.append(line.split()[3])
-    	if "gap" in line:
-    		gap = float(line.split()[2])
-    #Figure initialization
-
+    # Figure initialization
     fig = plt.figure(1, figsize=(8, 8))
     ax = fig.add_subplot(111, autoscale_on=False, xlim=(-5, 5), ylim=(-5, 5))
     plt.axis('off')
@@ -44,7 +51,6 @@ def draw():
     # Splitting circle by number of forward reactions
     num_segments = len(forward_rates)
     delta = 360.0/num_segments
-
 
     # Coordinates for curves
     transformed_rates_r = []
@@ -54,7 +60,7 @@ def draw():
 
 
 
-    #transforming rates to line widths
+    # transforming rates to line widths
     for i in range(0,num_segments):
         radial_offsets_f.append(float(forward_rates[i])/2)
         radial_offsets_r.append(float(rev_rates[i])/2)
@@ -62,26 +68,28 @@ def draw():
         transformed_rates_r.append(float(rev_rates[i])*scale)
 
 
-    #Drawing outside and inside curves
+    # Drawing outside and inside curves
     for i in range(0,num_segments):
         if fcolours[i] == "blank":
             r = lambda: random.randint(0,255)
             col = ('#%02X%02X%02X' % (r(),r(),r()))
         else:
             col = fcolours[i]
-        Curve = mpatches.Arc((0,0),height=6+radial_offsets_f[i],width=6+radial_offsets_f[i],angle=1,theta1=90-delta*i,theta2=90-gap-delta*(i-1),linewidth=transformed_rates_f[i],color=col)
+        Curve = mpatches.Arc((0,0),height=6+radial_offsets_f[i],width=6+radial_offsets_f[i],angle=1,
+                             theta1=90-delta*i,theta2=90-gap-delta*(i-1),linewidth=transformed_rates_f[i],color=col)
         ax.add_patch(Curve)
         col = rcolours[i]
-        Curve = mpatches.Arc((0,0),height=6-radial_offsets_r[i],width=6-radial_offsets_r[i],angle=1,theta1=90-delta*i,theta2=90-gap-delta*(i-1),linewidth=transformed_rates_r[i],color=col)
+        Curve = mpatches.Arc((0,0),height=6-radial_offsets_r[i],width=6-radial_offsets_r[i],angle=1,theta1=90-delta*i,
+                             theta2=90-gap-delta*(i-1),linewidth=transformed_rates_r[i],color=col)
         ax.add_patch(Curve)
-        a_angle = ((90-delta*(i))*(math.pi/180.0))+((+2)*(math.pi/180.0))/2	#Starting point angle for outside triangles
-        b_angle = ((90-delta*(i-1))*(math.pi/180.0))+((gap-(3*gap-(2)))*(math.pi/180.0))/2	#Starting point angle for inside triangles
+        a_angle = ((90-delta*(i))*(math.pi/180.0))+((+2)*(math.pi/180.0))/2	 # Starting point angle for outside triangles
+        b_angle = ((90-delta*(i-1))*(math.pi/180.0))+((gap-(3*gap-(2)))*(math.pi/180.0))/2	 # Starting point angle for inside triangles
         col = fcolours[i]
 
         f_angle_offset =10*float(forward_rates[i])*math.pi/180.0
         r_angle_offset =10*float(rev_rates[i])*math.pi/180.0
 
-    #Outside Arrows
+        # Outside Arrows
         a_x = 3*math.cos(a_angle)
         a_y = 3*math.sin(a_angle)
         b_vec = (3+(float(forward_rates[i])))
@@ -101,7 +109,7 @@ def draw():
         ax.add_patch(tri1)
         ax.add_patch(tri2)
 
-    #Inside Arrows
+    # Inside Arrows
         if rev_rates[i] != 0:
             col = rcolours[i]
             ai_x = 3*math.cos(b_angle)
@@ -123,10 +131,11 @@ def draw():
             ax.add_patch(tri3)
             ax.add_patch(tri4)
 
-        if rev_rates[i] == "0":
+        if rev_rates[i] == 0.0:
 
             col = fcolours[i]
-            Curve = mpatches.Arc((0,0),height=6-radial_offsets_f[i],width=6-radial_offsets_f[i],angle=1,theta1=90-delta*i,theta2=90-gap-delta*(i-1),linewidth=transformed_rates_f[i],color=col)
+            Curve = mpatches.Arc((0,0),height=6-radial_offsets_f[i],width=6-radial_offsets_f[i],angle=1,
+                                 theta1=90-delta*i,theta2=90-gap-delta*(i-1),linewidth=transformed_rates_f[i],color=col)
             ax.add_patch(Curve)
             a_x = 3*math.cos(a_angle)
             a_y = 3*math.sin(a_angle)
@@ -147,7 +156,7 @@ def draw():
             ax.add_patch(tri3)
             ax.add_patch(tri4)
 
-        #plt.text(4*math.cos(b_angle-0.1-r_angle_offset),4*math.sin(b_angle-0.1-r_angle_offset),"test")
+        # plt.text(4*math.cos(b_angle-0.1-r_angle_offset),4*math.sin(b_angle-0.1-r_angle_offset),"test")
 
     plt.draw()
     plt.savefig(img, format='png')
@@ -155,4 +164,6 @@ def draw():
     graph_url = base64.b64encode(img.getvalue()).decode()
     plt.close()
     return 'data:image/png;base64,{}'.format(graph_url)
-print ("running")
+
+
+print("running")
