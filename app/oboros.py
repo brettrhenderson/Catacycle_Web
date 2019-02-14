@@ -43,6 +43,9 @@ def draw(data=None):
                 forward_rates.append(f_rate)
                 rev_rates.append(data['r_rate{}'.format(i)])
 
+    #call Sofia's Scaler function, convert rates to arrow size
+    forward_rates, rev_rates = scaler(forward_rates, rev_rates, small_arrow=0.1, big_arrow=0.8, logarythmic=False)
+
     # Figure initialization
     fig = plt.figure(1, figsize=(8, 8))
     ax = fig.add_subplot(111, autoscale_on=False, xlim=(-5, 5), ylim=(-5, 5))
@@ -167,3 +170,46 @@ def draw(data=None):
 
 
 print("running")
+
+# transforming rates to line widths:
+# range = [0.1, 0.8], size = 0.7
+# find max and min of f_rate and r_rate
+# subtract smallest rate, multiply by 0.8/(max-min), add 0.1
+def scaler(forward_rates, rev_rates, small_arrow=0.1, big_arrow=0.8, logarythmic=False):
+    forward_rates = np.array(forward_rates).astype(np.float)
+    rev_rates = np.array(rev_rates).astype(np.float)
+
+    if logarythmic:
+        forward_rates[np.nonzero(forward_rates)]=np.log10(forward_rates[np.nonzero(forward_rates)])
+        rev_rates[np.nonzero(rev_rates)]=np.log10(rev_rates[np.nonzero(rev_rates)])
+
+    f_min = np.min(forward_rates[np.nonzero(forward_rates)])
+    f_max = forward_rates.max()
+    r_max = rev_rates.max()
+    if r_max == 0:
+        r_min = f_min
+    else:
+        r_min = np.min(rev_rates[np.nonzero(rev_rates)])
+
+    maxima = max(f_max, r_max)
+    minima = min(f_min, r_min)
+
+    ranger = big_arrow - small_arrow
+
+    # incase k range = 0
+    if minima == maxima:
+        forward_rates = (forward_rates * 0.0 + np.mean([big_arrow, small_arrow])).tolist()
+    else:
+        forward_rates = ((forward_rates - minima) / (maxima - minima) * ranger + small_arrow).tolist()
+
+    # incase reverse is empty
+    if r_max == 0:
+        print('all 0 oo')
+        rev_rates = (rev_rates).tolist()
+    else:
+        rev_rates[np.nonzero(rev_rates)] = (
+                    (rev_rates[np.nonzero(rev_rates)] - minima) / (maxima - minima) * ranger + small_arrow)
+        rev_rates = rev_rates.tolist()
+    print(rev_rates)
+    print(forward_rates)
+    return forward_rates, rev_rates
