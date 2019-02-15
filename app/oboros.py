@@ -12,12 +12,16 @@ import random
 import io
 import base64
 import numpy as np
+import logging
+
+log = logging.getLogger(__name__)
+#log.setLevel(logging.DEBUG)
 
 fcolours = "#4286f4 #e2893b #de5eed #dd547d #4ee5ce #4286f4 #dd547d #4ee5ce #4286f4 #dd547d #4ee5ce".split()
 rcolours = "#82abed #efb683 #edb2f4 #ef92ae #91f2e3 #82abed #ef92ae #91f2e3 #82abed #ef92ae #91f2e3".split()
 
 
-def draw(data=None):
+def draw(data=None, logarithmic=True, startrange=0.1, stoprange=0.8, preserve_multiples=True):
     img = io.BytesIO()
 
     forward_rates = []
@@ -44,8 +48,10 @@ def draw(data=None):
                 forward_rates.append(f_rate)
                 rev_rates.append(data['r_rate{}'.format(i)])
 
-    #call Sofia's Scaler function, convert rates to arrow size
-    forward_rates, rev_rates = scaler(forward_rates, rev_rates, small_arrow=0.1, big_arrow=0.8, logarythmic=False)
+    # call Sofia's Scaler function, convert rates to arrow size
+    forward_rates, rev_rates, range_rates = scaler(forward_rates, rev_rates, startrange=0.1, stoprange=0.8,
+                                                   logarythmic=logarithmic, preserve_multiples=preserve_multiples)
+    # forward_rates, rev_rates = scaler2(forward_rates, rev_rates, stoprange=0.8, logarythmic=False)
 
     # Figure initialization
     fig = plt.figure(1, figsize=(8, 8))
@@ -65,7 +71,11 @@ def draw(data=None):
 
 
     # transforming rates to line widths
-    for i in range(0,num_segments):
+    for i in range(0, num_segments):
+        if rev_rates[i] == 0:
+            forward_rates[i] /= 2
+
+        log.debug('corrected forward rate {}: {}'.format(i+1, forward_rates[i]))
         radial_offsets_f.append(float(forward_rates[i])/2)
         radial_offsets_r.append(float(rev_rates[i])/2)
         transformed_rates_f.append(float(forward_rates[i])*scale)
@@ -136,7 +146,6 @@ def draw(data=None):
             ax.add_patch(tri4)
 
         if rev_rates[i] == 0.0:
-
             col = fcolours[i]
             Curve = mpatches.Arc((0,0),height=6-radial_offsets_f[i],width=6-radial_offsets_f[i],angle=1,
                                  theta1=90-delta*i,theta2=90-gap-delta*(i-1),linewidth=transformed_rates_f[i],color=col)
@@ -172,45 +181,78 @@ def draw(data=None):
 
 print("running")
 
-# transforming rates to line widths:
-# range = [0.1, 0.8], size = 0.7
-# find max and min of f_rate and r_rate
-# subtract smallest rate, multiply by 0.8/(max-min), add 0.1
-def scaler(forward_rates, rev_rates, small_arrow=0.1, big_arrow=0.8, logarythmic=False):
+
+def scaler(forward_rates, rev_rates, startrange=0.1, stoprange=0.8, preserve_multiples=False, logarythmic=False):
+    """
+    Transforming rates to be within specified range defined by startrange and stoprange:
+    
+    Can use linear or logarithmic scale, which is preserved when transforming the data.
+    :param forward_rates: a list of forward rates as floats or ints
+    :param rev_rates: a list of reverse rates as floats or ints
+    :param startrange: float, first number of the range you want output to take
+    :param stoprange: float, last number of range for output to take
+    :param logarythmic: boolean specifying whether logarithmic scaling should be applied.
+    :return: (forward_rates, rev_rates), a tuple of the original lists scaled properly
+    """
+
+    if logarythmic:
+        preserve_multiples = False
+
     forward_rates = np.array(forward_rates).astype(np.float)
     rev_rates = np.array(rev_rates).astype(np.float)
 
-    if logarythmic:
-        forward_rates[np.nonzero(forward_rates)]=np.log10(forward_rates[np.nonzero(forward_rates)])
-        rev_rates[np.nonzero(rev_rates)]=np.log10(rev_rates[np.nonzero(rev_rates)])
+    log.debug("original forward: {}".format(forward_rates))
+    log.debug("original reverse: {}".format(rev_rates))
 
-    f_min = np.min(forward_rates[np.nonzero(forward_rates)])
-    f_max = forward_rates.max()
+    # make sure to only scale based on the non-zero elements.  Zeros will not affect scaling
+    f_nonzero = np.nonzero(forward_rates)
+    r_nonzero = np.nonzero(rev_rates)
+
+    # scale logarithmically and then apply the transformation to be within specified bounds (leave zeros)
+    if logarythmic:
+        log.debug("logarithmic scale selected")
+        forward_rates[f_nonzero]=np.log10(forward_rates[f_nonzero])
+        rev_rates[r_nonzero]=np.log10(rev_rates[r_nonzero])
+        log.debug("post-log forward: {}".format(forward_rates))
+        log.debug("post-log reverse: {}".format(rev_rates))
+
+    f_min = np.min(forward_rates[f_nonzero])
+    f_max = forward_rates.max() 
     r_max = rev_rates.max()
     if r_max == 0:
         r_min = f_min
     else:
-        r_min = np.min(rev_rates[np.nonzero(rev_rates)])
+        r_min = np.min(rev_rates[r_nonzero])
+
+    log.debug('f_min, f_max: {}'.format((f_min, f_max)))
+    log.debug('r_min, r_max: {}'.format((r_min, r_max)))
 
     maxima = max(f_max, r_max)
     minima = min(f_min, r_min)
 
-    ranger = big_arrow - small_arrow
+    ranger = stoprange - startrange
 
     # incase k range = 0
     if minima == maxima:
-        forward_rates = (forward_rates * 0.0 + np.mean([big_arrow, small_arrow])).tolist()
+        if preserve_multiples:
+            forward_rates[f_nonzero] = stoprange / 2.0
+            rev_rates[r_nonzero] = stoprange / 2.0
+        else:
+            # if all rates are the same, just set them to be a medium value in the desired range
+            forward_rates[f_nonzero] = np.mean([stoprange, startrange])
+            rev_rates[r_nonzero] = np.mean([stoprange, startrange])
     else:
-        forward_rates = ((forward_rates - minima) / (maxima - minima) * ranger + small_arrow).tolist()
+        if preserve_multiples:
+            forward_rates = forward_rates / maxima * stoprange
+            rev_rates = rev_rates / maxima * stoprange
+        else:
+            # otherwise, scale and move the rates to be between the desired endpoints
+            forward_rates[f_nonzero] = ((forward_rates[f_nonzero] - minima) / (maxima - minima) * ranger + startrange)
+            rev_rates[r_nonzero] = ((rev_rates[r_nonzero] - minima) / (maxima - minima) * ranger + startrange)
+    forward_rates = forward_rates.tolist()
+    rev_rates = rev_rates.tolist()
 
-    # incase reverse is empty
-    if r_max == 0:
-        print('all 0 oo')
-        rev_rates = (rev_rates).tolist()
-    else:
-        rev_rates[np.nonzero(rev_rates)] = (
-                    (rev_rates[np.nonzero(rev_rates)] - minima) / (maxima - minima) * ranger + small_arrow)
-        rev_rates = rev_rates.tolist()
-    print(rev_rates)
-    print(forward_rates)
-    return forward_rates, rev_rates
+    log.debug("final forward: {}".format(forward_rates))
+    log.debug("final reverse: {}".format(rev_rates))
+
+    return forward_rates, rev_rates, maxima - minima
