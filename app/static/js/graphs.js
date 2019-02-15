@@ -7,6 +7,8 @@ function slider_vals(input, output) {
     // Update the current slider value (each time you drag the slider handle)
     slider.oninput = function() {
       output.innerHTML = this.value;
+      // re-submit the form when the values of the sliders are changed.
+      document.getElementById('cycle-form').submit();
     }
 }
 
