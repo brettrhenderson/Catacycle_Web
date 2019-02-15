@@ -43,7 +43,7 @@ def draw(data=None):
                 forward_rates.append(f_rate)
                 rev_rates.append(data['r_rate{}'.format(i)])
 
-    # call Sofia's Scaler function, convert rates to arrow size
+    #call Sofia's Scaler function, convert rates to arrow size
     forward_rates, rev_rates = scaler(forward_rates, rev_rates, small_arrow=0.1, big_arrow=0.8, logarythmic=False)
 
     # Figure initialization
@@ -180,8 +180,8 @@ def scaler(forward_rates, rev_rates, small_arrow=0.1, big_arrow=0.8, logarythmic
     rev_rates = np.array(rev_rates).astype(np.float)
 
     if logarythmic:
-        forward_rates[np.nonzero(forward_rates)] = np.log10(forward_rates[np.nonzero(forward_rates)])
-        rev_rates[np.nonzero(rev_rates)] = np.log10(rev_rates[np.nonzero(rev_rates)])
+        forward_rates[np.nonzero(forward_rates)]=np.log10(forward_rates[np.nonzero(forward_rates)])
+        rev_rates[np.nonzero(rev_rates)]=np.log10(rev_rates[np.nonzero(rev_rates)])
 
     f_min = np.min(forward_rates[np.nonzero(forward_rates)])
     f_max = forward_rates.max()
@@ -192,21 +192,6 @@ def scaler(forward_rates, rev_rates, small_arrow=0.1, big_arrow=0.8, logarythmic
         r_min = np.min(rev_rates[np.nonzero(rev_rates)])
 
     maxima = max(f_max, r_max)
-    minima = min(f_min, r_min)
-
-    ranger = big_arrow - small_arrow
-
-    # incase k range = 0
-    if minima == maxima:
-        forward_rates = (forward_rates * 0.0  np.mean([big_arrow, small_arrow]
-    else:
-        forward_rates = ((forward_rates - minima) / (maxima - minima) * ranger
-
-    # incase reverse is empty
-    if r_max == 0:
-        print('all 0 oo')
-        rev_rates = (rev_rates).tolist()
-    else:
     minima = min(f_min, r_min)
 
     ranger = big_arrow - small_arrow
