@@ -180,8 +180,8 @@ def scaler(forward_rates, rev_rates, small_arrow=0.1, big_arrow=0.8, logarythmi
     rev_rates = np.array(rev_rates).astype(np.float)
 
     if logarythmic:
-        forward_rates[np.nonzero(forward_rates)]=np.log10(forward_rates[np.nonz
-        rev_rates[np.nonzero(rev_rates)]=np.log10(rev_rates[np.nonzero(rev_rate
+        forward_rates[np.nonzero(forward_rates)] = np.log10(forward_rates[np.nonzero(forward_rates)])
+        rev_rates[np.nonzero(rev_rates)] = np.log10(rev_rates[np.nonzero(rev_rates)])
 
     f_min = np.min(forward_rates[np.nonzero(forward_rates)])
     f_max = forward_rates.max()
@@ -213,9 +213,9 @@ def scaler(forward_rates, rev_rates, small_arrow=0.1, big_arrow=0.8, logarythmi
 
     # incase k range = 0
     if minima == maxima:
-        forward_rates = (forward_rates * 0.0  np.mean([big_arrow, small_arrow]
+        forward_rates = (forward_rates * 0.0 + np.mean([big_arrow, small_arrow])).tolist()
     else:
-        forward_rates = ((forward_rates - minima) / (maxima - minima) * ranger
+        forward_rates = ((forward_rates - minima) / (maxima - minima) * ranger + small_arrow).tolist()
 
     # incase reverse is empty
     if r_max == 0:
@@ -223,7 +223,7 @@ def scaler(forward_rates, rev_rates, small_arrow=0.1, big_arrow=0.8, logarythmi
         rev_rates = (rev_rates).tolist()
     else:
         rev_rates[np.nonzero(rev_rates)] = (
-                    (rev_rates[np.nonzero(rev_rates)] - minima) / (maxima - min
+                    (rev_rates[np.nonzero(rev_rates)] - minima) / (maxima - minima) * ranger + small_arrow)
         rev_rates = rev_rates.tolist()
     print(rev_rates)
     print(forward_rates)
