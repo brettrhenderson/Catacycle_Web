@@ -175,7 +175,7 @@ print("running")
 # range = [0.1, 0.8], size = 0.7
 # find max and min of f_rate and r_rate
 # subtract smallest rate, multiply by 0.8/(max-min), add 0.1
-def scaler(forward_rates, rev_rates, small_arrow=0.1, big_arrow=0.8, logarythmi
+def scaler(forward_rates, rev_rates, small_arrow=0.1, big_arrow=0.8, logarythmic=False):
     forward_rates = np.array(forward_rates).astype(np.float)
     rev_rates = np.array(rev_rates).astype(np.float)
 
