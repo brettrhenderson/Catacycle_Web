@@ -6,12 +6,12 @@ function slider_vals(input, output) {
 
     // Update the current slider value (each time you drag the slider handle)
     slider.oninput = function() {
-      output.innerHTML = this.value;
+      output.value = this.value;
     }
 }
 
-slider_vals("gap", "gapval")
-slider_vals("thickness", "thicknessval")
+slider_vals("Gap", "Gapval")
+slider_vals("Thickness", "Thicknessval")
 
 // javascript for addrow found at https://bootsnipp.com/snippets/402bQ
 

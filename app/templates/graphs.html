@@ -3,8 +3,8 @@
 
 {% block styles %}
 {{super()}}
-<link rel="stylesheet"
-      href="{{url_for('.static', filename='css/graphs.css')}}">
+<link rel="stylesheet" href="{{url_for('.static', filename='css/graphs.css')}}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 {% endblock %}
 
 {% block scripts %}
@@ -17,11 +17,11 @@
 
 {% block content %}
     <div class="container pb-2 mt-4 mb-2 border-bottom">
-        <h1>Catalytic Cycle</h1>
+        <h1>Catalytic Cycle Generator</h1>
     </div>
     <div class="row d-flex">
         <div class="col-md-6 flex-column" style="overflow: auto; height: 800px">
-            <form class="form-horizontal vertCenter" action="" method="post" nonvalidate>
+            <form class="vertCenter w-75" action="" method="post" nonvalidate>
                 {{ form.hidden_tag() }}
                 <div class="card">
                     <div class="card-header">
@@ -40,14 +40,22 @@
                     <div class="card-body">
                         <div class="tab-content">
                             <div class="tab-pane active show" id="quickstarttab">
-                                <label class="control-label" for="num-steps">Number of Steps:</label>
-                                <input type="text" class="form-control" id="num-steps" placeholder="e.g. 4">
-                                {% for slider in ['gap', 'thickness'] %}
-                                <div class="slidecontainer">
-                                    <label class="control-label" for={{ slider }}>{{ slider }}:</label>
-                                    <input id="{{ slider }}" class="slider" type="range" min="0" max="20" step="1" value="5"/>
+                                <div class="form-group form-row">
+                                    <label class="col-sm-6 col-form-label" for="num-steps">Number of Steps:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="num-steps" placeholder="e.g. 4">
+                                    </div>
                                 </div>
-                                <span id="{{ slider }}val"></span><br>
+                                {% for slider in ['Gap', 'Thickness'] %}
+                                <div class="form-group form-row">
+                                    <label class="col-sm-3 col-form-label" for={{ slider }}>{{ slider }}:</label>
+                                    <div class="pt-2 col-sm-7">
+                                        <input id="{{ slider }}" class="form-control-range" type="range" min="0" max="20" step="1" value="5"/>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input class="form-control" type="text" id="{{ slider }}val" value="5" readonly>
+                                    </div>
+                                </div>
                                 {% endfor %}
                             </div>
                             <div class="tab-pane" id="ratestab">
@@ -75,14 +83,14 @@
                                         <tr>
                                             <td>
                                                 <button type="button" class="btn btn-primary" id="addrow">
-                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                    <i class="fa fa-plus"></i>
                                                 </button>
                                             </td>
                                             <td></td>
                                             <td></td>
                                             <td>
-                                                <button type="button" class="btn btn-primary ibtnDel" id="delrow">
-                                                    <span class="glyphicon glyphicon-minus"></span>
+                                                <button type="button" class="btn btn-primary ibtnDel font-weight-bold" id="delrow">
+                                                    <i class="fa fa-minus"></i>
                                                 </button>
                                             </td>
                                         </tr>
@@ -129,6 +137,9 @@
                                     </table>
                             </div>
                         </div>
+                    </div>
+                    <div class="card-footer">
+                        <input type="submit" class="form-control btn btn-default" value="Graph">
                     </div>
                 </div>
             </form>
