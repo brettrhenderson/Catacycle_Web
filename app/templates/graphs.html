@@ -7,90 +7,90 @@
       href="{{url_for('.static', filename='css/graphs.css')}}">
 {% endblock %}
 
+{% block scripts %}
+{{super()}}
+<script src="{{url_for('.static', filename='js/graphs.js')}}"></script>
+<script type="text/javascript">
+    $(document).ready(addrow({{ rows|tojson }}))
+</script>
+{% endblock %}
+
 {% block content %}
-    <div class="container page-header">
+    <div class="container pb-2 mt-4 mb-2 border-bottom">
         <h1>Catalytic Cycle</h1>
     </div>
-    <div role="tabpanel" class="tab-pane container-fluid">
-        <div class="row display-flex">
-            <div class="col-md-6 flex-col" style="overflow: auto; height: 800px">
-                <form class="form-horizontal" action="" method="post" nonvalidate>
-                    {{ form.hidden_tag() }}
-                    <div class="panel-group vertCenter">
-                        <div class="panel-group">
-                            <div class="panel panel-primary" style="display: inline">
-                                <div class="panel-heading">
-                                        <h3 class="panel-title" style="display: inline">Quick Start</h3>
-                                        <a class="pull-right" data-toggle="collapse" href="#collapseQS" style="color: white">(show/hide)</a>
+    <div class="row d-flex">
+        <div class="col-md-6 flex-column" style="overflow: auto; height: 800px">
+            <form class="form-horizontal vertCenter" action="" method="post" nonvalidate>
+                {{ form.hidden_tag() }}
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#quickstarttab">Quick Start</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#ratestab">Step Rates</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#colorstab">Colors</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content">
+                            <div class="tab-pane active show" id="quickstarttab">
+                                <label class="control-label" for="num-steps">Number of Steps:</label>
+                                <input type="text" class="form-control" id="num-steps" placeholder="e.g. 4">
+                                {% for slider in ['gap', 'thickness'] %}
+                                <div class="slidecontainer">
+                                    <label class="control-label" for={{ slider }}>{{ slider }}:</label>
+                                    <input id="{{ slider }}" class="slider" type="range" min="0" max="20" step="1" value="5"/>
                                 </div>
-                                <div id="collapseQS" class="panel-collapse in collapse">
-                                    <label class="control-label" for="num-steps">Number of Steps:</label>
-                                    <input type="text" class="form-control" id="num-steps" placeholder="e.g. 4">
-                                    {% for slider in ['gap', 'thickness'] %}
-                                    <div class="slidecontainer">
-                                        <label class="control-label" for={{ slider }}>{{ slider }}:</label>
-                                        <input id="{{ slider }}" class="slider" type="range" min="0" max="20" step="1" value="5"/>
-                                    </div>
-                                    <span id="{{ slider }}val"></span><br>
-                                    {% endfor %}
-                                </div>
+                                <span id="{{ slider }}val"></span><br>
+                                {% endfor %}
                             </div>
-                        </div>
-                        <div class="panel-group">
-                            <div class="panel panel-primary" style="display: inline">
-                                <div class="panel-heading">
-                                        <h3 class="panel-title" style="display: inline">Cycle Rates</h3>
-                                        <a class="pull-right" data-toggle="collapse" href="#collapseR" style="color: white">(show/hide)</a>
-                                </div>
-                                <div id="collapseR" class="panel-collapse collapse">
-                                    <table class="rates-list table table-hover table-striped" style="width:100%">
-                                        <thead>
-                                            <tr>
-                                                {% for header in ['Step', 'Forward Rate', 'Reverse Rate', 'Swoop'] %}
-                                                <th>
-                                                    {{ header }}
-                                                </th>
-                                                {% endfor %}
-                                            </tr>
-                                        </thead>
-                                        <tbody id="rate-body">
-                                            {% for i in range(rows) %}
-                                            <tr id="row{{ i+1 }}">
-                                                <td>{{ i+1 }}</td>
-                                                <td><input id="f_rate{{ i+1 }}" class="form-control" type="text" name="f_rate{{ i+1 }}" value={{ form_values["f_rate{}".format(i+1)] }}></td>
-                                                <td><input id="r_rate{{ i+1 }}" class="form-control" type="text" name="r_rate{{ i+1 }}" value={{ form_values["r_rate{}".format(i+1)] }}></td>
-                                                <td><input id="incoming{{ i+1 }}" class="form-control" type="checkbox"></td>
-                                            </tr>
+                            <div class="tab-pane" id="ratestab">
+                                <table class="rates-list table table-hover table-striped" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            {% for header in ['Step', 'Forward Rate', 'Reverse Rate', 'Swoop'] %}
+                                            <th>
+                                                {{ header }}
+                                            </th>
                                             {% endfor %}
-                                        </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <td>
-                                                    <button type="button" class="btn btn-primary" id="addrow">
-                                                        <span class="glyphicon glyphicon-plus"></span>
-                                                    </button>
-                                                </td>
-                                                <td></td>
-                                                <td></td>
-                                                <td>
-                                                    <button type="button" class="btn btn-primary ibtnDel" id="delrow">
-                                                        <span class="glyphicon glyphicon-minus"></span>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="rate-body">
+                                        {% for i in range(rows) %}
+                                        <tr id="row{{ i+1 }}">
+                                            <td>{{ i+1 }}</td>
+                                            <td><input id="f_rate{{ i+1 }}" class="form-control" type="text" name="f_rate{{ i+1 }}" value={{ form_values["f_rate{}".format(i+1)] }}></td>
+                                            <td><input id="r_rate{{ i+1 }}" class="form-control" type="text" name="r_rate{{ i+1 }}" value={{ form_values["r_rate{}".format(i+1)] }}></td>
+                                            <td><input id="incoming{{ i+1 }}" class="form-control" type="checkbox"></td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td>
+                                                <button type="button" class="btn btn-primary" id="addrow">
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                </button>
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                            <td>
+                                                <button type="button" class="btn btn-primary ibtnDel" id="delrow">
+                                                    <span class="glyphicon glyphicon-minus"></span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
                             </div>
-                        </div>
-                        <div class="panel-group">
-                            <div class="panel panel-primary" style="display: inline">
-                                <div class="panel-heading">
-                                        <h3 class="panel-title" style="display: inline">Step Colors</h3>
-                                        <a class="pull-right" data-toggle="collapse" href="#collapseC" style="color: white">(show/hide)</a>
-                                </div>
-                                <div id="collapseC" class="panel-collapse collapse">
-                                    <table class="color-list table table-hover table-striped" style="width:100%">
+                            <div class="tab-pane" id="colorstab">
+                                <table class="color-list table table-hover table-striped" style="width:100%">
                                         <thead>
                                             <tr>
                                                 {% for header in ['Step', 'Forward Color', 'Reverse Color', 'Swoop Color'] %}
@@ -127,26 +127,16 @@
                                             </tr>
                                         </tfoot>
                                     </table>
-                                </div>
                             </div>
                         </div>
-                        <input type="submit" class="form-control btn btn-default" value="Graph">
                     </div>
-                </form>
-            </div>
-            <div class="col-md-6 flex-col">
-                <img class="img-fluid" src='{{ graph1 }}' style="border: 0px solid; max-width: 100%; height: auto;"></img>
-            </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6 flex-col">
+            <img class="img-fluid" src='{{ graph1 }}' style="border: 0px solid; max-width: 100%; height: auto;"></img>
         </div>
     </div>
 
 
-{% endblock %}
-
-{% block scripts %}
-{{super()}}
-<script src="{{url_for('.static', filename='js/graphs.js')}}"></script>
-<script type="text/javascript">
-    $(document).ready(addrow({{ rows|tojson }}))
-</script>
 {% endblock %}
