@@ -75,21 +75,21 @@
                                             <td>{{ i+1 }}</td>
                                             <td><input id="f_rate{{ i+1 }}" class="form-control" type="text" name="f_rate{{ i+1 }}" value={{ form_values["f_rate{}".format(i+1)] }}></td>
                                             <td><input id="r_rate{{ i+1 }}" class="form-control" type="text" name="r_rate{{ i+1 }}" value={{ form_values["r_rate{}".format(i+1)] }}></td>
-                                            <td><input id="incoming{{ i+1 }}" class="form-control" type="checkbox"></td>
+                                            <td><div class="pt-2"><input id="incoming{{ i+1 }}" class="form-control pt-2" type="checkbox"></div></td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>
                                     <tfoot>
                                         <tr>
                                             <td>
-                                                <button type="button" class="btn btn-primary" id="addrow">
+                                                <button type="button" class="btn btn-primary float-left" id="addrow">
                                                     <i class="fa fa-plus"></i>
                                                 </button>
                                             </td>
                                             <td></td>
                                             <td></td>
                                             <td>
-                                                <button type="button" class="btn btn-primary ibtnDel font-weight-bold" id="delrow">
+                                                <button type="button" class="btn btn-primary ibtnDel float-right" id="delrow">
                                                     <i class="fa fa-minus"></i>
                                                 </button>
                                             </td>
@@ -121,15 +121,15 @@
                                         <tfoot>
                                             <tr>
                                                 <td>
-                                                    <button type="button" class="btn btn-primary" id="addcolorrow">
-                                                        <span class="glyphicon glyphicon-plus"></span>
+                                                    <button type="button" class="btn btn-primary float-left" id="addcolorrow">
+                                                        <i class="fa fa-plus"></i>
                                                     </button>
                                                 </td>
                                                 <td></td>
                                                 <td></td>
                                                 <td>
-                                                    <button type="button" class="btn btn-primary ibtnDel" id="delcolorrow">
-                                                        <span class="glyphicon glyphicon-minus"></span>
+                                                    <button type="button" class="btn btn-primary ibtnDel float-right" id="delcolorrow">
+                                                        <i class="fa fa-minus"></i>
                                                     </button>
                                                 </td>
                                             </tr>
