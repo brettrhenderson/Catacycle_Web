@@ -4,14 +4,30 @@
 {% block styles %}
 {{super()}}
 <link rel="stylesheet" href="{{url_for('.static', filename='css/graphs.css')}}">
+<link rel="stylesheet" href="{{url_for('.static', filename='css/bootstrap-colorpicker.css')}}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 {% endblock %}
 
 {% block scripts %}
 {{super()}}
 <script src="{{url_for('.static', filename='js/graphs.js')}}"></script>
+<script src="{{url_for('.static', filename='js/bootstrap-colorpicker.js')}}"></script>
 <script type="text/javascript">
     $(document).ready(addrow({{ rows|tojson }}))
+</script>
+<script>
+    $(function () {
+        var prefixes = ['f', 'r', 'incoming'];
+        for (prefix in prefixes) {
+            for (i = 1; i < {{ rows+1 }}; i++) {
+                $('#' + prefixes[prefix] + '_color-picker-component' + i).colorpicker({
+                    popover: { placement: 'right' },
+                    format: 'hex',
+                    autoInputFallback: false,
+                });
+            }
+        }
+    });
 </script>
 {% endblock %}
 
@@ -50,10 +66,11 @@
                                 <div class="form-group form-row">
                                     <label class="col-sm-3 col-form-label" for={{ slider }}>{{ slider }}:</label>
                                     <div class="pt-3 col-sm-7">
-                                        <input id="{{ slider }}" class="form-control-range slider" type="range" min="0" max="20" step="1" value="5"/>
+                                        <input id="{{ slider }}" class="form-control-range slider" type="range" min="0"
+                                               max="20" step="1" value={{ form[slider | lower].data }}/>
                                     </div>
                                     <div class="col-sm-2">
-                                        <input class="form-control" type="text" id="{{ slider }}val" value="5" readonly>
+                                        <input class="form-control" type="text" id="{{ slider }}val" readonly>
                                     </div>
                                 </div>
                                 {% endfor %}
@@ -81,8 +98,8 @@
                                         {% for i in range(rows) %}
                                         <tr id="row{{ i+1 }}">
                                             <td>{{ i+1 }}</td>
-                                            <td><input id="f_rate{{ i+1 }}" class="form-control" type="text" name="f_rate{{ i+1 }}" value={{ form_values["f_rate{}".format(i+1)] }}></td>
-                                            <td><input id="r_rate{{ i+1 }}" class="form-control" type="text" name="r_rate{{ i+1 }}" value={{ form_values["r_rate{}".format(i+1)] }}></td>
+                                            <td><input id="f_rate{{ i+1 }}" class="form-control" type="text" name="f_rate{{ i+1 }}" value={{ form_values["forward_rates"][i+1] }}></td>
+                                            <td><input id="r_rate{{ i+1 }}" class="form-control" type="text" name="r_rate{{ i+1 }}" value={{ form_values["rev_rates"][i+1] }}></td>
                                             <td><div class="pt-2"><input id="incoming{{ i+1 }}" class="form-control pt-2" type="checkbox"></div></td>
                                         </tr>
                                         {% endfor %}
@@ -121,9 +138,16 @@
                                             {% for i in range(rows) %}
                                             <tr id="crow{{ i+1 }}">
                                                 <td>{{ i+1 }}</td>
-                                                <td><input id="f_color{{ i+1 }}" type="color" name="f_color{{ i+1 }}"></td>
-                                                <td><input id="r_color{{ i+1 }}" type="color" name="r_color{{ i+1 }}"></td>
-                                                <td><input id="incoming_color{{ i+1 }}" type="color" name="incoming_color{{ i+1 }}"></td>
+                                                {% for prefix in ['f', 'r', 'incoming'] %}
+                                                    <td>
+                                                        <div id="{{ prefix }}_color-picker-component{{ i+1 }}" class="input-group colorpicker-component">
+                                                            <input id="{{ prefix }}_color{{ i+1 }}" type="text" value="#000000" class="form-control"/>
+                                                            <span class="input-group-append">
+                                                                <span class="input-group-text colorpicker-input-addon"><i></i></span>
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                {% endfor %}
                                             </tr>
                                             {% endfor %}
                                         </tbody>

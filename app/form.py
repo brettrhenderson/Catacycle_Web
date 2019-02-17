@@ -1,88 +1,92 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, FloatField, IntegerField
+from wtforms import StringField, SubmitField, FloatField, IntegerField, BooleanField
 
 from wtforms.validators import DataRequired
 
 class RatesForm(FlaskForm):
 
+    MAX_ROWS = 10
+
     # QuickStart tab
-    num_steps = IntegerField('num-steps')
-    gap = IntegerField('Gap')
-    thickness = IntegerField('Thickness')
+    num_steps = IntegerField('num-steps', default=4)
+    gap = IntegerField('Gap', default=5)
+    thickness = IntegerField('Thickness', default=5)
 
     # Step Rates tab
-    f_rate1 = FloatField('f_rate1', validators=[DataRequired()])
-    f_rate2 = FloatField('f_rate2')
-    f_rate3 = FloatField('f_rate3')
-    f_rate4 = FloatField('f_rate4')
-    f_rate5 = FloatField('f_rate5')
-    f_rate6 = FloatField('f_rate6')
-    f_rate7 = FloatField('f_rate7')
-    f_rate8 = FloatField('f_rate8')
-    f_rate9 = FloatField('f_rate9')
-    f_rate10 = FloatField('f_rate10')
-    r_rate1 = FloatField('r_rate1')
-    r_rate2 = FloatField('r_rate2')
-    r_rate3 = FloatField('r_rate3')
-    r_rate4 = FloatField('r_rate4')
-    r_rate5 = FloatField('r_rate5')
-    r_rate6 = FloatField('r_rate6')
-    r_rate7 = FloatField('r_rate7')
-    r_rate8 = FloatField('r_rate8')
-    r_rate9 = FloatField('r_rate9')
-    r_rate10 = FloatField('r_rate10')
-    scale_type = StringField('scale_type')
+    f_rate1 = FloatField('f_rate1', validators=[DataRequired()], default=1.0)
+    f_rate2 = FloatField('f_rate2', default=1.0)
+    f_rate3 = FloatField('f_rate3', default=1.0)
+    f_rate4 = FloatField('f_rate4', default=1.0)
+    f_rate5 = FloatField('f_rate5', default=0.0)
+    f_rate6 = FloatField('f_rate6', default=0.0)
+    f_rate7 = FloatField('f_rate7', default=0.0)
+    f_rate8 = FloatField('f_rate8', default=0.0)
+    f_rate9 = FloatField('f_rate9', default=0.0)
+    f_rate10 = FloatField('f_rate10', default=0.0)
+    r_rate1 = FloatField('r_rate1', default=0.0)
+    r_rate2 = FloatField('r_rate2', default=0.0)
+    r_rate3 = FloatField('r_rate3', default=0.0)
+    r_rate4 = FloatField('r_rate4', default=0.0)
+    r_rate5 = FloatField('r_rate5', default=0.0)
+    r_rate6 = FloatField('r_rate6', default=0.0)
+    r_rate7 = FloatField('r_rate7', default=0.0)
+    r_rate8 = FloatField('r_rate8', default=0.0)
+    r_rate9 = FloatField('r_rate9', default=0.0)
+    r_rate10 = FloatField('r_rate10', default=0.0)
+
+    # rate scaling
+    scale_type = StringField('scale_type', default="Linear")
 
     # Incoming Arrows
-    incoming1 = FloatField('incoming1')
-    incoming2 = FloatField('incoming2')
-    incoming3 = FloatField('incoming3')
-    incoming4 = FloatField('incoming4')
-    incoming5 = FloatField('incoming5')
-    incoming6 = FloatField('incoming6')
-    incoming7 = FloatField('incoming7')
-    incoming8 = FloatField('incoming8')
-    incoming9 = FloatField('incoming9')
-    incoming10 = FloatField('incoming10')
+    is_incoming1 = BooleanField('is_incoming1', default=False)
+    is_incoming2 = BooleanField('is_incoming2', default=False)
+    is_incoming3 = BooleanField('is_incoming3', default=False)
+    is_incoming4 = BooleanField('is_incoming4', default=False)
+    is_incoming5 = BooleanField('is_incoming5', default=False)
+    is_incoming6 = BooleanField('is_incoming6', default=False)
+    is_incoming7 = BooleanField('is_incoming7', default=False)
+    is_incoming8 = BooleanField('is_incoming8', default=False)
+    is_incoming9 = BooleanField('is_incoming9', default=False)
+    is_incoming10 = BooleanField('is_incoming10', default=False)
 
 
     # Colors Tab
-    f_color1 = FloatField('f_color1', validators=[DataRequired()])
-    f_color2 = FloatField('f_color2')
-    f_color3 = FloatField('f_color3')
-    f_color4 = FloatField('f_color4')
-    f_color5 = FloatField('f_color5')
-    f_color6 = FloatField('f_color6')
-    f_color7 = FloatField('f_color7')
-    f_color8 = FloatField('f_color8')
-    f_color9 = FloatField('f_color9')
-    f_color10 = FloatField('f_color10')
-    r_color1 = FloatField('r_color1')
-    r_color2 = FloatField('r_color2')
-    r_color3 = FloatField('r_color3')
-    r_color4 = FloatField('r_color4')
-    r_color5 = FloatField('r_color5')
-    r_color6 = FloatField('r_color6')
-    r_color7 = FloatField('r_color7')
-    r_color8 = FloatField('r_color8')
-    r_color9 = FloatField('r_color9')
-    r_color10 = FloatField('r_color10')
-    incoming_color1 = FloatField('incoming_color1')
-    incoming_color2 = FloatField('incoming_color2')
-    incoming_color3 = FloatField('incoming_color3')
-    incoming_color4 = FloatField('incoming_color4')
-    incoming_color5 = FloatField('incoming_color5')
-    incoming_color6 = FloatField('incoming_color6')
-    incoming_color7 = FloatField('incoming_color7')
-    incoming_color8 = FloatField('incoming_color8')
-    incoming_color9 = FloatField('incoming_color9')
-    incoming_color10 = FloatField('incoming_color10')
+    f_color1 = FloatField('f_color1', validators=[DataRequired()], default='#000000')
+    f_color2 = FloatField('f_color2', default='#000000')
+    f_color3 = FloatField('f_color3', default='#000000')
+    f_color4 = FloatField('f_color4', default='#000000')
+    f_color5 = FloatField('f_color5', default='#000000')
+    f_color6 = FloatField('f_color6', default='#000000')
+    f_color7 = FloatField('f_color7', default='#000000')
+    f_color8 = FloatField('f_color8', default='#000000')
+    f_color9 = FloatField('f_color9', default='#000000')
+    f_color10 = FloatField('f_color10', default='#000000')
+    r_color1 = FloatField('r_color1', default='#000000')
+    r_color2 = FloatField('r_color2', default='#000000')
+    r_color3 = FloatField('r_color3', default='#000000')
+    r_color4 = FloatField('r_color4', default='#000000')
+    r_color5 = FloatField('r_color5', default='#000000')
+    r_color6 = FloatField('r_color6', default='#000000')
+    r_color7 = FloatField('r_color7', default='#000000')
+    r_color8 = FloatField('r_color8', default='#000000')
+    r_color9 = FloatField('r_color9', default='#000000')
+    r_color10 = FloatField('r_color10', default='#000000')
+    incoming_color1 = FloatField('incoming_color1', default='#000000')
+    incoming_color2 = FloatField('incoming_color2', default='#000000')
+    incoming_color3 = FloatField('incoming_color3', default='#000000')
+    incoming_color4 = FloatField('incoming_color4', default='#000000')
+    incoming_color5 = FloatField('incoming_color5', default='#000000')
+    incoming_color6 = FloatField('incoming_color6', default='#000000')
+    incoming_color7 = FloatField('incoming_color7', default='#000000')
+    incoming_color8 = FloatField('incoming_color8', default='#000000')
+    incoming_color9 = FloatField('incoming_color9', default='#000000')
+    incoming_color10 = FloatField('incoming_color10', default='#000000')
 
     # Submit
     submit = SubmitField('Graph')
 
     def num_rows(self):
-        for i in range(1,11):
+        for i in range(1,self.MAX_ROWS):
             frate = getattr(self, 'f_rate{}'.format(i)).data
             if frate and frate > 0.0:
                 rows = i
@@ -90,33 +94,50 @@ class RatesForm(FlaskForm):
                 break
         return rows
 
-    def rates(self):
-        data = {}
-        for i in range(1, 11):
-            frate = getattr(self, 'f_rate{}'.format(i)).data
-            rrate = getattr(self, 'r_rate{}'.format(i)).data
-            data['f_rate{}'.format(i)] = frate or 0.0
-            data['r_rate{}'.format(i)] = rrate or 0.0
-        return data
-
-    def no_data(self):
-        data = {}
-        for i in range(1, 11):
-            data['f_rate{}'.format(i)] = 0.0
-            data['r_rate{}'.format(i)] = 0.0
-        return data
-
-    def default_data(self):
-        data = {}
-        for i in range(1, 11):
-            data['f_rate{}'.format(i)] = 0.0
-            data['r_rate{}'.format(i)] = 0.0
-        for i in range(1, 5):
-            data['f_rate{}'.format(i)] = 1.0
-        return data
-
     def valid(self):
         if self.f_rate1.data > 0.0:
             return True
         else:
             return False
+
+    def draw_data(self):
+        data = {'forward_rates': [],
+                'rev_rates': [],
+                'is_incoming': [],
+                'fcolours': [],
+                'rcolours': [],
+                'incolours': [],
+                'gap': self.gap.data,
+                'thickness': self.thickness.data,
+                'scale_type': self.scale_type.data}
+
+        for i in range(1, self.MAX_ROWS+1):
+            data['forward_rates'].append(getattr(self, 'f_rate{}'.format(i)).data)
+            data['rev_rates'].append(getattr(self, 'r_rate{}'.format(i)).data)
+            data['is_incoming'].append(getattr(self, 'is_incoming{}'.format(i)).data)
+            data['fcolours'].append(getattr(self, 'f_color{}'.format(i)).data)
+            data['rcolours'].append(getattr(self, 'r_color{}'.format(i)).data)
+            data['incolours'].append(getattr(self, 'incoming_color{}'.format(i)).data)
+
+        return data
+
+    def default_data(self):
+        data = {'forward_rates': [],
+                'rev_rates': [],
+                'is_incoming': [],
+                'fcolours': [],
+                'rcolours': [],
+                'incolours': [],
+                'gap': self.gap.default,
+                'thickness': self.thickness.default,
+                'scale_type': self.scale_type.default}
+
+        for i in range(1, self.MAX_ROWS + 1):
+            data['forward_rates'].append(getattr(self, 'f_rate{}'.format(i)).default)
+            data['rev_rates'].append(getattr(self, 'r_rate{}'.format(i)).default)
+            data['is_incoming'].append(getattr(self, 'is_incoming{}'.format(i)).default)
+            data['fcolours'].append(getattr(self, 'f_color{}'.format(i)).default)
+            data['rcolours'].append(getattr(self, 'r_color{}'.format(i)).default)
+            data['incolours'].append(getattr(self, 'incoming_color{}'.format(i)).default)
+
+        return data
