@@ -31,6 +31,7 @@ class RatesForm(FlaskForm):
     r_rate8 = FloatField('r_rate8')
     r_rate9 = FloatField('r_rate9')
     r_rate10 = FloatField('r_rate10')
+    scale_type = StringField('scale_type')
 
     # Incoming Arrows
     incoming1 = FloatField('incoming1')
@@ -89,7 +90,7 @@ class RatesForm(FlaskForm):
                 break
         return rows
 
-    def values(self):
+    def rates(self):
         data = {}
         for i in range(1, 11):
             frate = getattr(self, 'f_rate{}'.format(i)).data
@@ -103,6 +104,15 @@ class RatesForm(FlaskForm):
         for i in range(1, 11):
             data['f_rate{}'.format(i)] = 0.0
             data['r_rate{}'.format(i)] = 0.0
+        return data
+
+    def default_data(self):
+        data = {}
+        for i in range(1, 11):
+            data['f_rate{}'.format(i)] = 0.0
+            data['r_rate{}'.format(i)] = 0.0
+        for i in range(1, 5):
+            data['f_rate{}'.format(i)] = 1.0
         return data
 
     def valid(self):

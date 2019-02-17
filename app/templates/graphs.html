@@ -20,8 +20,8 @@
         <h1>Catalytic Cycle Generator</h1>
     </div>
     <div class="row d-flex">
-        <div class="col-md-6 flex-column" style="overflow: auto; height: 800px">
-            <form class="vertCenter w-75" action="" method="post" nonvalidate>
+        <div class="col-md-6 flex-column max-vw-100" style="overflow: auto;">
+            <form id="cycle-form" class="vertCenter w-75" action="" method="post" nonvalidate>
                 {{ form.hidden_tag() }}
                 <div class="card">
                     <div class="card-header">
@@ -43,14 +43,14 @@
                                 <div class="form-group form-row">
                                     <label class="col-sm-6 col-form-label" for="num-steps">Number of Steps:</label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control" id="num-steps" placeholder="e.g. 4">
+                                        <input type="text" class="form-control" id="num-steps" value="{{ rows }}">
                                     </div>
                                 </div>
                                 {% for slider in ['Gap', 'Thickness'] %}
                                 <div class="form-group form-row">
                                     <label class="col-sm-3 col-form-label" for={{ slider }}>{{ slider }}:</label>
-                                    <div class="pt-2 col-sm-7">
-                                        <input id="{{ slider }}" class="form-control-range" type="range" min="0" max="20" step="1" value="5"/>
+                                    <div class="pt-3 col-sm-7">
+                                        <input id="{{ slider }}" class="form-control-range slider" type="range" min="0" max="20" step="1" value="5"/>
                                     </div>
                                     <div class="col-sm-2">
                                         <input class="form-control" type="text" id="{{ slider }}val" value="5" readonly>
@@ -59,6 +59,14 @@
                                 {% endfor %}
                             </div>
                             <div class="tab-pane" id="ratestab">
+                                <div class="form-group">
+                                    <label for="scale_type">Scale Type:</label>
+                                    <select class="form-control" id="scale_type">
+                                        <option>Linear</option>
+                                        <option>Logarithmic</option>
+                                        <option>Linear (Preserve Multiples)</option>
+                                    </select>
+                                </div>
                                 <table class="rates-list table table-hover table-striped" style="width:100%">
                                     <thead>
                                         <tr>
@@ -79,23 +87,24 @@
                                         </tr>
                                         {% endfor %}
                                     </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td>
-                                                <button type="button" class="btn btn-primary float-left" id="addrow">
-                                                    <i class="fa fa-plus"></i>
-                                                </button>
-                                            </td>
-                                            <td></td>
-                                            <td></td>
-                                            <td>
-                                                <button type="button" class="btn btn-primary ibtnDel float-right" id="delrow">
-                                                    <i class="fa fa-minus"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tfoot>
                                 </table>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <button type="button" class="btn btn-primary float-left" id="addrow">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+                                    <div class="col-sm-4 text-center">
+                                        <button type="button" class="btn btn-primary" id="clearrates">
+                                            Clear All
+                                        </button>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button type="button" class="btn btn-primary ibtnDel float-right" id="delrow">
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                             <div class="tab-pane" id="colorstab">
                                 <table class="color-list table table-hover table-striped" style="width:100%">
@@ -112,9 +121,9 @@
                                             {% for i in range(rows) %}
                                             <tr id="crow{{ i+1 }}">
                                                 <td>{{ i+1 }}</td>
-                                                <td><input id="f_color{{ i+1 }}" class="form-control" type="text" name="f_color{{ i+1 }}" value="#000000"></td>
-                                                <td><input id="r_color{{ i+1 }}" class="form-control" type="text" name="r_color{{ i+1 }}" value="#000000"></td>
-                                                <td><input id="incoming_color{{ i+1 }}" class="form-control" type="text" name="incoming_color{{ i+1 }}" value="#000000"></td>
+                                                <td><input id="f_color{{ i+1 }}" type="color" name="f_color{{ i+1 }}"></td>
+                                                <td><input id="r_color{{ i+1 }}" type="color" name="r_color{{ i+1 }}"></td>
+                                                <td><input id="incoming_color{{ i+1 }}" type="color" name="incoming_color{{ i+1 }}"></td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
@@ -144,7 +153,7 @@
                 </div>
             </form>
         </div>
-        <div class="col-md-6 flex-col">
+        <div class="col-md-6 flex-column max-vw-100">
             <img class="img-fluid" src='{{ graph1 }}' style="border: 0px solid; max-width: 100%; height: auto;"></img>
         </div>
     </div>
