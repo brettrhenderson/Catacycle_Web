@@ -44,15 +44,16 @@ def draw(data=None, startrange=0.1, stoprange=0.8):
                 gap = float(line.split()[2])
 
     else:
-        forward_rates = data['forward_rates']
-        rev_rates = data['rev_rates']
-        fcolours = data['fcolours']
-        rcolours = data['rcolours']
-        incolours = data['incolours']
-        gap = data['gap']
-        thickness = data['thickness']
+        forward_rates = data['forward_rates'][:data['num_steps']]
+        rev_rates = data['rev_rates'][:data['num_steps']]
+        fcolours = data['fcolours'][:data['num_steps']]
+        rcolours = data['rcolours'][:data['num_steps']]
+        incolours = data['incolours'][:data['num_steps']]
+        gap = float(data['gap'])
+        thickness = float(data['thickness'])
         scale_type = data['scale_type']
         is_incoming = data['is_incoming']
+
 
 
     # call Sofia's Scaler function, convert rates to arrow size
