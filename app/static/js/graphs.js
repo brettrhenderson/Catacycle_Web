@@ -1,6 +1,9 @@
 // initialize csrf token
 var token = ''
 
+// count number of steps in tables
+var counter = 4;
+
 function setToken(token_val) {
     token = token_val;
 }
@@ -27,13 +30,19 @@ function clear() {
     });
 
     $("#clearcolors").on("click", function (event) {
-        $('.color').val('#000000')
+        // $('.color').val('#000000')
+        var prefixes = ['f', 'r', 'incoming'];
+        for (prefix in prefixes) {
+            for (i = 1; i < counter; i++) {
+                $('#' + prefixes[prefix] + '_color-picker-component' + i).colorpicker('setValue', '#000000')
+            }
+        }
     });
 }
 
 // javascript for addrow found at https://bootsnipp.com/snippets/402bQ
 function addrow(rows) {
-    var counter = rows+1;
+    counter = rows+1;
 
     $("#delrow, #delcolorrow").on("click", function (event) {
         if (counter > 2) {
@@ -150,17 +159,6 @@ function submitHandler(csrf_token) {
         e.preventDefault(); //STOP default action
         submitForm(csrf_token, '/graphs', function (response) {
             document.getElementById('graph').src = response.data;
-        });
-
-    });
-
-    $('#download-form').submit(function(e)
-    {
-        e.preventDefault(); //STOP default action
-        var file_type = $("#dl_type").val().split('.')[1];
-        console.log(file_type)
-        submitForm(csrf_token, '/graphs/download/'+file_type, function (response) {
-            alert('Your download has started.');
         });
 
     });

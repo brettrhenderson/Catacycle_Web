@@ -15,13 +15,13 @@ import numpy as np
 import logging
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+# log.setLevel(logging.DEBUG)
 
 fcolours = "#4286f4 #e2893b #de5eed #dd547d #4ee5ce #4286f4 #dd547d #4ee5ce #4286f4 #dd547d #4ee5ce".split()
 rcolours = "#82abed #efb683 #edb2f4 #ef92ae #91f2e3 #82abed #ef92ae #91f2e3 #82abed #ef92ae #91f2e3".split()
 
 
-def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg', download=False):
+def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
     img = io.BytesIO()
 
     forward_rates = []
@@ -58,6 +58,7 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg', download=Fals
         log.debug('thickness: {}'.format(data['thickness']))
         scale_type = data['scale_type']
         is_incoming = data['is_incoming']
+        f_format = data['f_format'].split('.')[1]
 
 
 

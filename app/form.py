@@ -8,9 +8,10 @@ class RatesForm(FlaskForm):
 
     MAX_ROWS = 10
 
-    # QuickStart tab
+    # Styling tab
     gap = IntegerField('gap', default=15)
     thickness = IntegerField('thickness', default=15)
+    scale_type = StringField('scale_type', default="Linear")
 
     # Step Rates tab
     f_rate1 = FloatField('f_rate1', validators=[DataRequired()], default=1.0)
@@ -34,8 +35,6 @@ class RatesForm(FlaskForm):
     r_rate9 = FloatField('r_rate9', default=0.0)
     r_rate10 = FloatField('r_rate10', default=0.0)
 
-    # rate scaling
-    scale_type = StringField('scale_type', default="Linear")
 
     # Incoming Arrows
     is_incoming1 = BooleanField('is_incoming1', default=False)
@@ -82,6 +81,9 @@ class RatesForm(FlaskForm):
     incoming_color9 = StringField('incoming_color9', default='#000000')
     incoming_color10 = StringField('incoming_color10', default='#000000')
 
+    # File Format Tab
+    f_format = StringField('f_format', default='.svg')
+
     # Submit
     submit = SubmitField('Graph')
 
@@ -109,7 +111,8 @@ class RatesForm(FlaskForm):
                 'incolours': [],
                 'gap': self.gap.data,
                 'thickness': self.thickness.data,
-                'scale_type': self.scale_type.data}
+                'scale_type': self.scale_type.data,
+                'f_format': self.f_format.data}
 
         for i in range(1, self.MAX_ROWS+1):
             data['forward_rates'].append(getattr(self, 'f_rate{}'.format(i)).data)
@@ -133,7 +136,8 @@ class RatesForm(FlaskForm):
                 'gap': self.gap.default,
                 'thickness': self.thickness.default,
                 'scale_type': self.scale_type.default,
-                'num_steps': 4}
+                'num_steps': 4,
+                'f_format': '.svg'}
 
         for i in range(1, self.MAX_ROWS + 1):
             data['forward_rates'].append(getattr(self, 'f_rate{}'.format(i)).default)
