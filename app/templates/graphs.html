@@ -63,8 +63,9 @@
     </div>
     <div class="container-fluid">
         <div class="row d-flex">
-            <div class="col-md-6 flex-column max-vw-100" style="overflow: auto;">
-                <form id="cycle-form" class="vertCenter mw-75" action="" method="post" nonvalidate>
+            <div class="col-md-1 col-lg-1"></div>
+            <div class="col-md-5 col-lg-5 flex-column max-vw-100" style="overflow: auto;">
+                <form id="cycle-form" class="vertCenter" style="width: 100%;" action="" method="post" nonvalidate>
                     {{ form.hidden_tag() }}
                     <div class="card">
                         <div class="card-header">
@@ -228,7 +229,7 @@
                     </div>
                 </form>
             </div>
-            <div class="col-md-6 flex-column max-vw-100">
+            <div class="col-md-6 col-lg-6 flex-column max-vw-100">
                 <img id='graph' class="img-fluid max-vh-75" src='{{ graph1 }}'></img>
             </div>
         </div>
