@@ -85,14 +85,6 @@
                     <div class="card-body">
                         <div class="tab-content">
                             <div class="tab-pane active show" id="ratestab">
-                                <div class="form-group">
-                                    <label for="scale_type">Scale Type:</label>
-                                    <select class="form-control" id="scale_type" name="scale_type">
-                                        <option>Linear</option>
-                                        <option>Logarithmic</option>
-                                        <option>Linear (Preserve Multiples)</option>
-                                    </select>
-                                </div>
                                 <table class="rates-list table table-hover table-striped" style="width:100%">
                                     <thead>
                                         <tr>
@@ -133,6 +125,14 @@
                                 </div>
                             </div>
                             <div class="tab-pane" id="arrowsstyle">
+                                <div class="form-group">
+                                    <label for="scale_type">Scaling:</label>
+                                    <select class="form-control" id="scale_type" name="scale_type">
+                                        <option>Linear</option>
+                                        <option>Logarithmic</option>
+                                        <option>Preserve Multiples</option>
+                                    </select>
+                                </div>
                                 {% for slider in ['Gap', 'Thickness'] %}
                                 <div class="form-group form-row">
                                     <label class="col-sm-3 col-form-label" for="{{ slider | lower }}">{{ slider }}:</label>

@@ -15,7 +15,7 @@ import numpy as np
 import logging
 
 log = logging.getLogger(__name__)
-# log.setLevel(logging.DEBUG)
+log.setLevel(logging.DEBUG)
 
 fcolours = "#4286f4 #e2893b #de5eed #dd547d #4ee5ce #4286f4 #dd547d #4ee5ce #4286f4 #dd547d #4ee5ce".split()
 rcolours = "#82abed #efb683 #edb2f4 #ef92ae #91f2e3 #82abed #ef92ae #91f2e3 #82abed #ef92ae #91f2e3".split()
@@ -185,7 +185,7 @@ def draw(data=None, startrange=0.1, stoprange=0.8):
         # plt.text(4*math.cos(b_angle-0.1-r_angle_offset),4*math.sin(b_angle-0.1-r_angle_offset),"test")
 
     plt.draw()
-    plt.savefig(img, format='png')
+    plt.savefig(img, format='pdf')
     img.seek(0)
     graph_url = base64.b64encode(img.getvalue()).decode()
     plt.close()

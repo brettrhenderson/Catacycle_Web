@@ -11,6 +11,7 @@ log = logging.getLogger(__name__)
 @app.route('/index', methods=['GET', 'POST'])
 @app.route('/graphs', methods=['GET', 'POST'])
 def graphs():
+
     form = RatesForm(request.form)  # initialize the backend of the web form
     data = form.default_data()  # initialize the form with some default data on the front end
 
