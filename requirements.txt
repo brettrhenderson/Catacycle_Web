@@ -1,5 +1,5 @@
 matplotlib
 numpy
 flask
-flask-bootstrap
+flask-bootstrap4
 flask-wtf

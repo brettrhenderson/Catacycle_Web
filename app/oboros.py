@@ -15,18 +15,20 @@ import numpy as np
 import logging
 
 log = logging.getLogger(__name__)
-#log.setLevel(logging.DEBUG)
+# log.setLevel(logging.DEBUG)
 
 fcolours = "#4286f4 #e2893b #de5eed #dd547d #4ee5ce #4286f4 #dd547d #4ee5ce #4286f4 #dd547d #4ee5ce".split()
 rcolours = "#82abed #efb683 #edb2f4 #ef92ae #91f2e3 #82abed #ef92ae #91f2e3 #82abed #ef92ae #91f2e3".split()
 
 
-def draw(data=None, logarithmic=True, startrange=0.1, stoprange=0.8, preserve_multiples=True):
+def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
     img = io.BytesIO()
 
     forward_rates = []
     rev_rates = []
+    is_incoming = []
 
+    scale_type = 'Linear'
     gap = 5  # default gap without settings
     scale = 23.9   # will scale pending on image size -- connects graph space to figure space
 
@@ -42,16 +44,27 @@ def draw(data=None, logarithmic=True, startrange=0.1, stoprange=0.8, preserve_mu
                 gap = float(line.split()[2])
 
     else:
-        for i in range(1,11):
-            f_rate = data['f_rate{}'.format(i)]
-            if f_rate > 0.0:
-                forward_rates.append(f_rate)
-                rev_rates.append(data['r_rate{}'.format(i)])
+        forward_rates = data['forward_rates'][:data['num_steps']]
+        rev_rates = data['rev_rates'][:data['num_steps']]
+        fcolours = data['fcolours'][:data['num_steps']]
+        rcolours = data['rcolours'][:data['num_steps']]
+        incolours = data['incolours'][:data['num_steps']]
+        gap = float(data['gap'])
+        thickness = float(data['thickness'])
+        multiplier = thickness / 15.0
+        startrange *= multiplier
+        stoprange *= multiplier
+        log.debug('gap: {}'.format(data['gap']))
+        log.debug('thickness: {}'.format(data['thickness']))
+        scale_type = data['scale_type']
+        is_incoming = data['is_incoming']
+        f_format = data['f_format'].split('.')[1]
+
+
 
     # call Sofia's Scaler function, convert rates to arrow size
-    forward_rates, rev_rates, range_rates = scaler(forward_rates, rev_rates, startrange=0.1, stoprange=0.8,
-                                                   logarythmic=logarithmic, preserve_multiples=preserve_multiples)
-    # forward_rates, rev_rates = scaler2(forward_rates, rev_rates, stoprange=0.8, logarythmic=False)
+    forward_rates, rev_rates, range_rates = scaler(forward_rates, rev_rates, startrange=startrange,
+                                                   stoprange=stoprange, scale_type=scale_type)
 
     # Figure initialization
     fig = plt.figure(1, figsize=(8, 8))
@@ -146,6 +159,7 @@ def draw(data=None, logarithmic=True, startrange=0.1, stoprange=0.8, preserve_mu
             ax.add_patch(tri4)
 
         if rev_rates[i] == 0.0:
+
             col = fcolours[i]
             Curve = mpatches.Arc((0,0),height=6-radial_offsets_f[i],width=6-radial_offsets_f[i],angle=1,
                                  theta1=90-delta*i,theta2=90-gap-delta*(i-1),linewidth=transformed_rates_f[i],color=col)
@@ -172,17 +186,26 @@ def draw(data=None, logarithmic=True, startrange=0.1, stoprange=0.8, preserve_mu
         # plt.text(4*math.cos(b_angle-0.1-r_angle_offset),4*math.sin(b_angle-0.1-r_angle_offset),"test")
 
     plt.draw()
-    plt.savefig(img, format='png')
+
+    # correct mimetype based on filetype
+    if f_format == 'svg':
+        mimetype = 'image/svg+xml'
+    elif f_format == 'png':
+        mimetype = 'image/png'
+    else:
+        raise ValueError('Image format {} not supported.'.format(format))
+
+    plt.savefig(img, format=f_format)
+    plt.close()
     img.seek(0)
     graph_url = base64.b64encode(img.getvalue()).decode()
-    plt.close()
-    return 'data:image/png;base64,{}'.format(graph_url)
+
+    return 'data:{};base64,{}'.format(mimetype, graph_url)
 
 
-print("running")
 
 
-def scaler(forward_rates, rev_rates, startrange=0.1, stoprange=0.8, preserve_multiples=False, logarythmic=False):
+def scaler(forward_rates, rev_rates, startrange=0.1, stoprange=0.8, scale_type='Linear'):
     """
     Transforming rates to be within specified range defined by startrange and stoprange:
     
@@ -191,12 +214,12 @@ def scaler(forward_rates, rev_rates, startrange=0.1, stoprange=0.8, preserve_mul
     :param rev_rates: a list of reverse rates as floats or ints
     :param startrange: float, first number of the range you want output to take
     :param stoprange: float, last number of range for output to take
-    :param logarythmic: boolean specifying whether logarithmic scaling should be applied.
+    :param scale_type: 'Linear', 'Logarithmic', or 'Preserve Multiples'.
     :return: (forward_rates, rev_rates), a tuple of the original lists scaled properly
     """
 
-    if logarythmic:
-        preserve_multiples = False
+    if scale_type not in ['Linear', 'Logarithmic', 'Preserve Multiples']:
+        raise ValueError("scale_type must be Linear, Logarithmic, or Preserve Multiples")
 
     forward_rates = np.array(forward_rates).astype(np.float)
     rev_rates = np.array(rev_rates).astype(np.float)
@@ -209,7 +232,7 @@ def scaler(forward_rates, rev_rates, startrange=0.1, stoprange=0.8, preserve_mul
     r_nonzero = np.nonzero(rev_rates)
 
     # scale logarithmically and then apply the transformation to be within specified bounds (leave zeros)
-    if logarythmic:
+    if scale_type == 'Logarithmic':
         log.debug("logarithmic scale selected")
         forward_rates[f_nonzero]=np.log10(forward_rates[f_nonzero])
         rev_rates[r_nonzero]=np.log10(rev_rates[r_nonzero])
@@ -234,7 +257,7 @@ def scaler(forward_rates, rev_rates, startrange=0.1, stoprange=0.8, preserve_mul
 
     # incase k range = 0
     if minima == maxima:
-        if preserve_multiples:
+        if scale_type == 'Preserve Multiples':
             forward_rates[f_nonzero] = stoprange / 2.0
             rev_rates[r_nonzero] = stoprange / 2.0
         else:
@@ -242,7 +265,7 @@ def scaler(forward_rates, rev_rates, startrange=0.1, stoprange=0.8, preserve_mul
             forward_rates[f_nonzero] = np.mean([stoprange, startrange])
             rev_rates[r_nonzero] = np.mean([stoprange, startrange])
     else:
-        if preserve_multiples:
+        if scale_type == 'Preserve Multiples':
             forward_rates = forward_rates / maxima * stoprange
             rev_rates = rev_rates / maxima * stoprange
         else:
