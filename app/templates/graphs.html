@@ -13,8 +13,10 @@
 <script src="{{url_for('.static', filename='js/graphs.js')}}"></script>
 <script src="{{url_for('.static', filename='js/bootstrap-colorpicker.js')}}"></script>
 <script type="text/javascript">
+    $(document).ready(setToken("{{ form.csrf_token._value() }}"));
     $(document).ready(addrow({{ rows|tojson }}));
     $(document).ready(clear());
+    $(document).ready(submitHandler("{{ form.csrf_token._value() }}"));
 </script>
 <script>
     $(function () {
@@ -49,11 +51,6 @@
                             }
                         }
                     ]
-                }).on('colorpickerChange', function (e) {
-                    // console.log('changing color to ' + e.color.toHexString());
-                    // console.log('value before = ' + document.getElementById('{{ prefix }}_color{{ i }}').value);
-                    // document.getElementById('{{ prefix }}_color{{ i }}').value = e.color.toHexString();
-                    // console.log('value after = ' + document.getElementById('{{ prefix }}_color{{ i }}').value);
                 });
             {% endfor %}
         {% endfor %}
@@ -90,7 +87,7 @@
                             <div class="tab-pane active show" id="ratestab">
                                 <div class="form-group">
                                     <label for="scale_type">Scale Type:</label>
-                                    <select class="form-control" id="scale_type">
+                                    <select class="form-control" id="scale_type" name="scale_type">
                                         <option>Linear</option>
                                         <option>Logarithmic</option>
                                         <option>Linear (Preserve Multiples)</option>
@@ -138,13 +135,13 @@
                             <div class="tab-pane" id="arrowsstyle">
                                 {% for slider in ['Gap', 'Thickness'] %}
                                 <div class="form-group form-row">
-                                    <label class="col-sm-3 col-form-label" for={{ slider }}>{{ slider }}:</label>
+                                    <label class="col-sm-3 col-form-label" for="{{ slider | lower }}">{{ slider }}:</label>
                                     <div class="pt-3 col-sm-7">
-                                        <input id="{{ slider }}" class="form-control-range slider" type="range" min="0"
-                                               max="20" step="1" value="{{ form_values[slider | lower] }}">
+                                        <input id="{{ slider | lower }}" name="{{ slider | lower }}" class="form-control-range slider" type="range" min="0"
+                                               max="50" step="1" value="{{ form_values[slider | lower] }}">
                                     </div>
                                     <div class="col-sm-2">
-                                        <input class="form-control" type="text" id="{{ slider }}val" readonly>
+                                        <input class="form-control" type="text" id="{{ slider | lower }}val" readonly>
                                     </div>
                                 </div>
                                 {% endfor %}
@@ -219,7 +216,7 @@
             </form>
         </div>
         <div class="col-md-6 flex-column max-vw-100">
-            <img class="img-fluid" src='{{ graph1 }}' style="border: 0px solid; max-width: 100%; height: auto;"></img>
+            <img id='graph' class="img-fluid" src='{{ graph1 }}' style="border: 0px solid; max-width: 100%; height: auto;"></img>
         </div>
     </div>
 

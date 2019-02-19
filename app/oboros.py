@@ -15,7 +15,7 @@ import numpy as np
 import logging
 
 log = logging.getLogger(__name__)
-#log.setLevel(logging.DEBUG)
+# log.setLevel(logging.DEBUG)
 
 fcolours = "#4286f4 #e2893b #de5eed #dd547d #4ee5ce #4286f4 #dd547d #4ee5ce #4286f4 #dd547d #4ee5ce".split()
 rcolours = "#82abed #efb683 #edb2f4 #ef92ae #91f2e3 #82abed #ef92ae #91f2e3 #82abed #ef92ae #91f2e3".split()
@@ -51,6 +51,11 @@ def draw(data=None, startrange=0.1, stoprange=0.8):
         incolours = data['incolours'][:data['num_steps']]
         gap = float(data['gap'])
         thickness = float(data['thickness'])
+        multiplier = thickness / 15.0
+        startrange *= multiplier
+        stoprange *= multiplier
+        log.debug('gap: {}'.format(data['gap']))
+        log.debug('thickness: {}'.format(data['thickness']))
         scale_type = data['scale_type']
         is_incoming = data['is_incoming']
 
@@ -186,8 +191,6 @@ def draw(data=None, startrange=0.1, stoprange=0.8):
     plt.close()
     return 'data:image/png;base64,{}'.format(graph_url)
 
-
-print("running")
 
 
 def scaler(forward_rates, rev_rates, startrange=0.1, stoprange=0.8, scale_type='Linear'):

@@ -1,4 +1,11 @@
-//
+// initialize csrf token
+var token = ''
+
+function setToken(token_val) {
+    token = token_val;
+}
+
+
 function slider_vals(input, output) {
     var slider = document.getElementById(input);
     var output = document.getElementById(output);
@@ -6,14 +13,12 @@ function slider_vals(input, output) {
 
     // Update the current slider value (each time you drag the slider handle)
     slider.oninput = function() {
-      output.value = this.value;
-      // re-submit the form when the values of the sliders are changed.
-      document.getElementById('cycle-form').submit();
+        output.value = this.value;
     }
 }
 
-slider_vals("Gap", "Gapval")
-slider_vals("Thickness", "Thicknessval")
+slider_vals("gap", "gapval")
+slider_vals("thickness", "thicknessval")
 
 function clear() {
     $("#clearrates").on("click", function (event) {
@@ -24,13 +29,13 @@ function clear() {
     $("#clearcolors").on("click", function (event) {
         $('.color').val('#000000')
     });
-};
+}
 
 // javascript for addrow found at https://bootsnipp.com/snippets/402bQ
 function addrow(rows) {
     var counter = rows+1;
 
-    $("#delrow, delcolorrow").on("click", function (event) {
+    $("#delrow, #delcolorrow").on("click", function (event) {
         if (counter > 2) {
             $("#rate-body")[0].deleteRow(-1);
             $("#color-body")[0].deleteRow(-1);
@@ -60,9 +65,31 @@ function addrow(rows) {
             var prefixes = ['f', 'r', 'incoming'];
             for (prefix in prefixes) {
                 $('#' + prefixes[prefix] + '_color-picker-component' + counter).colorpicker({
+                    autoInputFallback: false,
                     popover: { placement: 'right' },
                     format: 'hex',
-                    autoInputFallback: false,
+                    extensions: [
+                        {
+                            name: 'swatches', // extension name to load
+                            options: { // extension options
+                                colors: {
+                                    'black': '#000000',
+                                    'gray': 'gray',
+                                    'red': 'red',
+                                    'blue': 'blue',
+                                    'defaultf1': '#4286f4',
+                                    'defaultf2': '#e2893b',
+                                    'defaultf3': '#de5eed',
+                                    'defaultf4': '#dd547d',
+                                    'defaultr1': '#82abed',
+                                    'defaultr2': '#efb683',
+                                    'defaultr3': '#edb2f4',
+                                    'defaultr4': '#ef92ae',
+                                },
+                                namesAsValues: false
+                            }
+                        }
+                    ]
                 });
             }
 
@@ -78,5 +105,47 @@ function addrow(rows) {
 
             counter++;
         }
-    });
+    })
 };
+
+function submitForm(csrf_token) {
+    var postData = $('#cycle-form').serialize();
+    // console.log(postData);
+    var formURL = '/graphs';
+
+    $.ajax(
+    {
+        url : formURL,
+        type: "POST",
+        crossDomain: true,
+        data : postData,
+        dataType: 'json',
+        success:function(response, textStatus, jqXHR)
+        {
+            // response: return data from server
+            document.getElementById('graph').src = response.data;
+            // console.log(response.data);
+        },
+        error: function(jqXHR, textStatus, errorThrown)
+        {
+            //if fails
+            alert('Form Submission Failed with the following error: ' + errorThrown);
+        }
+    });
+
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrf_token)
+            }
+        }
+    })
+}
+
+function submitHandler(csrf_token) {
+    $('#cycle-form').submit(function(e)
+    {
+        e.preventDefault(); //STOP default action
+        submitForm(csrf_token);
+    });
+}

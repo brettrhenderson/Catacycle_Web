@@ -8,14 +8,14 @@ class RatesForm(FlaskForm):
     MAX_ROWS = 10
 
     # QuickStart tab
-    gap = IntegerField('Gap', default=5)
-    thickness = IntegerField('Thickness', default=5)
+    gap = IntegerField('gap', default=15)
+    thickness = IntegerField('thickness', default=15)
 
     # Step Rates tab
     f_rate1 = FloatField('f_rate1', validators=[DataRequired()], default=1.0)
-    f_rate2 = FloatField('f_rate2', default=1.0)
-    f_rate3 = FloatField('f_rate3', default=1.0)
-    f_rate4 = FloatField('f_rate4', default=1.0)
+    f_rate2 = FloatField('f_rate2', default=0.0)
+    f_rate3 = FloatField('f_rate3', default=0.0)
+    f_rate4 = FloatField('f_rate4', default=0.0)
     f_rate5 = FloatField('f_rate5', default=0.0)
     f_rate6 = FloatField('f_rate6', default=0.0)
     f_rate7 = FloatField('f_rate7', default=0.0)
@@ -50,21 +50,21 @@ class RatesForm(FlaskForm):
 
 
     # Colors Tab
-    f_color1 = StringField('f_color1', default='#FF0000')
-    f_color2 = StringField('f_color2', default='#0000FF')
-    f_color3 = StringField('f_color3', default='#00FF00')
-    f_color4 = StringField('f_color4', default='#0FF000')
-    f_color5 = StringField('f_color5', default='#000000')
+    f_color1 = StringField('f_color1', default='#4286f4')
+    f_color2 = StringField('f_color2', default='#e2893b')
+    f_color3 = StringField('f_color3', default='#de5eed')
+    f_color4 = StringField('f_color4', default='#dd547d')
+    f_color5 = StringField('f_color5', default='#4ee5ce')
     f_color6 = StringField('f_color6', default='#000000')
     f_color7 = StringField('f_color7', default='#000000')
     f_color8 = StringField('f_color8', default='#000000')
     f_color9 = StringField('f_color9', default='#000000')
     f_color10 = StringField('f_color10', default='#000000')
-    r_color1 = StringField('r_color1', default='#000000')
-    r_color2 = StringField('r_color2', default='#000000')
-    r_color3 = StringField('r_color3', default='#000000')
-    r_color4 = StringField('r_color4', default='#000000')
-    r_color5 = StringField('r_color5', default='#000000')
+    r_color1 = StringField('r_color1', default='#82abed')
+    r_color2 = StringField('r_color2', default='#efb683')
+    r_color3 = StringField('r_color3', default='#edb2f4')
+    r_color4 = StringField('r_color4', default='#ef92ae')
+    r_color5 = StringField('r_color5', default='#91f2e3')
     r_color6 = StringField('r_color6', default='#000000')
     r_color7 = StringField('r_color7', default='#000000')
     r_color8 = StringField('r_color8', default='#000000')
@@ -85,7 +85,7 @@ class RatesForm(FlaskForm):
     submit = SubmitField('Graph')
 
     def num_rows(self):
-        for i in range(1,self.MAX_ROWS):
+        for i in range(1, self.MAX_ROWS):
             frate = getattr(self, 'f_rate{}'.format(i)).data
             if frate and frate > 0.0:
                 rows = i
@@ -118,6 +118,8 @@ class RatesForm(FlaskForm):
             data['rcolours'].append(getattr(self, 'r_color{}'.format(i)).data)
             data['incolours'].append(getattr(self, 'incoming_color{}'.format(i)).data)
 
+        data['num_steps'] = self.num_rows()
+
         return data
 
     def default_data(self):
@@ -129,7 +131,8 @@ class RatesForm(FlaskForm):
                 'incolours': [],
                 'gap': self.gap.default,
                 'thickness': self.thickness.default,
-                'scale_type': self.scale_type.default}
+                'scale_type': self.scale_type.default,
+                'num_steps': 4}
 
         for i in range(1, self.MAX_ROWS + 1):
             data['forward_rates'].append(getattr(self, 'f_rate{}'.format(i)).default)
@@ -138,5 +141,9 @@ class RatesForm(FlaskForm):
             data['fcolours'].append(getattr(self, 'f_color{}'.format(i)).default)
             data['rcolours'].append(getattr(self, 'r_color{}'.format(i)).default)
             data['incolours'].append(getattr(self, 'incoming_color{}'.format(i)).default)
+
+        # have four arrows displayed by default
+        for i in range(0, 4):
+            data['forward_rates'][i] = 1.0
 
         return data
