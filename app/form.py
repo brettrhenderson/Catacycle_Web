@@ -3,6 +3,7 @@ from wtforms import StringField, SubmitField, FloatField, IntegerField, BooleanF
 
 from wtforms.validators import DataRequired
 
+
 class RatesForm(FlaskForm):
 
     MAX_ROWS = 10

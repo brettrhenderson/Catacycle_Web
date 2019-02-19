@@ -1,4 +1,4 @@
-from flask import render_template, request, jsonify
+from flask import render_template, request, jsonify, send_file, redirect, url_for
 from app.form import RatesForm
 from app.oboros import draw
 from app import app
@@ -31,3 +31,16 @@ def graphs():
                            rows=data['num_steps'],
                            form=form,
                            form_values=data)
+
+
+@app.route('/graphs/download/<ftype>', methods=['GET', 'POST'])
+def download(ftype):
+
+    form = RatesForm(request.form)  # initialize the backend of the web form
+
+    if request.method == 'POST' and form.validate():
+        data = form.draw_data()
+        img = draw(data, f_format=ftype, download=True)
+        return send_file(img, attachment_filename='cycle.{}'.format(ftype), as_attachment=True)
+    else:
+        redirect(url_for('graphs'))

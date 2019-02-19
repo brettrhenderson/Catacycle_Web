@@ -64,159 +64,176 @@
     <div class="container pb-2 mt-4 mb-2 border-bottom">
         <h1>Catalytic Cycle Generator</h1>
     </div>
-    <div class="row d-flex">
-        <div class="col-md-6 flex-column max-vw-100" style="overflow: auto;">
-            <form id="cycle-form" class="vertCenter w-75" action="" method="post" nonvalidate>
-                {{ form.hidden_tag() }}
-                <div class="card">
-                    <div class="card-header">
-                        <ul class="nav nav-tabs card-header-tabs">
-                            <li class="nav-item">
-                                <a class="nav-link active" data-toggle="tab" href="#ratestab">Step Rates</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#arrowsstyle">Arrow Styling</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#colorstab">Colors</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="card-body">
-                        <div class="tab-content">
-                            <div class="tab-pane active show" id="ratestab">
-                                <table class="rates-list table table-hover table-striped" style="width:100%">
-                                    <thead>
-                                        <tr>
-                                            {% for header in ['Step', 'Forward Rate', 'Reverse Rate', 'Swoop'] %}
-                                            <th>
-                                                {{ header }}
-                                            </th>
+    <div class="container-fluid">
+        <div class="row d-flex">
+            <div class="col-md-6 flex-column max-vw-100" style="overflow: auto;">
+                <form id="cycle-form" class="vertCenter w-75" action="" method="post" nonvalidate>
+                    {{ form.hidden_tag() }}
+                    <div class="card">
+                        <div class="card-header">
+                            <ul class="nav nav-tabs card-header-tabs">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab" href="#ratestab">Step Rates</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#arrowsstyle">Arrow Styling</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#colorstab">Colors</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-body">
+                            <div class="tab-content">
+                                <div class="tab-pane active show" id="ratestab">
+                                    <table class="rates-list table table-hover table-striped" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                {% for header in ['Step', 'Forward Rate', 'Reverse Rate', 'Swoop'] %}
+                                                <th>
+                                                    {{ header }}
+                                                </th>
+                                                {% endfor %}
+                                            </tr>
+                                        </thead>
+                                        <tbody id="rate-body">
+                                            {% for i in range(rows) %}
+                                            <tr id="row{{ i+1 }}">
+                                                <td>{{ i+1 }}</td>
+                                                <td><input id="f_rate{{ i+1 }}" class="form-control rate" type="text" name="f_rate{{ i+1 }}" value="{{ form_values["forward_rates"][i] }}"></td>
+                                                <td><input id="r_rate{{ i+1 }}" class="form-control rate" type="text" name="r_rate{{ i+1 }}" value="{{ form_values["rev_rates"][i] }}"></td>
+                                                <td><div class="pt-2"><input id="incoming{{ i+1 }}" class="form-control pt-2 income-check" type="checkbox"></div></td>
+                                            </tr>
                                             {% endfor %}
-                                        </tr>
-                                    </thead>
-                                    <tbody id="rate-body">
-                                        {% for i in range(rows) %}
-                                        <tr id="row{{ i+1 }}">
-                                            <td>{{ i+1 }}</td>
-                                            <td><input id="f_rate{{ i+1 }}" class="form-control rate" type="text" name="f_rate{{ i+1 }}" value="{{ form_values["forward_rates"][i] }}"></td>
-                                            <td><input id="r_rate{{ i+1 }}" class="form-control rate" type="text" name="r_rate{{ i+1 }}" value="{{ form_values["rev_rates"][i] }}"></td>
-                                            <td><div class="pt-2"><input id="incoming{{ i+1 }}" class="form-control pt-2 income-check" type="checkbox"></div></td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                                <div class="row">
-                                    <div class="col-sm-4">
-                                        <button type="button" class="btn btn-primary float-left" id="addrow">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
-                                    <div class="col-sm-4 text-center">
-                                        <button type="button" class="btn btn-primary" id="clearrates">
-                                            Clear All
-                                        </button>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <button type="button" class="btn btn-primary ibtnDel float-right" id="delrow">
-                                            <i class="fa fa-minus"></i>
-                                        </button>
+                                        </tbody>
+                                    </table>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <button type="button" class="btn btn-primary float-left" id="addrow">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        <div class="col-sm-4 text-center">
+                                            <button type="button" class="btn btn-primary" id="clearrates">
+                                                Clear All
+                                            </button>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <button type="button" class="btn btn-primary ibtnDel float-right" id="delrow">
+                                                <i class="fa fa-minus"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="tab-pane" id="arrowsstyle">
-                                <div class="form-group">
-                                    <label for="scale_type">Scaling:</label>
-                                    <select class="form-control" id="scale_type" name="scale_type">
-                                        <option>Linear</option>
-                                        <option>Logarithmic</option>
-                                        <option>Preserve Multiples</option>
-                                    </select>
-                                </div>
-                                {% for slider in ['Gap', 'Thickness'] %}
-                                <div class="form-group form-row">
-                                    <label class="col-sm-3 col-form-label" for="{{ slider | lower }}">{{ slider }}:</label>
-                                    <div class="pt-3 col-sm-7">
-                                        <input id="{{ slider | lower }}" name="{{ slider | lower }}" class="form-control-range slider" type="range" min="0"
-                                               max="50" step="1" value="{{ form_values[slider | lower] }}">
+                                <div class="tab-pane" id="arrowsstyle">
+                                    <div class="form-group">
+                                        <label for="scale_type">Scaling:</label>
+                                        <select class="form-control" id="scale_type" name="scale_type">
+                                            <option>Linear</option>
+                                            <option>Logarithmic</option>
+                                            <option>Preserve Multiples</option>
+                                        </select>
                                     </div>
-                                    <div class="col-sm-2">
-                                        <input class="form-control" type="text" id="{{ slider | lower }}val" readonly>
+                                    {% for slider in ['Gap', 'Thickness'] %}
+                                    <div class="form-group form-row">
+                                        <label class="col-sm-3 col-form-label" for="{{ slider | lower }}">{{ slider }}:</label>
+                                        <div class="pt-3 col-sm-7">
+                                            <input id="{{ slider | lower }}" name="{{ slider | lower }}" class="form-control-range slider" type="range" min="0"
+                                                   max="50" step="1" value="{{ form_values[slider | lower] }}">
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <input class="form-control" type="text" id="{{ slider | lower }}val" readonly>
+                                        </div>
                                     </div>
+                                    {% endfor %}
                                 </div>
-                                {% endfor %}
-                            </div>
-                            <div class="tab-pane" id="colorstab">
-                                <table class="color-list table table-hover table-striped" style="width:100%">
-                                    <thead>
-                                        <tr>
-                                            {% for header in ['Step', 'Forward Color', 'Reverse Color', 'Swoop Color'] %}
-                                            <th>
-                                                {{ header }}
-                                            </th>
+                                <div class="tab-pane" id="colorstab">
+                                    <table class="color-list table table-hover table-striped" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                {% for header in ['Step', 'Forward Color', 'Reverse Color', 'Swoop Color'] %}
+                                                <th>
+                                                    {{ header }}
+                                                </th>
+                                                {% endfor %}
+                                            </tr>
+                                        </thead>
+                                        <tbody id="color-body">
+                                            {% for i in range(rows) %}
+                                            <tr id="crow{{ i+1 }}">
+                                                <td>{{ i+1 }}</td>
+                                                <td>
+                                                    <div id="f_color-picker-component{{ i+1 }}" class="input-group colorpicker-component">
+                                                        <input id="f_color{{ i+1 }}" name="f_color{{ i+1 }}" type="text" value="{{ form_values['fcolours'][i] }}" class="form-control color"/>
+                                                        <span class="input-group-append">
+                                                            <span class="input-group-text colorpicker-input-addon"><i></i></span>
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div id="r_color-picker-component{{ i+1 }}" class="input-group colorpicker-component">
+                                                        <input id="r_color{{ i+1 }}" name="r_color{{ i+1 }}" type="text" value="{{ form_values['rcolours'][i] }}" class="form-control color"/>
+                                                        <span class="input-group-append">
+                                                            <span class="input-group-text colorpicker-input-addon"><i></i></span>
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div id="incoming_color-picker-component{{ i+1 }}" class="input-group colorpicker-component">
+                                                        <input id="incoming_color{{ i+1 }}" name="incoming_color{{ i+1 }}" type="text" value="{{ form_values['incolours'][i] }}" class="form-control color"/>
+                                                        <span class="input-group-append">
+                                                            <span class="input-group-text colorpicker-input-addon"><i></i></span>
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                            </tr>
                                             {% endfor %}
-                                        </tr>
-                                    </thead>
-                                    <tbody id="color-body">
-                                        {% for i in range(rows) %}
-                                        <tr id="crow{{ i+1 }}">
-                                            <td>{{ i+1 }}</td>
-                                            <td>
-                                                <div id="f_color-picker-component{{ i+1 }}" class="input-group colorpicker-component">
-                                                    <input id="f_color{{ i+1 }}" name="f_color{{ i+1 }}" type="text" value="{{ form_values['fcolours'][i] }}" class="form-control color"/>
-                                                    <span class="input-group-append">
-                                                        <span class="input-group-text colorpicker-input-addon"><i></i></span>
-                                                    </span>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div id="r_color-picker-component{{ i+1 }}" class="input-group colorpicker-component">
-                                                    <input id="r_color{{ i+1 }}" name="r_color{{ i+1 }}" type="text" value="{{ form_values['rcolours'][i] }}" class="form-control color"/>
-                                                    <span class="input-group-append">
-                                                        <span class="input-group-text colorpicker-input-addon"><i></i></span>
-                                                    </span>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div id="incoming_color-picker-component{{ i+1 }}" class="input-group colorpicker-component">
-                                                    <input id="incoming_color{{ i+1 }}" name="incoming_color{{ i+1 }}" type="text" value="{{ form_values['incolours'][i] }}" class="form-control color"/>
-                                                    <span class="input-group-append">
-                                                        <span class="input-group-text colorpicker-input-addon"><i></i></span>
-                                                    </span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                                <div class="row">
-                                    <div class="col-sm-4">
-                                        <button type="button" class="btn btn-primary float-left" id="addcolorrow">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
-                                    <div class="col-sm-4 text-center">
-                                        <button type="button" class="btn btn-primary" id="clearcolors">
-                                            Clear All
-                                        </button>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <button type="button" class="btn btn-primary ibtnDel float-right" id="delcolorrow">
-                                            <i class="fa fa-minus"></i>
-                                        </button>
+                                        </tbody>
+                                    </table>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <button type="button" class="btn btn-primary float-left" id="addcolorrow">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        <div class="col-sm-4 text-center">
+                                            <button type="button" class="btn btn-primary" id="clearcolors">
+                                                Clear All
+                                            </button>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <button type="button" class="btn btn-primary ibtnDel float-right" id="delcolorrow">
+                                                <i class="fa fa-minus"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="card-footer">
+                            <input type="submit" class="form-control btn btn-default" value="Graph">
+                        </div>
                     </div>
-                    <div class="card-footer">
-                        <input type="submit" class="form-control btn btn-default" value="Graph">
+                </form>
+            </div>
+            <div class="col-md-6 flex-column max-vw-100">
+                <img id='graph' class="img-fluid mw-vw-100 border" src='{{ graph1 }}' style="border: 0px solid; height: auto;"></img>
+                <form class="pt-3" id="download-form" action="" method="post" nonvalidate>
+                    <div class="form-row form-group">
+                        <div class="col-sm-2"></div>
+                        <div class="form-group col-sm-4">
+                            <input type="submit" class="form-control btn btn-primary" value="Download">
+                        </div>
+                        <div class="form-group col-sm-4">
+                            <select class="form-control" id="dl_type" name="dl_type">
+                                <option selected>.pdf</option>
+                                <option>.png</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2"></div>
                     </div>
-                </div>
-            </form>
-        </div>
-        <div class="col-md-6 flex-column max-vw-100">
-            <img id='graph' class="img-fluid" src='{{ graph1 }}' style="border: 0px solid; max-width: 100%; height: auto;"></img>
+                </form>
+            </div>
         </div>
     </div>
 

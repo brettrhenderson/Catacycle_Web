@@ -108,10 +108,10 @@ function addrow(rows) {
     })
 };
 
-function submitForm(csrf_token) {
+function submitForm(csrf_token, form_url, response_handler) {
     var postData = $('#cycle-form').serialize();
     // console.log(postData);
-    var formURL = '/graphs';
+    var formURL = form_url;
 
     $.ajax(
     {
@@ -119,11 +119,11 @@ function submitForm(csrf_token) {
         type: "POST",
         crossDomain: true,
         data : postData,
-        dataType: 'json',
         success:function(response, textStatus, jqXHR)
         {
             // response: return data from server
-            document.getElementById('graph').src = response.data;
+            response_handler(response);
+            //document.getElementById('graph').src = response.data;
             // console.log(response.data);
         },
         error: function(jqXHR, textStatus, errorThrown)
@@ -142,10 +142,26 @@ function submitForm(csrf_token) {
     })
 }
 
+
+
 function submitHandler(csrf_token) {
     $('#cycle-form').submit(function(e)
     {
         e.preventDefault(); //STOP default action
-        submitForm(csrf_token);
+        submitForm(csrf_token, '/graphs', function (response) {
+            document.getElementById('graph').src = response.data;
+        });
+
+    });
+
+    $('#download-form').submit(function(e)
+    {
+        e.preventDefault(); //STOP default action
+        var file_type = $("#dl_type").val().split('.')[1];
+        console.log(file_type)
+        submitForm(csrf_token, '/graphs/download/'+file_type, function (response) {
+            alert('Your download has started.');
+        });
+
     });
 }

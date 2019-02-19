@@ -21,7 +21,7 @@ fcolours = "#4286f4 #e2893b #de5eed #dd547d #4ee5ce #4286f4 #dd547d #4ee5ce #428
 rcolours = "#82abed #efb683 #edb2f4 #ef92ae #91f2e3 #82abed #ef92ae #91f2e3 #82abed #ef92ae #91f2e3".split()
 
 
-def draw(data=None, startrange=0.1, stoprange=0.8):
+def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg', download=False):
     img = io.BytesIO()
 
     forward_rates = []
@@ -185,11 +185,22 @@ def draw(data=None, startrange=0.1, stoprange=0.8):
         # plt.text(4*math.cos(b_angle-0.1-r_angle_offset),4*math.sin(b_angle-0.1-r_angle_offset),"test")
 
     plt.draw()
-    plt.savefig(img, format='pdf')
+
+    # correct mimetype based on filetype
+    if f_format == 'svg':
+        mimetype = 'image/svg+xml'
+    elif f_format == 'png':
+        mimetype = 'image/png'
+    else:
+        raise ValueError('Image format {} not supported.'.format(format))
+
+    plt.savefig(img, format=f_format)
+    plt.close()
     img.seek(0)
     graph_url = base64.b64encode(img.getvalue()).decode()
-    plt.close()
-    return 'data:image/png;base64,{}'.format(graph_url)
+
+    return 'data:{};base64,{}'.format(mimetype, graph_url)
+
 
 
 
