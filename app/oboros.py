@@ -17,23 +17,28 @@ import logging
 log = logging.getLogger(__name__)
 # log.setLevel(logging.DEBUG)
 
-fcolours = "#4286f4 #e2893b #de5eed #dd547d #4ee5ce #4286f4 #dd547d #4ee5ce #4286f4 #dd547d #4ee5ce".split()
-rcolours = "#82abed #efb683 #edb2f4 #ef92ae #91f2e3 #82abed #ef92ae #91f2e3 #82abed #ef92ae #91f2e3".split()
-
+MAX_STEPS = 10
 
 def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
-    img = io.BytesIO()
+
+    # set defaults and declare variables
+    img = io.BytesIO()    # file-like object to hold image
+
+    fcolours = "#4286f4 #e2893b #de5eed #dd547d #4ee5ce #4286f4 #dd547d #4ee5ce #4286f4 #dd547d #4ee5ce".split()
+    rcolours = "#82abed #efb683 #edb2f4 #ef92ae #91f2e3 #82abed #ef92ae #91f2e3 #82abed #ef92ae #91f2e3".split()
+    incolours = "#82abed #efb683 #edb2f4 #ef92ae #91f2e3 #82abed #ef92ae #91f2e3 #82abed #ef92ae #91f2e3".split()
 
     forward_rates = []
     rev_rates = []
-    is_incoming = []
+    is_incoming = [False for i in range(MAX_STEPS)]   # no incoming arrows by default
 
     scale_type = 'Linear'
     gap = 5  # default gap without settings
     scale = 23.9   # will scale pending on image size -- connects graph space to figure space
 
-    # Different image size scale will need to be coded in using "transformed_point = ax.transData.transform((x,y))"
-    if data is None:
+
+    # Read in the data from its source
+    if data is None:    # when data is provided via a csv file
         data = open("data.dat", 'r')
         for line in data:
             if "f_rate" in line:
@@ -43,26 +48,23 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
             if "gap" in line:
                 gap = float(line.split()[2])
 
-    else:
+    else:    # when data is passed in as a python dictionary (as when it is collected from a web form)
         forward_rates = data['forward_rates'][:data['num_steps']]
         rev_rates = data['rev_rates'][:data['num_steps']]
         fcolours = data['fcolours'][:data['num_steps']]
         rcolours = data['rcolours'][:data['num_steps']]
         incolours = data['incolours'][:data['num_steps']]
+        is_incoming = data['is_incoming'][:data['num_steps']]
         gap = float(data['gap'])
-        thickness = float(data['thickness'])
-        multiplier = thickness / 15.0
+        multiplier = data['multiplier']
         startrange *= multiplier
         stoprange *= multiplier
-        log.debug('gap: {}'.format(data['gap']))
-        log.debug('thickness: {}'.format(data['thickness']))
         scale_type = data['scale_type']
-        is_incoming = data['is_incoming']
         f_format = data['f_format'].split('.')[1]
 
 
 
-    # call Sofia's Scaler function, convert rates to arrow size
+    # Call Sofia's Scaler function, convert rates to arrow size
     forward_rates, rev_rates, range_rates = scaler(forward_rates, rev_rates, startrange=startrange,
                                                    stoprange=stoprange, scale_type=scale_type)
 
@@ -97,7 +99,12 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
 
     # Drawing outside and inside curves
     for i in range(0,num_segments):
-        if fcolours[i] == "blank":
+
+        # starting and ending angle for each arrow
+        
+
+        # Outside Arrows / forward rates
+        if fcolours[i] == "blank" or fcolours[i] is None:    # Assign a random color if none is provided
             r = lambda: random.randint(0,255)
             col = ('#%02X%02X%02X' % (r(),r(),r()))
         else:
@@ -136,8 +143,8 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
         ax.add_patch(tri1)
         ax.add_patch(tri2)
 
-    # Inside Arrows
-        if rev_rates[i] != 0:
+        # Inside Arrows / reverse rates
+        if rev_rates[i] != 0:    # if reverse rate is 0, make forward arrowhead symmetrical
             col = rcolours[i]
             ai_x = 3*math.cos(b_angle)
             ai_y = 3*math.sin(b_angle)
@@ -183,11 +190,9 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
             ax.add_patch(tri3)
             ax.add_patch(tri4)
 
-        # plt.text(4*math.cos(b_angle-0.1-r_angle_offset),4*math.sin(b_angle-0.1-r_angle_offset),"test")
-
     plt.draw()
 
-    # correct mimetype based on filetype
+    # correct mimetype based on filetype (for displaying in browser)
     if f_format == 'svg':
         mimetype = 'image/svg+xml'
     elif f_format == 'png':

@@ -103,7 +103,7 @@
                                                 <td>{{ i+1 }}</td>
                                                 <td><input id="f_rate{{ i+1 }}" class="form-control rate" type="text" name="f_rate{{ i+1 }}" value="{{ form_values["forward_rates"][i] }}"></td>
                                                 <td><input id="r_rate{{ i+1 }}" class="form-control rate" type="text" name="r_rate{{ i+1 }}" value="{{ form_values["rev_rates"][i] }}"></td>
-                                                <td><div class="pt-2"><input id="incoming{{ i+1 }}" class="form-control pt-2 income-check" type="checkbox"></div></td>
+                                                <td><div class="pt-2"><input id="is_incoming{{ i+1 }}" name="is_incoming{{ i+1 }}" class="form-control pt-2 income-check" type="checkbox"></div></td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>

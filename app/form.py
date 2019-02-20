@@ -111,6 +111,7 @@ class RatesForm(FlaskForm):
                 'incolours': [],
                 'gap': self.gap.data,
                 'thickness': self.thickness.data,
+                'multiplier': float(self.thickness.data)/15.0,
                 'scale_type': self.scale_type.data,
                 'f_format': self.f_format.data}
 
@@ -135,6 +136,7 @@ class RatesForm(FlaskForm):
                 'incolours': [],
                 'gap': self.gap.default,
                 'thickness': self.thickness.default,
+                'multiplier': float(self.thickness.default)/15.0,
                 'scale_type': self.scale_type.default,
                 'num_steps': 4,
                 'f_format': '.svg'}
