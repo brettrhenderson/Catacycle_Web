@@ -101,7 +101,8 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
     for i in range(0,num_segments):
 
         # starting and ending angle for each arrow
-        
+        theta1 = 90-delta*i
+        theta2 = 90-gap-delta*(i-1)
 
         # Outside Arrows / forward rates
         if fcolours[i] == "blank" or fcolours[i] is None:    # Assign a random color if none is provided
@@ -110,11 +111,11 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
         else:
             col = fcolours[i]
         Curve = mpatches.Arc((0,0),height=6+radial_offsets_f[i],width=6+radial_offsets_f[i],angle=1,
-                             theta1=90-delta*i,theta2=90-gap-delta*(i-1),linewidth=transformed_rates_f[i],color=col)
+                             theta1=theta1,theta2=theta2,linewidth=transformed_rates_f[i],color=col)
         ax.add_patch(Curve)
         col = rcolours[i]
-        Curve = mpatches.Arc((0,0),height=6-radial_offsets_r[i],width=6-radial_offsets_r[i],angle=1,theta1=90-delta*i,
-                             theta2=90-gap-delta*(i-1),linewidth=transformed_rates_r[i],color=col)
+        Curve = mpatches.Arc((0,0),height=6-radial_offsets_r[i],width=6-radial_offsets_r[i],angle=1,theta1=theta1,
+                             theta2=theta2,linewidth=transformed_rates_r[i],color=col)
         ax.add_patch(Curve)
         a_angle = ((90-delta*(i))*(math.pi/180.0))+((+2)*(math.pi/180.0))/2	 # Starting point angle for outside triangles
         b_angle = ((90-delta*(i-1))*(math.pi/180.0))+((gap-(3*gap-(2)))*(math.pi/180.0))/2	 # Starting point angle for inside triangles
@@ -127,7 +128,6 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
         a_x = 3*math.cos(a_angle)
         a_y = 3*math.sin(a_angle)
         b_vec = (3+(float(forward_rates[i])))
-        c_vec = (3+(float(forward_rates[i])+(float(forward_rates[i])/4)))
         c_vec = (3+(float(forward_rates[i])))
 
         b_x = (b_vec*math.cos(a_angle))
@@ -169,12 +169,11 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
 
             col = fcolours[i]
             Curve = mpatches.Arc((0,0),height=6-radial_offsets_f[i],width=6-radial_offsets_f[i],angle=1,
-                                 theta1=90-delta*i,theta2=90-gap-delta*(i-1),linewidth=transformed_rates_f[i],color=col)
+                                 theta1=theta1,theta2=theta2,linewidth=transformed_rates_f[i],color=col)
             ax.add_patch(Curve)
             a_x = 3*math.cos(a_angle)
             a_y = 3*math.sin(a_angle)
             b_vec = (3-(float(forward_rates[i])))
-            c_vec = (3+(float(forward_rates[i])+(float(forward_rates[i])/4)))
             c_vec = (3-(float(forward_rates[i])))
 
             b_x = (b_vec*math.cos(a_angle))
