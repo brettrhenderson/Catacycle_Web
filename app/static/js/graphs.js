@@ -57,7 +57,7 @@ function addrow(rows) {
             var newcolorRow = $('<tr id="crow' + counter + '">');
             var ccols = "";
             ccols += '<td>' + counter + '</td>';
-            var prefixes = ['f', 'r', 'incoming']
+            var prefixes = ['f', 'r']
             for (prefix in prefixes) {
                 ccols += `<td>
                              <div id="${prefixes[prefix]}_color-picker-component${counter}" class="input-group colorpicker-component">
@@ -71,7 +71,7 @@ function addrow(rows) {
 
             newcolorRow.append(ccols);
             $("table.color-list").append(newcolorRow);
-            var prefixes = ['f', 'r', 'incoming'];
+            var prefixes = ['f', 'r'];
             for (prefix in prefixes) {
                 $('#' + prefixes[prefix] + '_color-picker-component' + counter).colorpicker({
                     autoInputFallback: false,

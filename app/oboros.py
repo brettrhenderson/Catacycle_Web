@@ -26,13 +26,13 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
 
     fcolours = "#4286f4 #e2893b #de5eed #dd547d #4ee5ce #4286f4 #dd547d #4ee5ce #4286f4 #dd547d #4ee5ce".split()
     rcolours = "#82abed #efb683 #edb2f4 #ef92ae #91f2e3 #82abed #ef92ae #91f2e3 #82abed #ef92ae #91f2e3".split()
-    incolours = "#82abed #efb683 #edb2f4 #ef92ae #91f2e3 #82abed #ef92ae #91f2e3 #82abed #ef92ae #91f2e3".split()
+    incolours = fcolours
 
     forward_rates = []
     rev_rates = []
     is_incoming = [False for i in range(MAX_STEPS)]   # no incoming arrows by default
 
-    scale_type = 'Linear'
+    scale_type = 'Logarithmic'
     gap = 5  # default gap without settings
     scale = 23.9   # will scale pending on image size -- connects graph space to figure space
 
@@ -53,7 +53,7 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
         rev_rates = data['rev_rates'][:data['num_steps']]
         fcolours = data['fcolours'][:data['num_steps']]
         rcolours = data['rcolours'][:data['num_steps']]
-        incolours = data['incolours'][:data['num_steps']]
+        incolours = fcolours
         is_incoming = data['is_incoming'][:data['num_steps']]
         gap = float(data['gap'])
         multiplier = data['multiplier']

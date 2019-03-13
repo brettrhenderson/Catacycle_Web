@@ -110,17 +110,17 @@
                                     </table>
                                     <div class="row">
                                         <div class="col-sm-4">
-                                            <button type="button" class="btn btn-primary float-left" id="addrow">
+                                            <button type="button" class="btn btn-outline-primary float-left" id="addrow">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
                                         <div class="col-sm-4 text-center">
-                                            <button type="button" class="btn btn-primary" id="clearrates">
+                                            <button type="button" class="btn btn-outline-primary" id="clearrates">
                                                 Clear All
                                             </button>
                                         </div>
                                         <div class="col-sm-4">
-                                            <button type="button" class="btn btn-primary ibtnDel float-right" id="delrow">
+                                            <button type="button" class="btn btn-outline-primary ibtnDel float-right" id="delrow">
                                                 <i class="fa fa-minus"></i>
                                             </button>
                                         </div>
@@ -130,7 +130,7 @@
                                     <table class="color-list table table-hover table-striped" style="width:100%">
                                         <thead>
                                             <tr>
-                                                {% for header in ['Step', 'Forward Color', 'Reverse Color', 'Swoop Color'] %}
+                                                {% for header in ['Step', 'Forward Color', 'Reverse Color'] %}
                                                 <th>
                                                     {{ header }}
                                                 </th>
@@ -157,31 +157,23 @@
                                                         </span>
                                                     </div>
                                                 </td>
-                                                <td>
-                                                    <div id="incoming_color-picker-component{{ i+1 }}" class="input-group colorpicker-component">
-                                                        <input id="incoming_color{{ i+1 }}" name="incoming_color{{ i+1 }}" type="text" value="{{ form_values['incolours'][i] }}" class="form-control color"/>
-                                                        <span class="input-group-append">
-                                                            <span class="input-group-text colorpicker-input-addon"><i></i></span>
-                                                        </span>
-                                                    </div>
-                                                </td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
                                     </table>
                                     <div class="row">
                                         <div class="col-sm-4">
-                                            <button type="button" class="btn btn-primary float-left" id="addcolorrow">
+                                            <button type="button" class="btn btn-outline-primary float-left" id="addcolorrow">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
                                         <div class="col-sm-4 text-center">
-                                            <button type="button" class="btn btn-primary" id="clearcolors">
+                                            <button type="button" class="btn btn-outline-primary" id="clearcolors">
                                                 Clear All
                                             </button>
                                         </div>
                                         <div class="col-sm-4">
-                                            <button type="button" class="btn btn-primary ibtnDel float-right" id="delcolorrow">
+                                            <button type="button" class="btn btn-outline-primary ibtnDel float-right" id="delcolorrow">
                                                 <i class="fa fa-minus"></i>
                                             </button>
                                         </div>
@@ -191,23 +183,47 @@
                                     <div class="form-group">
                                         <label for="scale_type">Scaling:</label>
                                         <select class="form-control" id="scale_type" name="scale_type">
-                                            <option>Linear</option>
                                             <option>Logarithmic</option>
-                                            <option>Preserve Multiples</option>
+                                            <option>Linear</option>
+                                            <!--<option>Preserve Multiples</option>-->
                                         </select>
                                     </div>
-                                    {% for slider in ['Gap', 'Thickness'] %}
                                     <div class="form-group form-row">
-                                        <label class="col-sm-3 col-form-label" for="{{ slider | lower }}">{{ slider }}:</label>
-                                        <div class="pt-3 col-sm-7">
-                                            <input id="{{ slider | lower }}" name="{{ slider | lower }}" class="form-control-range slider" type="range" min="0"
-                                                   max="50" step="1" value="{{ form_values[slider | lower] }}">
+                                        <label class="col-sm-2 col-form-label" for="gap">Gap:</label>
+                                        <span class="col-sm-2">
+                                            <img src="{{url_for('.static', filename='images/Gap_small.png')}}" alt="small gap"
+                                             srcset="{{url_for('.static', filename='images/Gap_small.svg')}}" width="60" height="30">
+                                        </span>
+                                        <div class="pt-3 col-sm-4">
+                                            <input id="gap" name="gap" class="form-control-range slider" type="range" min="0"
+                                                   max="50" step="1" value="{{ form_values['gap'] }}">
                                         </div>
+                                        <span class="col-sm-2">
+                                            <img src="{{url_for('.static', filename='images/Gap_big.png')}}" alt="big gap"
+                                             srcset="{{url_for('.static', filename='images/Gap_big.svg')}}" width="60" height="30">
+                                        </span>
                                         <div class="col-sm-2">
-                                            <input class="form-control" type="text" id="{{ slider | lower }}val" readonly>
+                                            <input class="form-control" type="text" id="gapval" readonly>
                                         </div>
                                     </div>
-                                    {% endfor %}
+                                    <div class="form-group form-row">
+                                        <label class="col-sm-2 col-form-label" for="thickness">Thickness:</label>
+                                        <span class="col-sm-2">
+                                            <img src="{{url_for('.static', filename='images/Thickness_small.png')}}" alt="thin arrow"
+                                             srcset="{{url_for('.static', filename='images/Thickness_small.svg')}}" width="60" height="60">
+                                        </span>
+                                        <div class="pt-3 col-sm-4">
+                                            <input id="thickness" name="thickness" class="form-control-range slider" type="range" min="0"
+                                                   max="50" step="1" value="{{ form_values['thickness'] }}">
+                                        </div>
+                                        <span class="col-sm-2">
+                                            <img src="{{url_for('.static', filename='images/Thickness_big.png')}}" alt="thick arrow"
+                                             srcset="{{url_for('.static', filename='images/Thickness_big.svg')}}" width="60" height="60">
+                                        </span>
+                                        <div class="col-sm-2">
+                                            <input class="form-control" type="text" id="thicknessval" readonly>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="tab-pane" id="fileformat">
                                     <div class="form-group form-row">
@@ -224,7 +240,7 @@
                             </div>
                         </div>
                         <div class="card-footer">
-                            <input type="submit" class="form-control btn btn-default" value="Graph">
+                            <input type="submit" class="form-control btn btn-primary" value="Graph">
                         </div>
                     </div>
                 </form>

@@ -70,16 +70,6 @@ class RatesForm(FlaskForm):
     r_color8 = StringField('r_color8', default='#000000')
     r_color9 = StringField('r_color9', default='#000000')
     r_color10 = StringField('r_color10', default='#000000')
-    incoming_color1 = StringField('incoming_color1', default='#000000')
-    incoming_color2 = StringField('incoming_color2', default='#000000')
-    incoming_color3 = StringField('incoming_color3', default='#000000')
-    incoming_color4 = StringField('incoming_color4', default='#000000')
-    incoming_color5 = StringField('incoming_color5', default='#000000')
-    incoming_color6 = StringField('incoming_color6', default='#000000')
-    incoming_color7 = StringField('incoming_color7', default='#000000')
-    incoming_color8 = StringField('incoming_color8', default='#000000')
-    incoming_color9 = StringField('incoming_color9', default='#000000')
-    incoming_color10 = StringField('incoming_color10', default='#000000')
 
     # File Format Tab
     f_format = StringField('f_format', default='.svg')
@@ -108,7 +98,6 @@ class RatesForm(FlaskForm):
                 'is_incoming': [],
                 'fcolours': [],
                 'rcolours': [],
-                'incolours': [],
                 'gap': self.gap.data,
                 'thickness': self.thickness.data,
                 'multiplier': float(self.thickness.data)/15.0,
@@ -121,7 +110,6 @@ class RatesForm(FlaskForm):
             data['is_incoming'].append(getattr(self, 'is_incoming{}'.format(i)).data)
             data['fcolours'].append(getattr(self, 'f_color{}'.format(i)).data)
             data['rcolours'].append(getattr(self, 'r_color{}'.format(i)).data)
-            data['incolours'].append(getattr(self, 'incoming_color{}'.format(i)).data)
 
         data['num_steps'] = self.num_rows()
 
@@ -133,7 +121,6 @@ class RatesForm(FlaskForm):
                 'is_incoming': [],
                 'fcolours': [],
                 'rcolours': [],
-                'incolours': [],
                 'gap': self.gap.default,
                 'thickness': self.thickness.default,
                 'multiplier': float(self.thickness.default)/15.0,
@@ -147,7 +134,6 @@ class RatesForm(FlaskForm):
             data['is_incoming'].append(getattr(self, 'is_incoming{}'.format(i)).default)
             data['fcolours'].append(getattr(self, 'f_color{}'.format(i)).default)
             data['rcolours'].append(getattr(self, 'r_color{}'.format(i)).default)
-            data['incolours'].append(getattr(self, 'incoming_color{}'.format(i)).default)
 
         # have four arrows displayed by default
         for i in range(0, 4):
