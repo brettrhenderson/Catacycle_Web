@@ -30,7 +30,8 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
 
     forward_rates = []
     rev_rates = []
-    is_incoming = [False for i in range(MAX_STEPS)]   # no incoming arrows by default
+    is_incoming = [False for i in range(MAX_STEPS)]   # no incoming swoops by default
+    is_outgoing = [False for i in range(MAX_STEPS)]  # no outgoing swoops by default
 
     scale_type = 'Logarithmic'
     gap = 5  # default gap without settings
@@ -55,6 +56,7 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
         rcolours = data['rcolours'][:data['num_steps']]
         incolours = fcolours
         is_incoming = data['is_incoming'][:data['num_steps']]
+        is_outgoing = data['is_outgoing'][:data['num_steps']]
         gap = float(data['gap'])
         multiplier = data['multiplier']
         startrange *= multiplier

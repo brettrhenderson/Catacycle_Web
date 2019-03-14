@@ -36,7 +36,7 @@ class RatesForm(FlaskForm):
     r_rate10 = FloatField('r_rate10', default=0.0)
 
 
-    # Incoming Arrows
+    # Incoming Swoops
     is_incoming1 = BooleanField('is_incoming1', default=False)
     is_incoming2 = BooleanField('is_incoming2', default=False)
     is_incoming3 = BooleanField('is_incoming3', default=False)
@@ -47,6 +47,18 @@ class RatesForm(FlaskForm):
     is_incoming8 = BooleanField('is_incoming8', default=False)
     is_incoming9 = BooleanField('is_incoming9', default=False)
     is_incoming10 = BooleanField('is_incoming10', default=False)
+
+    # Outgoing Swoops
+    is_outgoing1 = BooleanField('is_outgoing1', default=False)
+    is_outgoing2 = BooleanField('is_outgoing2', default=False)
+    is_outgoing3 = BooleanField('is_outgoing3', default=False)
+    is_outgoing4 = BooleanField('is_outgoing4', default=False)
+    is_outgoing5 = BooleanField('is_outgoing5', default=False)
+    is_outgoing6 = BooleanField('is_outgoing6', default=False)
+    is_outgoing7 = BooleanField('is_outgoing7', default=False)
+    is_outgoing8 = BooleanField('is_outgoing8', default=False)
+    is_outgoing9 = BooleanField('is_outgoing9', default=False)
+    is_outgoing10 = BooleanField('is_outgoing10', default=False)
 
 
     # Colors Tab
@@ -96,6 +108,7 @@ class RatesForm(FlaskForm):
         data = {'forward_rates': [],
                 'rev_rates': [],
                 'is_incoming': [],
+                'is_outgoing': [],
                 'fcolours': [],
                 'rcolours': [],
                 'gap': self.gap.data,
@@ -108,6 +121,7 @@ class RatesForm(FlaskForm):
             data['forward_rates'].append(getattr(self, 'f_rate{}'.format(i)).data)
             data['rev_rates'].append(getattr(self, 'r_rate{}'.format(i)).data)
             data['is_incoming'].append(getattr(self, 'is_incoming{}'.format(i)).data)
+            data['is_outgoing'].append(getattr(self, 'is_outgoing{}'.format(i)).data)
             data['fcolours'].append(getattr(self, 'f_color{}'.format(i)).data)
             data['rcolours'].append(getattr(self, 'r_color{}'.format(i)).data)
 
@@ -119,6 +133,7 @@ class RatesForm(FlaskForm):
         data = {'forward_rates': [],
                 'rev_rates': [],
                 'is_incoming': [],
+                'is_outgoing': [],
                 'fcolours': [],
                 'rcolours': [],
                 'gap': self.gap.default,
@@ -132,6 +147,7 @@ class RatesForm(FlaskForm):
             data['forward_rates'].append(getattr(self, 'f_rate{}'.format(i)).default)
             data['rev_rates'].append(getattr(self, 'r_rate{}'.format(i)).default)
             data['is_incoming'].append(getattr(self, 'is_incoming{}'.format(i)).default)
+            data['is_outgoing'].append(getattr(self, 'is_outgoing{}'.format(i)).default)
             data['fcolours'].append(getattr(self, 'f_color{}'.format(i)).default)
             data['rcolours'].append(getattr(self, 'r_color{}'.format(i)).default)
 

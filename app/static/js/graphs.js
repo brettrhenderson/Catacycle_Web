@@ -107,7 +107,8 @@ function addrow(rows) {
             cols += '<td>' + counter + '</td>';
             cols += '<td><input type="text" id="f_rate' + counter + '" class="form-control rate" name="f_rate' + counter + '" value="1.0"/></td>';
             cols += '<td><input type="text" id="r_rate' + counter + '" class="form-control rate" name="r_rate' + counter + '" value="0.0"/></td>';
-            cols += '<td><input id="incoming' + counter + '" class="form-control" type="checkbox"</td>'
+            cols += '<td><input id="is_incoming' + counter + '" class="form-control" type="checkbox"</td>'
+            cols += '<td><input id="is_outgoing' + counter + '" class="form-control" type="checkbox"</td>'
 
             newRow.append(cols);
             $("table.rates-list").append(newRow);

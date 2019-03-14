@@ -63,8 +63,8 @@
     </div>
     <div class="container-fluid">
         <div class="row d-flex">
-            <div class="col-md-1 col-lg-1"></div>
-            <div class="col-md-5 col-lg-5 flex-column max-vw-100" style="overflow: auto;">
+            <div class="col-md-2 col-lg-2"></div>
+            <div class="col-md-4 col-lg-4 flex-column max-vw-100" style="overflow: auto;">
                 <form id="cycle-form" class="vertCenter" style="width: 100%;" action="" method="post" nonvalidate>
                     {{ form.hidden_tag() }}
                     <div class="card">
@@ -90,7 +90,7 @@
                                     <table class="rates-list table table-hover table-striped" style="width:100%">
                                         <thead>
                                             <tr>
-                                                {% for header in ['Step', 'Forward Rate', 'Reverse Rate', 'Swoop'] %}
+                                                {% for header in ['Step', 'Forward Rate', 'Reverse Rate', 'Swoop In', 'Swoop Out'] %}
                                                 <th>
                                                     {{ header }}
                                                 </th>
@@ -104,6 +104,7 @@
                                                 <td><input id="f_rate{{ i+1 }}" class="form-control rate" type="text" name="f_rate{{ i+1 }}" value="{{ form_values["forward_rates"][i] }}"></td>
                                                 <td><input id="r_rate{{ i+1 }}" class="form-control rate" type="text" name="r_rate{{ i+1 }}" value="{{ form_values["rev_rates"][i] }}"></td>
                                                 <td><div class="pt-2"><input id="is_incoming{{ i+1 }}" name="is_incoming{{ i+1 }}" class="form-control pt-2 income-check" type="checkbox"></div></td>
+                                                <td><div class="pt-2"><input id="is_outgoing{{ i+1 }}" name="is_outgoing{{ i+1 }}" class="form-control pt-2 income-check" type="checkbox"></div></td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
@@ -280,7 +281,7 @@
             <div class="col-md-4 mt-3">
 
               <!-- Links -->
-              <a class="btn btn-info"href="#">Contact Form</a>
+              <a class="vertCenter btn btn-info"href="#">Contact Form</a>
 
             </div>
             <!-- Grid column -->
@@ -294,40 +295,34 @@
         <hr>
 
         <!-- Social buttons -->
-        <ul class="list-unstyled list-inline text-center">
-          <li class="list-inline-item">
-            <a class="btn-floating btn-fb mx-1">
-              <i class="fa fa-facebook-f"> </i>
-            </a>
-          </li>
-          <li class="list-inline-item">
-            <a class="btn-floating btn-tw mx-1">
-              <i class="fa fa-twitter"> </i>
-            </a>
-          </li>
-          <li class="list-inline-item">
-            <a class="btn-floating btn-gplus mx-1">
-              <i class="fa fa-google-plus-g"> </i>
-            </a>
-          </li>
-          <li class="list-inline-item">
-            <a class="btn-floating btn-li mx-1">
-              <i class="fa fa-linkedin-in"> </i>
-            </a>
-          </li>
-          <li class="list-inline-item">
-            <a class="btn-floating btn-dribbble mx-1">
-              <i class="fa fa-dribbble"> </i>
-            </a>
-          </li>
-        </ul>
+        <div class="wrapper">
+            <ul class="social-icons icon-circle list-unstyled list-inline">
+                <li>
+                    <a href="https://twitter.com/mcindoe?lang=en" class="btn">
+                        <i class="fa fa-twitter"> </i>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://ca.linkedin.com/in/scottmcindoe" class="btn">
+                        <i class="fa fa-linkedin"> </i>
+                    </a>
+                </li>
+                <li class="ml-3">
+                    <a href="http://web.uvic.ca/~mcindoe/" class="btn btn-dark">
+                        McIndoe Group
+                    </a>
+                </li>
+            </ul>
+        </div>
         <!-- Social buttons -->
-
-        <!-- Copyright -->
+        <div class="footer-copyright text-center py-3">Copyright placeholder:
+          <a href="#"> None</a>
+        </div>
+        <!-- Copyright
         <div class="footer-copyright text-center py-3">© 2018 Copyright:
           <a href="#"> None</a>
         </div>
-        <!-- Copyright -->
+        Copyright -->
 
     </footer>
     <!-- Footer -->
