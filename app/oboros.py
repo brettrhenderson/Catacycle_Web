@@ -193,43 +193,42 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
             ax.add_patch(tri4)
 
         # input and output arrows below (some scaling and adjustment may be needed)
-        if len(swoops) == len(forward_rates):
-            if swoops[i] == "inp":
-                col = fcolours[i]
-                angle = (((90-delta*(i))*(math.pi/180.0))+(90-gap-delta*(i-1))*(math.pi/180.0))/2
-                width = transformed_rates_f[i]-3
-                style="simple,tail_width=" + str(width)+ ",head_width="+ str(width)+",head_length=0.001"
-               # style="wedge,tail_width=" + str(width)+ ",shrink_factor=0.5"
-                kw = dict(arrowstyle=style, color=col)
+        # input arrows/swoops
+        if is_incoming[i]:
+            col = fcolours[i]
+            angle = (((90-delta*(i))*(math.pi/180.0))+(90-gap-delta*(i-1))*(math.pi/180.0))/2
+            width = transformed_rates_f[i]-3
+            style="simple,tail_width=" + str(width)+ ",head_width="+ str(width)+",head_length=0.001"
+           # style="wedge,tail_width=" + str(width)+ ",shrink_factor=0.5"
+            kw = dict(arrowstyle=style, color=col)
 
-                shift = radial_offsets_f[i]/2
-                x1 = (3.0+shift)*math.cos(angle)
-                x2 = (4.0+shift)*math.cos(angle + (delta*math.pi/180.0)/4)
-                y1 = (3.0+shift)*math.sin(angle)
-                y2 = (4.0+shift)*math.sin(angle + (delta*math.pi/180.0)/4)
+            shift = radial_offsets_f[i]/2
+            x1 = (3.0+shift)*math.cos(angle)
+            x2 = (4.0+shift)*math.cos(angle + (delta*math.pi/180.0)/4)
+            y1 = (3.0+shift)*math.sin(angle)
+            y2 = (4.0+shift)*math.sin(angle + (delta*math.pi/180.0)/4)
 
-                arrow = mpatches.FancyArrowPatch((x2,y2),(x1,y1),connectionstyle="arc3,rad=0.3",**kw)
-                ax.add_patch(arrow)
-        if len(swoops) == len(forward_rates):
-            if swoops[i] == "out":
-                col = fcolours[i]
-                angle = (((90-delta*(i))*(math.pi/180.0))+(90-gap-delta*(i-1))*(math.pi/180.0))/2
-                width = transformed_rates_f[i]-3
-                style="simple,tail_width=" + str(width)+ ",head_width="+ str(width*2) + ",head_length="+str(width)
-               # style="wedge,tail_width=" + str(width)+ ",shrink_factor=0.5"
-                kw = dict(arrowstyle=style, color=col)
+            arrow = mpatches.FancyArrowPatch((x2,y2),(x1,y1),connectionstyle="arc3,rad=0.3",**kw)
+            ax.add_patch(arrow)
+        if is_outgoing[i]:
+            col = fcolours[i]
+            angle = (((90-delta*(i))*(math.pi/180.0))+(90-gap-delta*(i-1))*(math.pi/180.0))/2
+            width = transformed_rates_f[i]-3
+            style="simple,tail_width=" + str(width)+ ",head_width="+ str(width*2) + ",head_length="+str(width)
+           # style="wedge,tail_width=" + str(width)+ ",shrink_factor=0.5"
+            kw = dict(arrowstyle=style, color=col)
 
 
-                edit1 = (delta*math.pi/180.0/3)
-                edit2 = (delta*math.pi/180.0/22)
-                shift = radial_offsets_f[i]/1.8
-                x1 = (3.0+shift)*math.cos(angle + edit1)
-                x2 = (4.5+shift)*math.cos(angle + edit2)
-                y1 = (3.0+shift)*math.sin(angle + edit1)
-                y2 = (4.5+shift)*math.sin(angle + edit2)
+            edit1 = (delta*math.pi/180.0/3)
+            edit2 = (delta*math.pi/180.0/22)
+            shift = radial_offsets_f[i]/1.8
+            x1 = (3.0+shift)*math.cos(angle + edit1)
+            x2 = (4.5+shift)*math.cos(angle + edit2)
+            y1 = (3.0+shift)*math.sin(angle + edit1)
+            y2 = (4.5+shift)*math.sin(angle + edit2)
 
-                arrow = mpatches.FancyArrowPatch((x1,y1),(x2,y2),connectionstyle="arc3,rad=0.4",**kw)
-                ax.add_patch(arrow)
+            arrow = mpatches.FancyArrowPatch((x1,y1),(x2,y2),connectionstyle="arc3,rad=0.4",**kw)
+            ax.add_patch(arrow)
     plt.draw()
 
     # correct mimetype based on filetype (for displaying in browser)
