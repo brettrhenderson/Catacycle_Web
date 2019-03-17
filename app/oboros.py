@@ -28,6 +28,7 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
     rcolours = "#82abed #efb683 #edb2f4 #ef92ae #91f2e3 #82abed #ef92ae #91f2e3 #82abed #ef92ae #91f2e3".split()
     incolours = fcolours
 
+    swoops = []
     forward_rates = []
     rev_rates = []
     is_incoming = [False for i in range(MAX_STEPS)]   # no incoming swoops by default
@@ -191,6 +192,44 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
             ax.add_patch(tri3)
             ax.add_patch(tri4)
 
+        # input and output arrows below (some scaling and adjustment may be needed)
+        if len(swoops) == len(forward_rates):
+            if swoops[i] == "inp":
+                col = fcolours[i]
+                angle = (((90-delta*(i))*(math.pi/180.0))+(90-gap-delta*(i-1))*(math.pi/180.0))/2
+                width = transformed_rates_f[i]-3
+                style="simple,tail_width=" + str(width)+ ",head_width="+ str(width)+",head_length=0.001"
+               # style="wedge,tail_width=" + str(width)+ ",shrink_factor=0.5"
+                kw = dict(arrowstyle=style, color=col)
+
+                shift = radial_offsets_f[i]/2
+                x1 = (3.0+shift)*math.cos(angle)
+                x2 = (4.0+shift)*math.cos(angle + (delta*math.pi/180.0)/4)
+                y1 = (3.0+shift)*math.sin(angle)
+                y2 = (4.0+shift)*math.sin(angle + (delta*math.pi/180.0)/4)
+
+                arrow = mpatches.FancyArrowPatch((x2,y2),(x1,y1),connectionstyle="arc3,rad=0.3",**kw)
+                ax.add_patch(arrow)
+        if len(swoops) == len(forward_rates):
+            if swoops[i] == "out":
+                col = fcolours[i]
+                angle = (((90-delta*(i))*(math.pi/180.0))+(90-gap-delta*(i-1))*(math.pi/180.0))/2
+                width = transformed_rates_f[i]-3
+                style="simple,tail_width=" + str(width)+ ",head_width="+ str(width*2) + ",head_length="+str(width)
+               # style="wedge,tail_width=" + str(width)+ ",shrink_factor=0.5"
+                kw = dict(arrowstyle=style, color=col)
+
+
+                edit1 = (delta*math.pi/180.0/3)
+                edit2 = (delta*math.pi/180.0/22)
+                shift = radial_offsets_f[i]/1.8
+                x1 = (3.0+shift)*math.cos(angle + edit1)
+                x2 = (4.5+shift)*math.cos(angle + edit2)
+                y1 = (3.0+shift)*math.sin(angle + edit1)
+                y2 = (4.5+shift)*math.sin(angle + edit2)
+
+                arrow = mpatches.FancyArrowPatch((x1,y1),(x2,y2),connectionstyle="arc3,rad=0.4",**kw)
+                ax.add_patch(arrow)
     plt.draw()
 
     # correct mimetype based on filetype (for displaying in browser)
@@ -214,7 +253,7 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
 def scaler(forward_rates, rev_rates, startrange=0.1, stoprange=0.8, scale_type='Linear'):
     """
     Transforming rates to be within specified range defined by startrange and stoprange:
-    
+
     Can use linear or logarithmic scale, which is preserved when transforming the data.
     :param forward_rates: a list of forward rates as floats or ints
     :param rev_rates: a list of reverse rates as floats or ints
@@ -246,7 +285,7 @@ def scaler(forward_rates, rev_rates, startrange=0.1, stoprange=0.8, scale_type='
         log.debug("post-log reverse: {}".format(rev_rates))
 
     f_min = np.min(forward_rates[f_nonzero])
-    f_max = forward_rates.max() 
+    f_max = forward_rates.max()
     r_max = rev_rates.max()
     if r_max == 0:
         r_min = f_min
