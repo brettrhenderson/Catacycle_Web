@@ -38,6 +38,10 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
     gap = 5  # default gap without settings
     scale = 23.9   # will scale pending on image size -- connects graph space to figure space
 
+    diameter = 6.0
+    radius = diameter / 2.0
+    angle_rotation = 0.0
+
 
     # Read in the data from its source
     if data is None:    # when data is provided via a csv file
@@ -83,10 +87,6 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
     # Coordinates for curves
     transformed_rates_r = []
     transformed_rates_f = []
-    radial_offsets_f = []
-    radial_offsets_r = []
-
-
 
     # transforming rates to line widths
     for i in range(0, num_segments):
@@ -94,18 +94,22 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
             forward_rates[i] /= 2
 
         log.debug('corrected forward rate {}: {}'.format(i+1, forward_rates[i]))
-        radial_offsets_f.append(float(forward_rates[i])/2)
-        radial_offsets_r.append(float(rev_rates[i])/2)
         transformed_rates_f.append(float(forward_rates[i])*scale)
         transformed_rates_r.append(float(rev_rates[i])*scale)
 
 
     # Drawing outside and inside curves
-    for i in range(0,num_segments):
+    for i in range(0, num_segments):
 
-        # starting and ending angle for each arrow
-        theta1 = 90-delta*i
-        theta2 = 90-gap-delta*(i-1)
+        # starting and ending angle for each arrow (moving counterclockwise)
+        # gap/2 is added to center the gap at the top
+        theta1 = 90 - delta * (i + 1) + (gap / 2.0)
+        theta2 = 90 - (gap / 2.0) - delta * i
+
+        # set the diameter for the the circle on which the inner and outer arrows lie for each step
+        outer_diam = diameter + float(forward_rates[i]) / 2
+        inner_diam = diameter - float(rev_rates[i]) / 2
+        inner_diam_ss = diameter - float(forward_rates[i])/2
 
         # Outside Arrows / forward rates
         if fcolours[i] == "blank" or fcolours[i] is None:    # Assign a random color if none is provided
@@ -113,121 +117,120 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
             col = ('#%02X%02X%02X' % (r(),r(),r()))
         else:
             col = fcolours[i]
-        Curve = mpatches.Arc((0,0),height=6+radial_offsets_f[i],width=6+radial_offsets_f[i],angle=1,
-                             theta1=theta1,theta2=theta2,linewidth=transformed_rates_f[i],color=col)
-        ax.add_patch(Curve)
+        curve = mpatches.Arc((0, 0), height=outer_diam, width=outer_diam, angle=angle_rotation,
+                             theta1=theta1, theta2=theta2, linewidth=transformed_rates_f[i], color=col)
+        ax.add_patch(curve)
         col = rcolours[i]
-        Curve = mpatches.Arc((0,0),height=6-radial_offsets_r[i],width=6-radial_offsets_r[i],angle=1,theta1=theta1,
-                             theta2=theta2,linewidth=transformed_rates_r[i],color=col)
-        ax.add_patch(Curve)
-        a_angle = ((90-delta*(i))*(math.pi/180.0))+((+2)*(math.pi/180.0))/2	 # Starting point angle for outside triangles
-        b_angle = ((90-delta*(i-1))*(math.pi/180.0))+((gap-(3*gap-(2)))*(math.pi/180.0))/2	 # Starting point angle for inside triangles
+        curve = mpatches.Arc((0, 0), height=inner_diam, width=inner_diam, angle=angle_rotation,
+                             theta1=theta1, theta2=theta2, linewidth=transformed_rates_r[i], color=col)
+        ax.add_patch(curve)
+
+        a_angle = math.radians(theta1)  # Starting point angle for outside triangles
+        b_angle = math.radians(theta2)  # Starting point angle for inside triangles
         col = fcolours[i]
 
-        f_angle_offset =10*float(forward_rates[i])*math.pi/180.0
-        r_angle_offset =10*float(rev_rates[i])*math.pi/180.0
+        f_angle_offset = math.radians(10*float(forward_rates[i])) + 0.1
+        r_angle_offset =math.radians(10*float(rev_rates[i])) + 0.1
 
         # Outside Arrows
-        a_x = 3*math.cos(a_angle)
-        a_y = 3*math.sin(a_angle)
-        b_vec = (3+(float(forward_rates[i])))
-        c_vec = (3+(float(forward_rates[i])))
+        b_vec = radius + float(forward_rates[i])
+        c_vec = radius + float(forward_rates[i])
+        d_vec = radius + float(forward_rates[i]) / 2
 
-        b_x = (b_vec*math.cos(a_angle))
-        b_y = (b_vec*math.sin(a_angle))
-        c_x = (b_vec*math.cos(a_angle+0.1+f_angle_offset))
-        c_y = (b_vec*math.sin(a_angle+0.1+f_angle_offset))
-        d_x =(3+float(forward_rates[i])/2)*math.cos(a_angle+0.1+f_angle_offset)
-        d_y =(3+float(forward_rates[i])/2)*math.sin(a_angle+0.1+f_angle_offset)
-        e_x = (c_vec*math.cos(a_angle+0.1+f_angle_offset))
-        e_y =(c_vec*math.sin(a_angle+0.1+f_angle_offset))
-        tri1 = plt.Polygon(((a_x,a_y),(b_x,b_y),(c_x,c_y)),color='w')
-        tri2 = plt.Polygon(((a_x,a_y),(d_x,d_y),(e_x,e_y)),color=col)
+        a_x = radius * math.cos(a_angle)
+        a_y = radius * math.sin(a_angle)
+        b_x = b_vec * math.cos(a_angle)
+        b_y = b_vec * math.sin(a_angle)
+        c_x = c_vec * math.cos(a_angle + f_angle_offset)
+        c_y = c_vec * math.sin(a_angle + f_angle_offset)
+        d_x = d_vec * math.cos(a_angle + f_angle_offset)
+        d_y = d_vec * math.sin(a_angle + f_angle_offset)
+
+        tri1 = plt.Polygon(((a_x, a_y), (b_x, b_y), (c_x, c_y)), color='w')  # a white triangle to block out the color
+        tri2 = plt.Polygon(((a_x, a_y), (d_x, d_y), (c_x, c_y)), color=col)  # colored triangle to form arrowhead
         ax.add_patch(tri1)
         ax.add_patch(tri2)
 
         # Inside Arrows / reverse rates
-        if rev_rates[i] != 0:    # if reverse rate is 0, make forward arrowhead symmetrical
+        if rev_rates[i] != 0:
             col = rcolours[i]
-            ai_x = 3*math.cos(b_angle)
-            ai_y = 3*math.sin(b_angle)
-            bi_vec = (3-(float(rev_rates[i])))
-            ci_vec = (3-(float(rev_rates[i])+(float(rev_rates[i])/4)))
-            ci_vec = (3-(float(rev_rates[i])))
-            bi_x = (bi_vec*math.cos(b_angle))
-            bi_y = (bi_vec*math.sin(b_angle))
-            ci_x = (bi_vec*math.cos(b_angle-0.1-r_angle_offset))
-            ci_y = (bi_vec*math.sin(b_angle-0.1-r_angle_offset))
 
-            di_x =(3-float(rev_rates[i])/2)*math.cos(b_angle-0.1-r_angle_offset)
-            di_y =(3-float(rev_rates[i])/2)*math.sin(b_angle-0.1-r_angle_offset)
-            ei_x = (ci_vec*math.cos(b_angle-0.1-r_angle_offset))
-            ei_y =(ci_vec*math.sin(b_angle-0.1-r_angle_offset))
-            tri3 = plt.Polygon(((ai_x,ai_y),(bi_x,bi_y),(ci_x,ci_y)),color='w')
-            tri4 = plt.Polygon(((ai_x,ai_y),(di_x,di_y),(ei_x,ei_y)),color=col)
+            ex_radius_r = radius - (float(rev_rates[i]))
+            di_vec = radius - float(rev_rates[i]) / 2
+
+            ai_x = radius * math.cos(b_angle)
+            ai_y = radius * math.sin(b_angle)
+            bi_x = ex_radius_r * math.cos(b_angle)
+            bi_y = ex_radius_r * math.sin(b_angle)
+            ci_x = ex_radius_r * math.cos(b_angle - r_angle_offset)
+            ci_y = ex_radius_r * math.sin(b_angle - r_angle_offset)
+            di_x = di_vec * math.cos(b_angle - r_angle_offset)
+            di_y = di_vec * math.sin(b_angle - r_angle_offset)
+
+            tri3 = plt.Polygon(((ai_x, ai_y), (bi_x, bi_y), (ci_x, ci_y)), color='w')  # a white triangle to block out the color
+            tri4 = plt.Polygon(((ai_x, ai_y), (di_x, di_y), (ci_x, ci_y)), color=col)  # colored triangle to form arrowhead
             ax.add_patch(tri3)
             ax.add_patch(tri4)
 
-        if rev_rates[i] == 0.0:
+        if rev_rates[i] == 0.0:  # if reverse rate is 0, make forward arrowhead symmetrical
 
             col = fcolours[i]
-            Curve = mpatches.Arc((0,0),height=6-radial_offsets_f[i],width=6-radial_offsets_f[i],angle=1,
-                                 theta1=theta1,theta2=theta2,linewidth=transformed_rates_f[i],color=col)
-            ax.add_patch(Curve)
-            a_x = 3*math.cos(a_angle)
-            a_y = 3*math.sin(a_angle)
-            b_vec = (3-(float(forward_rates[i])))
-            c_vec = (3-(float(forward_rates[i])))
+            curve = mpatches.Arc((0, 0), height=inner_diam_ss, width=inner_diam_ss, angle=angle_rotation,
+                                 theta1=theta1, theta2=theta2, linewidth=transformed_rates_f[i], color=col)
+            ax.add_patch(curve)
 
-            b_x = (b_vec*math.cos(a_angle))
-            b_y = (b_vec*math.sin(a_angle))
-            c_x = (b_vec*math.cos(a_angle+0.1+f_angle_offset))
-            c_y = (b_vec*math.sin(a_angle+0.1+f_angle_offset))
-            d_x =(3+float(forward_rates[i])/2)*math.cos(a_angle+0.1+f_angle_offset)
-            d_y =(3+float(forward_rates[i])/2)*math.sin(a_angle+0.1+f_angle_offset)
-            e_x = (c_vec*math.cos(a_angle+0.1+f_angle_offset))
-            e_y =(c_vec*math.sin(a_angle+0.1+f_angle_offset))
-            tri3 = plt.Polygon(((a_x,a_y),(b_x,b_y),(c_x,c_y)),color='w')
-            tri4 = plt.Polygon(((a_x,a_y),(d_x,d_y),(e_x,e_y)),color=col)
+            b_vec = radius - float(forward_rates[i])
+            d_vec = radius - float(forward_rates[i]) / 2
+
+            a_x = radius * math.cos(a_angle)
+            a_y = radius * math.sin(a_angle)
+            b_x = b_vec * math.cos(a_angle)
+            b_y = b_vec*math.sin(a_angle)
+            c_x = b_vec*math.cos(a_angle + f_angle_offset)
+            c_y = b_vec*math.sin(a_angle + f_angle_offset)
+            d_x = d_vec * math.cos(a_angle + f_angle_offset)
+            d_y = d_vec * math.sin(a_angle + f_angle_offset)
+
+            tri3 = plt.Polygon(((a_x, a_y), (b_x, b_y), (c_x, c_y)), color='w')
+            tri4 = plt.Polygon(((a_x, a_y), (d_x, d_y), (c_x, c_y)), color=col)
             ax.add_patch(tri3)
             ax.add_patch(tri4)
 
         # input and output arrows below (some scaling and adjustment may be needed)
         # input arrows/swoops
+        central_angle = math.radians((theta1 + theta2) / 2.0 ) + f_angle_offset / 2  # starting angle halfway along step
+        width = transformed_rates_f[i] / 2  # may need to scale
+        shift = float(forward_rates[i]) / 4
+        swept_angle = math.radians((delta - gap) / 4)
+
         if is_incoming[i]:
             col = fcolours[i]
-            angle = (((90-delta*(i))*(math.pi/180.0))+(90-gap-delta*(i-1))*(math.pi/180.0))/2
-            width = transformed_rates_f[i]-3
+            angle = central_angle + math.radians(2.0)  # shift slightly off-center to avoid creating angle with outgoing
             style="simple,tail_width=" + str(width)+ ",head_width="+ str(width)+",head_length=0.001"
            # style="wedge,tail_width=" + str(width)+ ",shrink_factor=0.5"
             kw = dict(arrowstyle=style, color=col)
 
-            shift = radial_offsets_f[i]/2
             x1 = (3.0+shift)*math.cos(angle)
-            x2 = (4.0+shift)*math.cos(angle + (delta*math.pi/180.0)/4)
+            x2 = (4.0+shift)*math.cos(angle + swept_angle)
             y1 = (3.0+shift)*math.sin(angle)
-            y2 = (4.0+shift)*math.sin(angle + (delta*math.pi/180.0)/4)
+            y2 = (4.0+shift)*math.sin(angle + swept_angle)
 
-            arrow = mpatches.FancyArrowPatch((x2,y2),(x1,y1),connectionstyle="arc3,rad=0.3",**kw)
+            arrow = mpatches.FancyArrowPatch((x2, y2), (x1, y1), connectionstyle="arc3,rad=0.3", **kw)
             ax.add_patch(arrow)
+
         if is_outgoing[i]:
             col = fcolours[i]
-            angle = (((90-delta*(i))*(math.pi/180.0))+(90-gap-delta*(i-1))*(math.pi/180.0))/2
-            width = transformed_rates_f[i]-3
-            style="simple,tail_width=" + str(width)+ ",head_width="+ str(width*2) + ",head_length="+str(width)
+            angle = central_angle - math.radians(2.0)  # shift slightly off-center to avoid creating angle with incoming
+            style="simple,tail_width=" + str(width)+ ",head_width="+ str(width*3) + ",head_length="+str(width * 2)
            # style="wedge,tail_width=" + str(width)+ ",shrink_factor=0.5"
             kw = dict(arrowstyle=style, color=col)
 
+            x1 = (3.0 + shift) * math.cos(angle)
+            x2 = (4.0 + shift) * math.cos(angle - swept_angle)
+            y1 = (3.0 + shift) * math.sin(angle)
+            y2 = (4.0 + shift) * math.sin(angle - swept_angle)
 
-            edit1 = (delta*math.pi/180.0/3)
-            edit2 = (delta*math.pi/180.0/22)
-            shift = radial_offsets_f[i]/1.8
-            x1 = (3.0+shift)*math.cos(angle + edit1)
-            x2 = (4.5+shift)*math.cos(angle + edit2)
-            y1 = (3.0+shift)*math.sin(angle + edit1)
-            y2 = (4.5+shift)*math.sin(angle + edit2)
-
-            arrow = mpatches.FancyArrowPatch((x1,y1),(x2,y2),connectionstyle="arc3,rad=0.4",**kw)
+            arrow = mpatches.FancyArrowPatch((x1, y1), (x2, y2), connectionstyle="arc3,rad=0.4", **kw)
             ax.add_patch(arrow)
     plt.draw()
 
