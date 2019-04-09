@@ -205,7 +205,7 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
 
         if is_incoming[i]:
             col = fcolours[i]
-            angle = central_angle + math.radians(2.0)  # shift slightly off-center to avoid creating angle with outgoing
+            angle = central_angle # + math.radians(2.0)  # shift slightly off-center to avoid creating angle with outgoing
             style="simple,tail_width=" + str(width)+ ",head_width="+ str(width)+",head_length=0.001"
            # style="wedge,tail_width=" + str(width)+ ",shrink_factor=0.5"
             kw = dict(arrowstyle=style, color=col)
@@ -220,7 +220,7 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
 
         if is_outgoing[i]:
             col = fcolours[i]
-            angle = central_angle - math.radians(2.0)  # shift slightly off-center to avoid creating angle with incoming
+            angle = central_angle #- math.radians(2.0)  # shift slightly off-center to avoid creating angle with incoming
             style="simple,tail_width=" + str(width)+ ",head_width="+ str(width*3) + ",head_length="+str(width * 2)
            # style="wedge,tail_width=" + str(width)+ ",shrink_factor=0.5"
             kw = dict(arrowstyle=style, color=col)

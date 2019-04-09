@@ -5,7 +5,7 @@ from app import app
 import logging
 
 log = logging.getLogger(__name__)
-#log.setLevel(logging.DEBUG)
+# log.setLevel(logging.DEBUG)
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
@@ -17,6 +17,7 @@ def graphs():
 
     if request.method == 'POST' and form.validate():
         data = form.draw_data()
+        log.debug(data)
         #log.debug('gap: {}'.format(data['gap']))
         #log.debug('scale type: {}'.format(data['scale_type']))
         #log.debug('thickness: {}'.format(data['thickness']))

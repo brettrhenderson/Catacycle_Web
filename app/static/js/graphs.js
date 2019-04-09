@@ -71,35 +71,73 @@ function addrow(rows) {
 
             newcolorRow.append(ccols);
             $("table.color-list").append(newcolorRow);
-            var prefixes = ['f', 'r'];
+            var prefixes = ['r', 'f'];
+            var i = counter;
             for (prefix in prefixes) {
-                $('#' + prefixes[prefix] + '_color-picker-component' + counter).colorpicker({
-                    autoInputFallback: false,
-                    popover: { placement: 'right' },
-                    format: 'hex',
-                    extensions: [
-                        {
-                            name: 'swatches', // extension name to load
-                            options: { // extension options
-                                colors: {
-                                    'black': '#000000',
-                                    'gray': 'gray',
-                                    'red': 'red',
-                                    'blue': 'blue',
-                                    'defaultf1': '#4286f4',
-                                    'defaultf2': '#e2893b',
-                                    'defaultf3': '#de5eed',
-                                    'defaultf4': '#dd547d',
-                                    'defaultr1': '#82abed',
-                                    'defaultr2': '#efb683',
-                                    'defaultr3': '#edb2f4',
-                                    'defaultr4': '#ef92ae',
-                                },
-                                namesAsValues: false
+                if (prefixes[prefix] == 'f') {
+                    $('#' + prefixes[prefix] + '_color-picker-component' + counter).colorpicker({
+                        autoInputFallback: false,
+                        popover: { placement: 'right' },
+                        format: 'hex',
+                        extensions: [
+                            {
+                                name: 'swatches', // extension name to load
+                                options: { // extension options
+                                    colors: {
+                                        'black': '#000000',
+                                        'gray': 'gray',
+                                        'red': 'red',
+                                        'blue': 'blue',
+                                        'defaultf1': '#4286f4',
+                                        'defaultf2': '#e2893b',
+                                        'defaultf3': '#de5eed',
+                                        'defaultf4': '#dd547d',
+                                        'defaultr1': '#82abed',
+                                        'defaultr2': '#efb683',
+                                        'defaultr3': '#edb2f4',
+                                        'defaultr4': '#ef92ae',
+                                    },
+                                    namesAsValues: false
+                                }
                             }
-                        }
-                    ]
-                });
+                        ]
+                    })
+                    .on('change', function (e) {
+
+                        $('#r_color-picker-component' + i)
+                        .colorpicker('setValue', e.color.api('lighten', '0.50').api('fade', '0.4').toHexString());
+                         // .colorpicker('setValue', e.color.api('lighten', '0.50').api('fade', '0.4').api('desaturate', '0.0').toHexString());
+                    });
+                }
+                else {
+                    $('#' + prefixes[prefix] + '_color-picker-component' + counter).colorpicker({
+                        autoInputFallback: false,
+                        popover: { placement: 'right' },
+                        format: 'hex',
+                        extensions: [
+                            {
+                                name: 'swatches', // extension name to load
+                                options: { // extension options
+                                    colors: {
+                                        'black': '#000000',
+                                        'gray': 'gray',
+                                        'red': 'red',
+                                        'blue': 'blue',
+                                        'defaultf1': '#4286f4',
+                                        'defaultf2': '#e2893b',
+                                        'defaultf3': '#de5eed',
+                                        'defaultf4': '#dd547d',
+                                        'defaultr1': '#82abed',
+                                        'defaultr2': '#efb683',
+                                        'defaultr3': '#edb2f4',
+                                        'defaultr4': '#ef92ae',
+                                    },
+                                    namesAsValues: false
+                                }
+                            }
+                        ]
+                    });
+                }
             }
 
             var newRow = $('<tr id="row' + counter + '">');
