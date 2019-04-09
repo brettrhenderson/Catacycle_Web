@@ -20,7 +20,7 @@
 </script>
 <script>
     $(function () {
-        {% for prefix in ['f', 'r', 'incoming'] %}
+        {% for prefix in ['r', 'f'] %}
             {% for i in range(1, rows+1) %}
                 $('#{{ prefix }}_color-picker-component{{ i }}').colorpicker({
                     autoInputFallback: false,
@@ -48,11 +48,18 @@
                             }
                         }
                     ]
+                })
+                {% if prefix == 'f' %}
+                .on('change', function (e) {
+                    $('#r_color-picker-component{{ i }}')
+                    .colorpicker('setValue', e.color.api('lighten', '0.50').api('fade', '0.4').toHexString());
+                    // .colorpicker('setValue', e.color.api('lighten', '0.50').api('fade', '0.4').api('desaturate', '0.0').toHexString());
                 });
+                {% else %}
+                ;
+                {% endif %}
             {% endfor %}
         {% endfor %}
-        //    }
-        //}
     });
 </script>
 {% endblock %}
@@ -90,7 +97,7 @@
                                     <table class="rates-list table table-hover table-striped" style="width:100%">
                                         <thead>
                                             <tr>
-                                                {% for header in ['Step', 'Forward Rate', 'Reverse Rate', 'Swoop In', 'Swoop Out'] %}
+                                                {% for header in ['Step', 'Forward Rate', 'Reverse Rate', 'Add Reagent', 'Remove Product'] %}
                                                 <th>
                                                     {{ header }}
                                                 </th>
