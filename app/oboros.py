@@ -19,16 +19,21 @@ log = logging.getLogger(__name__)
 
 MAX_STEPS = 10
 
-def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
+# define some default colors in case none are provided
+fcolours = "#4286f4 #e2893b #de5eed #dd547d #4ee5ce #4286f4 #dd547d #4ee5ce #4286f4 #dd547d #4ee5ce".split()
+rcolours = "#82abed #efb683 #edb2f4 #ef92ae #91f2e3 #82abed #ef92ae #91f2e3 #82abed #ef92ae #91f2e3".split()
+incolours = fcolours
+
+
+
+######################################
+# 1. For Drawing Cycle (Curved Arrows)
+######################################
+def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg', figsize=(8, 8)):
 
     # set defaults and declare variables
     img = io.BytesIO()    # file-like object to hold image
 
-    fcolours = "#4286f4 #e2893b #de5eed #dd547d #4ee5ce #4286f4 #dd547d #4ee5ce #4286f4 #dd547d #4ee5ce".split()
-    rcolours = "#82abed #efb683 #edb2f4 #ef92ae #91f2e3 #82abed #ef92ae #91f2e3 #82abed #ef92ae #91f2e3".split()
-    incolours = fcolours
-
-    swoops = []
     forward_rates = []
     rev_rates = []
     is_incoming = [False for i in range(MAX_STEPS)]   # no incoming swoops by default
@@ -63,20 +68,19 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
         is_incoming = data['is_incoming'][:data['num_steps']]
         is_outgoing = data['is_outgoing'][:data['num_steps']]
         gap = float(data['gap'])
-        multiplier = data['multiplier']
-        startrange *= multiplier
-        stoprange *= multiplier
+        startrange *= data['multiplier']
+        stoprange *= data['multiplier']
         scale_type = data['scale_type']
         f_format = data['f_format'].split('.')[1]
 
 
 
     # Call Sofia's Scaler function, convert rates to arrow size
-    forward_rates, rev_rates, range_rates = scaler(forward_rates, rev_rates, startrange=startrange,
-                                                   stoprange=stoprange, scale_type=scale_type)
+    forward_rates, rev_rates, _ = scaler(forward_rates, rev_rates, startrange=startrange,
+                                         stoprange=stoprange, scale_type=scale_type)
 
     # Figure initialization
-    fig = plt.figure(1, figsize=(8, 8))
+    fig = plt.figure(1, figsize=figsize)
     ax = fig.add_subplot(111, autoscale_on=False, xlim=(-5, 5), ylim=(-5, 5))
     plt.axis('off')
 
@@ -242,7 +246,7 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
     else:
         raise ValueError('Image format {} not supported.'.format(format))
 
-    plt.savefig(img, format=f_format)
+    plt.savefig(img, format=f_format, transparent=True)
     plt.close()
     img.seek(0)
     graph_url = base64.b64encode(img.getvalue()).decode()
@@ -250,6 +254,81 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg'):
     return 'data:{};base64,{}'.format(mimetype, graph_url)
 
 
+###################################################
+# 2. For Drawing Straight Arrows for Side Reactions
+###################################################
+
+def draw_straight(data, startrange=0.1, stoprange=0.8, f_format='svg', figsize=(8, 8)):
+
+    # set defaults and declare variables
+    img = io.BytesIO()    # file-like object to hold image
+
+    # will use the whole list of forward and reverse rates for scaling our straight rates
+    forward_rates = []
+    rev_rates = []
+    is_incoming = False   # no incoming swoop by default
+    is_outgoing = False  # no outgoing swoop by default
+
+    scale_type = 'Logarithmic'
+    gap = 5  # default gap without settings
+    scale = 23.9   # will scale pending on image size -- connects graph space to figure space
+
+    diameter = 6.0
+    radius = diameter / 2.0
+    angle_rotation = 0.0
+
+    # data is passed in as a python dictionary (which is collected from a web form)
+    forward_rates = data['forward_rates'][:data['num_steps']]
+    rev_rates = data['rev_rates'][:data['num_steps']]
+    forward_rates.append(data['f_rate_straight'])
+    rev_rates.append(data['r_rate_straight'])
+    fcolour = data['f_color_straight']
+    rcolour = data['r_color_straight']
+    is_incoming = data['incoming_straight']
+    is_outgoing = data['outgoing_straight']
+    startrange *= data['multiplier']
+    stoprange *= data['multiplier']
+    scale_type = data['scale_type']
+    f_format = data['f_format'].split('.')[1]
+
+    # Call Sofia's Scaler function, convert rates to arrow size
+    forward_rates, rev_rates, _ = scaler(forward_rates, rev_rates, startrange=startrange,
+                                         stoprange=stoprange, scale_type=scale_type)
+
+    # we only need the scaled rates for the straight arrow rxn
+    f_rate_scaled, r_rate_scaled = forward_rates[-1], rev_rates[-1]
+
+
+    # Figure initialization
+    fig = plt.figure(1, figsize=figsize)
+    ax = fig.add_subplot(111, autoscale_on=False, xlim=(-5, 5), ylim=(-5, 5))
+    plt.axis('off')
+
+    # add arrows to the axes
+
+
+    # draw on the axes
+    plt.draw()
+
+    # correct mimetype based on filetype (for displaying in browser)
+    if f_format == 'svg':
+        mimetype = 'image/svg+xml'
+    elif f_format == 'png':
+        mimetype = 'image/png'
+    else:
+        raise ValueError('Image format {} not supported.'.format(format))
+
+    # save the figure to the temporary file-like object
+    plt.savefig(img, format=f_format, transparent=True)
+    plt.close()
+    img.seek(0)
+    graph_url = base64.b64encode(img.getvalue()).decode()
+
+    return 'data:{};base64,{}'.format(mimetype, graph_url)
+
+
+########################################################################################################
+########################################################################################################
 
 
 def scaler(forward_rates, rev_rates, startrange=0.1, stoprange=0.8, scale_type='Linear'):

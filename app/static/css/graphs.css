@@ -155,6 +155,9 @@
 
 .carousel-indicators li {
     background-color: rgba(0,0,0,.25) !important;
+    width: 10px;
+    height: 10px;
+    border-radius: 100%;
 }
 .carousel-indicators .active {
     background-color: rgba(0,0,0,.75) !important ;
@@ -167,4 +170,12 @@
 
 .carousel-control-next-icon {
   background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E") !important;
+}
+
+
+.fade-top {
+  background: -moz-linear-gradient(top, rgba(184,184,184,0) 0%, rgba(137,137,137,1) 6%, rgba(102,102,102,1) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top, rgba(184,184,184,0) 0%,rgba(137,137,137,1) 6%,rgba(102,102,102,1) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom, rgba(184,184,184,0) 0%,rgba(137,137,137,1) 6%,rgba(102,102,102,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00b8b8b8', endColorstr='#666666',GradientType=0 ); /* IE6-9 */
 }

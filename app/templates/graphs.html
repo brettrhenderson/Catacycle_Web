@@ -19,48 +19,26 @@
     $(document).ready(submitHandler("{{ form.csrf_token._value() }}"));
 </script>
 <script>
-    $(function () {
-        {% for prefix in ['r', 'f'] %}
-            {% for i in range(1, rows+1) %}
-                $('#{{ prefix }}_color-picker-component{{ i }}').colorpicker({
-                    autoInputFallback: false,
-                    popover: { placement: 'right' },
-                    format: 'hex',
-                    extensions: [
-                        {
-                            name: 'swatches', // extension name to load
-                            options: { // extension options
-                                colors: {
-                                    'black': '#000000',
-                                    'gray': 'gray',
-                                    'red': 'red',
-                                    'blue': 'blue',
-                                    'defaultf1': '#4286f4',
-                                    'defaultf2': '#e2893b',
-                                    'defaultf3': '#de5eed',
-                                    'defaultf4': '#dd547d',
-                                    'defaultr1': '#82abed',
-                                    'defaultr2': '#efb683',
-                                    'defaultr3': '#edb2f4',
-                                    'defaultr4': '#ef92ae',
-                                },
-                                namesAsValues: false
-                            }
-                        }
-                    ]
-                })
-                {% if prefix == 'f' %}
-                .on('change', function (e) {
-                    $('#r_color-picker-component{{ i }}')
-                    .colorpicker('setValue', e.color.api('lighten', '0.50').api('fade', '0.4').toHexString());
-                    // .colorpicker('setValue', e.color.api('lighten', '0.50').api('fade', '0.4').api('desaturate', '0.0').toHexString());
-                });
-                {% else %}
-                ;
-                {% endif %}
-            {% endfor %}
+    // link tabs to correct carousel images
+    link_click_to_carousel("#outsiderxnlink", '#imageCarousel', 1);
+    link_click_to_carousel("#rateslink", '#imageCarousel', 0);
+    link_click_to_carousel("#colorslink", '#imageCarousel', 0);
+    link_click_to_carousel("#arrowslink", '#imageCarousel', 0);
+
+    // add colorpickers to the outside reactions tab
+    add_colorpicker('#straight_f_color-picker-component', true, '#straight_r_color-picker-component');
+    add_colorpicker('#straight_r_color-picker-component', false, 'None');
+
+    // add the colorpickers for the cycle steps
+    {% for prefix in ['r', 'f'] %}
+        {% for i in range(1, rows+1) %}
+            {% if prefix == 'f' %}
+                add_colorpicker('#{{ prefix }}_color-picker-component{{ i }}', true, '#r_color-picker-component{{ i }}');
+            {% else %}
+                add_colorpicker('#{{ prefix }}_color-picker-component{{ i }}', false, 'None');
+            {% endif %}
         {% endfor %}
-    });
+    {% endfor %}
 </script>
 {% endblock %}
 
@@ -69,7 +47,7 @@
         <h1>Catalytic Cycle Generator</h1>
     </div>
     <div class="container-fluid">
-        <div class="row d-flex">
+        <div class="row d-flex bg-secondary">
             <div class="col-md-1 col-lg-1"></div>
             <div class="col-md-5 col-lg-5 d-flex flex-column align-items-center justify-content-center max-vw-100" style="overflow: auto;">
                 <form id="cycle-form"  style="width: 100%;" action="" method="post" nonvalidate>
@@ -78,19 +56,19 @@
                         <div class="card-header">
                             <ul class="nav nav-tabs card-header-tabs">
                                 <li class="nav-item">
-                                    <a class="nav-link active" data-toggle="tab" href="#ratestab">Step Rates</a>
+                                    <a id="rateslink" class="nav-link active" data-toggle="tab" href="#ratestab">Step Rates</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#colorstab">Colors</a>
+                                    <a id="colorslink" class="nav-link" data-toggle="tab" href="#colorstab">Colors</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#arrowsstyle">Styling</a>
+                                    <a id="arrowslink" class="nav-link" data-toggle="tab" href="#arrowsstyle">Styling</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" data-toggle="tab" href="#fileformat">File Format</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#outsiderxns">Outside Reactions</a>
+                                    <a id="outsiderxnlink" class="nav-link" data-toggle="tab" href="#outsiderxns">Outside Reactions</a>
                                 </li>
                             </ul>
                         </div>
@@ -250,7 +228,7 @@
                                 </div>
                                 <div class="tab-pane" id="outsiderxns">
                                     <div class="form-row">
-                                        <div class="form-group col>
+                                        <div class="form-group col">
                                              <label for="f_rate_straight">Forward Rate</label>
                                              <input type="text" class="form-control" id="f_rate_straight" name="f_rate_straight" value="{{ form_values["f_rate_straight"] }}">
                                         </div>
@@ -278,7 +256,7 @@
                                          </div>
                                     </div>
                                     <div class="form-row">
-                                        <div class="form-group col>
+                                        <div class="form-group col">
                                             <label for="f_color_straight">Forward Color</label>
                                             <div id="straight_f_color-picker-component" class="input-group colorpicker-component">
                                                 <input id="f_color_straight" name="f_color_straight" type="text" value="{{ form_values['f_color_straight'] }}" class="form-control"/>

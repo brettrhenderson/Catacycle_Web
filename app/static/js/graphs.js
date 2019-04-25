@@ -23,6 +23,14 @@ function slider_vals(input, output) {
 slider_vals("gap", "gapval")
 slider_vals("thickness", "thicknessval")
 
+
+function link_click_to_carousel(id, carouselid, carousel_num) {
+    $(id).on("click", function (event) {
+        $(carouselid).carousel(carousel_num);
+
+    });
+}
+
 function clear() {
     $("#clearrates").on("click", function (event) {
         $('.rate').val('0.0')
@@ -38,6 +46,72 @@ function clear() {
             }
         }
     });
+}
+
+function add_colorpicker(id, auto_lighten, other_id) {
+    if (auto_lighten) {
+        $(id).colorpicker({
+            autoInputFallback: false,
+            popover: { placement: 'right' },
+            format: 'hex',
+            extensions: [
+                {
+                    name: 'swatches', // extension name to load
+                    options: { // extension options
+                        colors: {
+                            'black': '#000000',
+                            'gray': 'gray',
+                            'red': 'red',
+                            'blue': 'blue',
+                            'defaultf1': '#4286f4',
+                            'defaultf2': '#e2893b',
+                            'defaultf3': '#de5eed',
+                            'defaultf4': '#dd547d',
+                            'defaultr1': '#82abed',
+                            'defaultr2': '#efb683',
+                            'defaultr3': '#edb2f4',
+                            'defaultr4': '#ef92ae',
+                        },
+                        namesAsValues: false
+                    }
+                }
+            ]
+        })
+        .on('change', function (e) {
+            $(other_id)
+            .colorpicker('setValue', e.color.api('lighten', '0.50').api('fade', '0.4').toHexString());
+             // .colorpicker('setValue', e.color.api('lighten', '0.50').api('fade', '0.4').api('desaturate', '0.0').toHexString());
+        });
+    }
+    else {
+        $(id).colorpicker({
+            autoInputFallback: false,
+            popover: { placement: 'right' },
+            format: 'hex',
+            extensions: [
+                {
+                    name: 'swatches', // extension name to load
+                    options: { // extension options
+                        colors: {
+                            'black': '#000000',
+                            'gray': 'gray',
+                            'red': 'red',
+                            'blue': 'blue',
+                            'defaultf1': '#4286f4',
+                            'defaultf2': '#e2893b',
+                            'defaultf3': '#de5eed',
+                            'defaultf4': '#dd547d',
+                            'defaultr1': '#82abed',
+                            'defaultr2': '#efb683',
+                            'defaultr3': '#edb2f4',
+                            'defaultr4': '#ef92ae',
+                        },
+                        namesAsValues: false
+                    }
+                }
+            ]
+        });
+    }
 }
 
 // javascript for addrow found at https://bootsnipp.com/snippets/402bQ

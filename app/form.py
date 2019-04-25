@@ -86,6 +86,14 @@ class RatesForm(FlaskForm):
     # File Format Tab
     f_format = StringField('f_format', default='.svg')
 
+    # Outside Reactions (straight arrows) tab
+    f_rate_straight = FloatField('f_rate_straight', validators=[DataRequired()], default=1.0)
+    r_rate_straight = FloatField('r_rate_straight', default=1.0)
+    incoming_straight = BooleanField('incoming_straight', default=False)
+    outgoing_straight = BooleanField('outgoing_straight', default=False)
+    f_color_straight = StringField('f_color_straight', default='#000000')
+    r_color_straight = StringField('r_color_straight', default='#000000')
+
     # Submit
     submit = SubmitField('Graph')
 
@@ -111,6 +119,12 @@ class RatesForm(FlaskForm):
                 'is_outgoing': [],
                 'fcolours': [],
                 'rcolours': [],
+                'f_rate_straight': self.f_rate_straight.data,
+                'r_rate_straight': self.r_rate_straight.data,
+                'incoming_straight': self.incoming_straight.data,
+                'outgoing_straight': self.outgoing_straight.data,
+                'f_color_straight': self.f_color_straight.data,
+                'r_color_straight': self.r_color_straight.data,
                 'gap': self.gap.data,
                 'thickness': self.thickness.data,
                 'multiplier': float(self.thickness.data)/15.0,
@@ -136,6 +150,12 @@ class RatesForm(FlaskForm):
                 'is_outgoing': [],
                 'fcolours': [],
                 'rcolours': [],
+                'f_rate_straight': self.f_rate_straight.default,
+                'r_rate_straight': self.r_rate_straight.default,
+                'incoming_straight': self.incoming_straight.default,
+                'outgoing_straight': self.outgoing_straight.default,
+                'f_color_straight': self.f_color_straight.default,
+                'r_color_straight': self.r_color_straight.default,
                 'gap': self.gap.default,
                 'thickness': self.thickness.default,
                 'multiplier': float(self.thickness.default)/15.0,
