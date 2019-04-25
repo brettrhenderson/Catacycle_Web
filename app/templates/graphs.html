@@ -70,8 +70,8 @@
     </div>
     <div class="container-fluid">
         <div class="row d-flex">
-            <div class="col-md-2 col-lg-2"></div>
-            <div class="col-md-4 col-lg-4 d-flex flex-column align-items-center justify-content-center max-vw-100" style="overflow: auto;">
+            <div class="col-md-1 col-lg-1"></div>
+            <div class="col-md-5 col-lg-5 d-flex flex-column align-items-center justify-content-center max-vw-100" style="overflow: auto;">
                 <form id="cycle-form"  style="width: 100%;" action="" method="post" nonvalidate>
                     {{ form.hidden_tag() }}
                     <div class="card">
@@ -250,35 +250,35 @@
                                 </div>
                                 <div class="tab-pane" id="outsiderxns">
                                     <div class="form-row">
-                                        <div class="form-group col-sm-5>
+                                        <div class="form-group col>
                                              <label for="f_rate_straight">Forward Rate</label>
                                              <input type="text" class="form-control" id="f_rate_straight" name="f_rate_straight" value="{{ form_values["f_rate_straight"] }}">
                                         </div>
-                                        <div class="form-group col-sm-5">
+                                        <div class="form-group col">
                                              <label for="r_rate_straight">Reverse Rate</label>
                                              <input type="text" class="form-control" id="r_rate_straight" name="r_rate_straight" value="{{ form_values["r_rate_straight"] }}">
                                         </div>
                                     </div>
                                     <div class="form-row">
-                                        <div class="form-group col-sm-5">
+                                        <div class="form-group col">
                                             <div class="form-check">
-                                                <label class="form-check-label" for="incoming_straight">
-                                                    Add Reagent
-                                                </label>
                                                 <input class="form-check-input" type="checkbox" id="incoming_straight" name="incoming_straight">
+                                                <label class="form-check-label" for="incoming_straight">
+                                                    Add
+                                                </label>
                                             </div>
                                         </div>
-                                        <div class="form-group col-sm-5">
+                                        <div class="form-group col">
                                             <div class="form-check">
-                                                <label class="form-check-label" for="outgoing_straight">
-                                                    Remove Product
-                                                </label>
                                                 <input class="form-check-input" type="checkbox" id="outgoing_straight" name="outgoing_straight">
+                                                <label class="form-check-label" for="outgoing_straight">
+                                                    Remove
+                                                </label>
                                             </div>
                                          </div>
                                     </div>
-                                    <div class="form-group form-row">
-                                        <div class="form-group col-sm-5>
+                                    <div class="form-row">
+                                        <div class="form-group col>
                                             <label for="f_color_straight">Forward Color</label>
                                             <div id="straight_f_color-picker-component" class="input-group colorpicker-component">
                                                 <input id="f_color_straight" name="f_color_straight" type="text" value="{{ form_values['f_color_straight'] }}" class="form-control"/>
@@ -287,7 +287,7 @@
                                                 </span>
                                             </div>
                                         </div>
-                                        <div class="form-group col-sm-5">
+                                        <div class="form-group col">
                                              <label for="r_color_straight">Reverse Color</label>
                                              <div id="straight_r_color-picker-component" class="input-group colorpicker-component">
                                                 <input id="r_color_straight" name="r_color_straight" type="text" value="{{ form_values['r_color_straight'] }}" class="form-control"/>
