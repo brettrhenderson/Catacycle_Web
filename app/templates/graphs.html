@@ -71,8 +71,8 @@
     <div class="container-fluid">
         <div class="row d-flex">
             <div class="col-md-2 col-lg-2"></div>
-            <div class="col-md-4 col-lg-4 flex-column max-vw-100" style="overflow: auto;">
-                <form id="cycle-form" class="vertCenter" style="width: 100%;" action="" method="post" nonvalidate>
+            <div class="col-md-4 col-lg-4 d-flex flex-column align-items-center justify-content-center max-vw-100" style="overflow: auto;">
+                <form id="cycle-form"  style="width: 100%;" action="" method="post" nonvalidate>
                     {{ form.hidden_tag() }}
                     <div class="card">
                         <div class="card-header">
@@ -87,7 +87,10 @@
                                     <a class="nav-link" data-toggle="tab" href="#arrowsstyle">Styling</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#fileformat">Outside Reactions</a>
+                                    <a class="nav-link" data-toggle="tab" href="#fileformat">File Format</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#outsiderxns">Outside Reactions</a>
                                 </li>
                             </ul>
                         </div>
@@ -245,6 +248,56 @@
                                         <div class="col-sm-6"></div>
                                     </div>
                                 </div>
+                                <div class="tab-pane" id="outsiderxns">
+                                    <div class="form-row">
+                                        <div class="form-group col-sm-5>
+                                             <label for="f_rate_straight">Forward Rate</label>
+                                             <input type="text" class="form-control" id="f_rate_straight" name="f_rate_straight" value="{{ form_values["f_rate_straight"] }}">
+                                        </div>
+                                        <div class="form-group col-sm-5">
+                                             <label for="r_rate_straight">Reverse Rate</label>
+                                             <input type="text" class="form-control" id="r_rate_straight" name="r_rate_straight" value="{{ form_values["r_rate_straight"] }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-sm-5">
+                                            <div class="form-check">
+                                                <label class="form-check-label" for="incoming_straight">
+                                                    Add Reagent
+                                                </label>
+                                                <input class="form-check-input" type="checkbox" id="incoming_straight" name="incoming_straight">
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-sm-5">
+                                            <div class="form-check">
+                                                <label class="form-check-label" for="outgoing_straight">
+                                                    Remove Product
+                                                </label>
+                                                <input class="form-check-input" type="checkbox" id="outgoing_straight" name="outgoing_straight">
+                                            </div>
+                                         </div>
+                                    </div>
+                                    <div class="form-group form-row">
+                                        <div class="form-group col-sm-5>
+                                            <label for="f_color_straight">Forward Color</label>
+                                            <div id="straight_f_color-picker-component" class="input-group colorpicker-component">
+                                                <input id="f_color_straight" name="f_color_straight" type="text" value="{{ form_values['f_color_straight'] }}" class="form-control"/>
+                                                <span class="input-group-append">
+                                                    <span class="input-group-text colorpicker-input-addon"><i></i></span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-sm-5">
+                                             <label for="r_color_straight">Reverse Color</label>
+                                             <div id="straight_r_color-picker-component" class="input-group colorpicker-component">
+                                                <input id="r_color_straight" name="r_color_straight" type="text" value="{{ form_values['r_color_straight'] }}" class="form-control"/>
+                                                <span class="input-group-append">
+                                                    <span class="input-group-text colorpicker-input-addon"><i></i></span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="card-footer">
@@ -253,7 +306,7 @@
                     </div>
                 </form>
             </div>
-            <div class="col-md-6 col-lg-6 d-flex flex-column align-items-center justify-content-center max-vw-100">
+            <div class="col-md-6 col-lg-6 d-flex flex-column align-items-center justify-content-start max-vw-100">
                 <div id="imageCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
                      <ol class="carousel-indicators">
                           <li data-target="#imageCarousel" data-slide-to="0" class="active"></li>
@@ -261,10 +314,10 @@
                      </ol>
                      <div class="carousel-inner">
                           <div class="carousel-item active">
-                              <img id='graph' class="d-block w-100 img-fluid max-vh-75" src='{{ graph1 }}' alt="First slide">
+                              <img id='graph' class="d-block w-100 img-fluid max-vh-75" src='{{ graph1 }}' alt="Cycle">
                           </div>
                           <div class="carousel-item">
-                               <img class="d-block w-100" src="http://placehold.it/800x200" alt="Chania">
+                               <img class="d-block w-100 img-fluid max-vh-75" src='{{ graph1 }}' alt="Straight Arrow">
                           </div>
                      </div>
                      <a class="carousel-control-prev" href="#imageCarousel" role="button" data-slide="prev">
