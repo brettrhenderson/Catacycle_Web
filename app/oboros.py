@@ -16,7 +16,7 @@ import logging
 import app.drawing_helpers as dh
 
 log = logging.getLogger(__name__)
-# log.setLevel(logging.DEBUG)
+#log.setLevel(logging.DEBUG)
 
 MAX_STEPS = 10
 
@@ -53,7 +53,9 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
     swoop_width_scale = 1.0
     swoop_radius_scale = 1.0
     swoop_sweep_scale = 0.9
-    edgecolor = 'none'
+    edgecolor_f = fcolours   #'k' 'none'
+    edgecolor_r = rcolours  # 'k' 'none'
+    edgecolor_swoops = ['none' for _ in range(len(fcolours))]
     rel_head_width = 0.5
     rel_head_length_scaler = 1.0
     swoop_head_length_scaler = 1.0
@@ -85,14 +87,13 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
         theta1 = 90 - delta * (i + 1) + (gap / 2.0)
         theta2 = 90 - (gap / 2.0) - delta * i
         rel_head_length = (0.1 + 0.015 * num_segments) * rel_head_length_scaler
-        print('Cycle: {}'.format(rel_head_length))
 
         if rev_rates[i] == 0:    # draw an irreversible arrow
             f_colour = fcolours[i]
             arrow_path = dh.curved_arrow_single(theta1, theta2, radius, widths_f[i], origin=(0,0),
                                                 rel_head_width=rel_head_width, rel_head_len=rel_head_length,
                                                 abs_head_len=None, reverse=False)
-            arrow_patch = mpatches.PathPatch(arrow_path, facecolor=f_colour, edgecolor=edgecolor)
+            arrow_patch = mpatches.PathPatch(arrow_path, facecolor=f_colour, edgecolor=edgecolor_f[i])
             ax.add_patch(arrow_patch)
         else:    # draw a reversible arrow
             f_colour = fcolours[i]
@@ -100,12 +101,15 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
             f_path, r_path = dh.curved_arrow_double(theta1, theta2, radius, widths_f[i], widths_r[i], origin=(0, 0),
                                                     rel_head_width=rel_head_width, rel_head_len=rel_head_length,
                                                     f_abs_head_len=None, r_abs_head_len=None, reverse=False)
-            f_patch = mpatches.PathPatch(f_path, facecolor=f_colour, edgecolor=edgecolor)
-            r_patch = mpatches.PathPatch(r_path, facecolor=r_colour, edgecolor=edgecolor)
+            r_patch = mpatches.PathPatch(r_path, facecolor=r_colour, edgecolor=edgecolor_r[i])
+            f_patch = mpatches.PathPatch(f_path, facecolor=f_colour, edgecolor=edgecolor_f[i])
             ax.add_patch(f_patch)
             ax.add_patch(r_patch)
 
         # input arrows/swoops
+        move_center_dist = 0
+        if rev_rates[i] != 0:
+            move_center_dist = widths_f[i] / 2
         arrowhead_angle = math.radians(theta2 - theta1) * rel_head_length
         central_angle = math.radians(theta1 + theta2) / 2 + arrowhead_angle / 2  # shifted to be in center of tail
         swoop_width = widths_f[i] * swoop_width_scale  # may need to scale
@@ -115,27 +119,27 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
         shift = widths_f[i] / 2 - swoop_width / 2    # aligns swoop inner arc with cycle outer arc
         swoop_start_angle = math.degrees(central_angle) + 90 + (180 - swoop_sweep_angle) / 2 + math.degrees(swoop_head_len) / 2
         swoop_end_angle = math.degrees(central_angle) + 270 - (180 - swoop_sweep_angle) / 2 + math.degrees(swoop_head_len) / 2
-        dist_to_swoop_center = radius + shift + swoop_radius
+        dist_to_swoop_center = radius + shift + swoop_radius + move_center_dist
         swoop_origin = (dist_to_swoop_center * math.cos(central_angle), dist_to_swoop_center * math.sin(central_angle))
 
         if is_incoming[i] and is_outgoing[i]:
             swoop_path = dh.curved_arrow_single(swoop_start_angle, swoop_end_angle, swoop_radius, swoop_width,
                                                 origin=swoop_origin, rel_head_width=rel_head_width,
                                                 rel_head_len=swoop_head_len, abs_head_len=swoop_head_len, reverse=True)
-            swoop_patch = mpatches.PathPatch(swoop_path, facecolor=f_colour, edgecolor=edgecolor)
+            swoop_patch = mpatches.PathPatch(swoop_path, facecolor=f_colour, edgecolor=edgecolor_swoops[i])
             ax.add_patch(swoop_patch)
 
         elif is_outgoing[i]:
             swoop_path = dh.curved_arrow_single(math.degrees(central_angle) + 180, swoop_end_angle, swoop_radius,
                                                 swoop_width, origin=swoop_origin, rel_head_width=rel_head_width,
                                                 rel_head_len=swoop_head_len, abs_head_len=swoop_head_len, reverse=True)
-            swoop_patch = mpatches.PathPatch(swoop_path, facecolor=f_colour, edgecolor=edgecolor)
+            swoop_patch = mpatches.PathPatch(swoop_path, facecolor=f_colour, edgecolor=edgecolor_swoops[i])
             ax.add_patch(swoop_patch)
 
         elif is_incoming[i]:
             swoop_path = dh.filled_circular_arc(swoop_start_angle, math.degrees(central_angle) + 180, swoop_radius,
                                                 swoop_width, origin=swoop_origin)
-            swoop_patch = mpatches.PathPatch(swoop_path, facecolor=f_colour, edgecolor=edgecolor)
+            swoop_patch = mpatches.PathPatch(swoop_path, facecolor=f_colour, edgecolor=edgecolor_swoops[i])
             ax.add_patch(swoop_patch)
     plt.draw()
 
@@ -159,7 +163,7 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
 # 2. For Drawing Straight Arrows for Side Reactions
 ###################################################
 
-def draw_straight(data, startrange=0.1, stoprange=0.8, f_format='svg', figsize=(8, 8)):
+def draw_straight(data, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8, 8)):
 
     # set defaults and declare variables
     img = io.BytesIO()    # file-like object to hold image
@@ -183,7 +187,9 @@ def draw_straight(data, startrange=0.1, stoprange=0.8, f_format='svg', figsize=(
     swoop_width_scale = 1.0
     swoop_radius_scale = 1.0
     swoop_sweep_scale = 1.0
-    edgecolor = 'none'
+    edgecolor_f = fcolour  #'k' #'none'
+    edgecolor_r = rcolour  #'k' #'none'
+    edgecolor_swoop = 'none'
     rel_head_width = 0.5
     rel_head_length_scaler = 1.0
     swoop_head_length_scaler = 1.0
@@ -220,19 +226,21 @@ def draw_straight(data, startrange=0.1, stoprange=0.8, f_format='svg', figsize=(
         arrow_path = dh.straight_arrow_single(length, f_width, origin=(0, 0),
                                               rel_head_width=rel_head_width, rel_head_len=rel_head_length,
                                               abs_head_len=None, reverse=False)
-        arrow_patch = mpatches.PathPatch(arrow_path, facecolor=fcolour, edgecolor=edgecolor)
+        arrow_patch = mpatches.PathPatch(arrow_path, facecolor=fcolour, edgecolor=edgecolor_f)
         ax.add_patch(arrow_patch)
     else:  # draw a reversible arrow
         f_path, r_path = dh.straight_arrow_double(length, f_width, r_width, origin=(0,0), rel_head_width=rel_head_width,
                                                 f_abs_head_len=None, r_abs_head_len=None, rel_head_len=rel_head_length,
                                                 reverse=False)
-        f_patch = mpatches.PathPatch(f_path, facecolor=fcolour, edgecolor=edgecolor)
-        r_patch = mpatches.PathPatch(r_path, facecolor=rcolour, edgecolor=edgecolor)
+        r_patch = mpatches.PathPatch(r_path, facecolor=rcolour, edgecolor=edgecolor_r)
+        f_patch = mpatches.PathPatch(f_path, facecolor=fcolour, edgecolor=edgecolor_f)
         ax.add_patch(f_patch)
         ax.add_patch(r_patch)
 
     # input arrows/swoops
-    move_center = np.array([-rel_head_length * length / 2, 0])  # shift to account for arrowhead
+    move_center_y = 0
+    if rev_rate != 0:
+        move_center_y = f_width / 2
     swoop_width = f_width * swoop_width_scale
     swoop_radius = radius / (num_segments / 2) * swoop_radius_scale
     swoop_sweep_angle = 180 * swoop_sweep_scale
@@ -240,26 +248,26 @@ def draw_straight(data, startrange=0.1, stoprange=0.8, f_format='svg', figsize=(
     shift = f_width / 2 - swoop_width / 2  # aligns swoop inner arc with cycle outer arc
     swoop_start_angle = 180 + (180 - swoop_sweep_angle) / 2 + math.degrees(swoop_head_len) / 6
     swoop_end_angle = 360 - (180 - swoop_sweep_angle) / 2 + math.degrees(swoop_head_len) / 6
-    swoop_origin = (-rel_head_length * length / 2, shift + swoop_radius)
+    swoop_origin = (-rel_head_length * length / 2, shift + swoop_radius + move_center_y)
 
     if is_incoming and is_outgoing:
         swoop_path = dh.curved_arrow_single(swoop_start_angle, swoop_end_angle, swoop_radius, swoop_width,
                                             origin=swoop_origin, rel_head_width=rel_head_width,
                                             rel_head_len=swoop_head_len, abs_head_len=swoop_head_len, reverse=True)
-        swoop_patch = mpatches.PathPatch(swoop_path, facecolor=fcolour, edgecolor=edgecolor)
+        swoop_patch = mpatches.PathPatch(swoop_path, facecolor=fcolour, edgecolor=edgecolor_swoop)
         ax.add_patch(swoop_patch)
 
     elif is_outgoing:
         swoop_path = dh.curved_arrow_single(270, swoop_end_angle, swoop_radius,
                                             swoop_width, origin=swoop_origin, rel_head_width=rel_head_width,
                                             rel_head_len=swoop_head_len, abs_head_len=swoop_head_len, reverse=True)
-        swoop_patch = mpatches.PathPatch(swoop_path, facecolor=fcolour, edgecolor=edgecolor)
+        swoop_patch = mpatches.PathPatch(swoop_path, facecolor=fcolour, edgecolor=edgecolor_swoop)
         ax.add_patch(swoop_patch)
 
     elif is_incoming:
         swoop_path = dh.filled_circular_arc(swoop_start_angle, 270, swoop_radius,
                                             swoop_width, origin=swoop_origin)
-        swoop_patch = mpatches.PathPatch(swoop_path, facecolor=fcolour, edgecolor=edgecolor)
+        swoop_patch = mpatches.PathPatch(swoop_path, facecolor=fcolour, edgecolor=edgecolor_swoop)
         ax.add_patch(swoop_patch)
 
     # draw on the axes
@@ -315,15 +323,15 @@ def scaler(forward_rates, rev_rates, startrange=0.1, stoprange=0.8, scale_type='
     # scale logarithmically and then apply the transformation to be within specified bounds (leave zeros)
     if scale_type == 'Logarithmic':
         log.debug("logarithmic scale selected")
-        forward_rates[f_nonzero]=np.log10(forward_rates[f_nonzero])
-        rev_rates[r_nonzero]=np.log10(rev_rates[r_nonzero])
+        forward_rates[f_nonzero] = np.log10(forward_rates[f_nonzero])
+        rev_rates[r_nonzero] = np.log10(rev_rates[r_nonzero])
         log.debug("post-log forward: {}".format(forward_rates))
         log.debug("post-log reverse: {}".format(rev_rates))
 
     f_min = np.min(forward_rates[f_nonzero])
     f_max = forward_rates.max()
     r_max = rev_rates.max()
-    if r_max == 0:
+    if not any(rev_rates):
         r_min = f_min
     else:
         r_min = np.min(rev_rates[r_nonzero])
