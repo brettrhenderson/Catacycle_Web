@@ -271,7 +271,8 @@ function submitHandler(csrf_token) {
     {
         e.preventDefault(); //STOP default action
         submitForm(csrf_token, '/graphs', function (response) {
-            document.getElementById('graph').src = response.data;
+            document.getElementById('graph').src = response.data[0];
+            document.getElementById('straight-graph').src = response.data[1];
         });
 
     });

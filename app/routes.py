@@ -1,6 +1,6 @@
 from flask import render_template, request, jsonify, send_file, redirect, url_for
 from app.form import RatesForm
-from app.oboros import draw
+from app.oboros import draw, draw_straight
 from app import app
 import logging
 
@@ -22,7 +22,7 @@ def graphs():
         #log.debug('scale type: {}'.format(data['scale_type']))
         #log.debug('thickness: {}'.format(data['thickness']))
         log.debug(data)
-        return jsonify(data=draw(data))
+        return jsonify(data=[draw(data), draw_straight(data)])
 
     # log.debug('gap: {}'.format(data['gap']))
     # log.debug('scale type: {}'.format(data['scale_type']))
@@ -30,6 +30,7 @@ def graphs():
     log.debug(data)
     return render_template('graphs.html',
                            graph1=draw(data),
+                           graph2=draw_straight(data),
                            rows=data['num_steps'],
                            form=form,
                            form_values=data)

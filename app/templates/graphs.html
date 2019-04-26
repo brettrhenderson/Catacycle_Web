@@ -23,7 +23,7 @@
     link_click_to_carousel("#outsiderxnlink", '#imageCarousel', 1);
     link_click_to_carousel("#rateslink", '#imageCarousel', 0);
     link_click_to_carousel("#colorslink", '#imageCarousel', 0);
-    link_click_to_carousel("#arrowslink", '#imageCarousel', 0);
+    // link_click_to_carousel("#arrowslink", '#imageCarousel', 0);
 
     // add colorpickers to the outside reactions tab
     add_colorpicker('#straight_f_color-picker-component', true, '#straight_r_color-picker-component');
@@ -47,7 +47,7 @@
         <h1>Catalytic Cycle Generator</h1>
     </div>
     <div class="container-fluid">
-        <div class="row d-flex bg-secondary">
+        <div class="row d-flex">
             <div class="col-md-1 col-lg-1"></div>
             <div class="col-md-5 col-lg-5 d-flex flex-column align-items-center justify-content-center max-vw-100" style="overflow: auto;">
                 <form id="cycle-form"  style="width: 100%;" action="" method="post" nonvalidate>
@@ -295,7 +295,7 @@
                               <img id='graph' class="d-block w-100 img-fluid max-vh-75" src='{{ graph1 }}' alt="Cycle">
                           </div>
                           <div class="carousel-item">
-                               <img class="d-block w-100 img-fluid max-vh-75" src='{{ graph1 }}' alt="Straight Arrow">
+                               <img id="straight-graph" class="d-block w-100 img-fluid max-vh-75" src='{{ graph2 }}' alt="Straight Arrow">
                           </div>
                      </div>
                      <a class="carousel-control-prev" href="#imageCarousel" role="button" data-slide="prev">
@@ -306,10 +306,6 @@
                           <span class="carousel-control-next-icon" aria-hidden="true"></span>
                           <span class="sr-only">Next</span>
                      </a>
-                </div>
-                <!--<img id='graph' class="img-fluid max-vh-75" src='{{ graph1 }}'></img>-->
-                <div>
-                    <a class="btn btn-primary" href="#">Press Me!</a>
                 </div>
             </div>
         </div>

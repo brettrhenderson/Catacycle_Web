@@ -5,7 +5,7 @@ import numpy as np
 
 def curved_arrow_single(theta1, theta2, radius, width, origin=(0,0), rel_head_width=0.5, rel_head_len=0.1,
                         abs_head_len=None, reverse=False):
-    """Construct the path for an irreversible arrow"""
+    """Construct the path for an irreversible curved arrow"""
     # set the angle swept by the arrowhead
     if abs_head_len is None:  # compute arrow head length (angle swept) as a fraction of total length
         f_angle_offset = math.radians((theta2 - theta1) * rel_head_len)
@@ -41,7 +41,7 @@ def curved_arrow_single(theta1, theta2, radius, width, origin=(0,0), rel_head_wi
 
 def curved_arrow_double(theta1, theta2, radius, width_outer, width_inner, origin=(0,0), rel_head_width=0.5,
                         f_abs_head_len=None, r_abs_head_len=None, rel_head_len=0.1, reverse=False):
-    """Construct the paths a double-sided reversible arrow.
+    """Construct the paths a double-sided reversible curved arrow.
 
     Returns the paths for both the outer and inner arrows.
     Radius is the distance from the origin to the inside of the outer arrow"""
@@ -85,6 +85,72 @@ def curved_arrow_double(theta1, theta2, radius, width_outer, width_inner, origin
         return outer_path, inner_path
     else:
         pass
+
+def straight_arrow_single(length, width, origin=(0,0), rel_head_width=0.5,
+                        abs_head_len=None, rel_head_len=0.2, reverse=False):
+    """Construct the path for an irreversible straight arrow"""
+    # set the width of the arrowhead
+    if abs_head_len is None:  # compute arrow head length (angle swept) as a fraction of total length
+        f_offset = length * rel_head_len
+    else:
+        f_offset = abs_head_len
+
+    width_head_part = width * rel_head_width
+
+    if reverse:
+        length = -length
+        f_offset = -f_offset
+
+    tip = (length / 2, 0)
+    start = (length / 2 - f_offset, width / 2)
+    tail_top = (-length / 2, width / 2)
+    tail_bottom = (-length / 2, -width / 2)
+    head_bottom = (length / 2 - f_offset, -width / 2)
+    head_bottom_point = (length / 2 - f_offset, -width / 2 - width_head_part)
+    head_top_point = (length / 2 - f_offset, width / 2 + width_head_part)
+    points = [start, tail_top, tail_bottom, head_bottom, head_bottom_point, tip, head_top_point]
+    path = patches.Polygon(np.array(points)).get_path()
+    return shift_path_by_vec(path, np.array(origin))
+
+
+def straight_arrow_double(length, width_top, width_bottom, origin=(0,0), rel_head_width=0.5,
+                        f_abs_head_len=None, r_abs_head_len=None, rel_head_len=0.2, reverse=False):
+    """Construct the path for an irreversible straight arrow"""
+    # set the width of the arrowhead
+    if f_abs_head_len is None:  # compute arrow head length (angle swept) as a fraction of total length
+        f_offset = length * rel_head_len
+    else:
+        f_offset = f_abs_head_len
+    if r_abs_head_len is None:  # compute arrow head length (angle swept) as a fraction of total length
+        r_offset = length * rel_head_len
+    else:
+        r_offset = r_abs_head_len
+
+    width_head_top = width_top * rel_head_width
+    width_head_bottom = width_bottom * rel_head_width
+
+    if reverse:
+        length = -length
+        f_offset = -f_offset
+        r_offset = -r_offset
+
+    tip_top = (length / 2, 0)
+    start = (length / 2 - f_offset, width_top)
+    tail_top_top = (-length / 2, width_top)
+    tail_bottom_top = (-length / 2, 0)
+    head_top_point = (length / 2 - f_offset, width_top + width_head_top)
+
+    points_top = [start, tail_top_top, tail_bottom_top, tip_top, head_top_point]
+    path_top = patches.Polygon(np.array(points_top)).get_path()
+
+    tail_bottom_bottom = (length / 2, -width_bottom)
+    head_bottom_bottom = (-length / 2 + r_offset, -width_bottom)
+    head_bottom_point = (-length / 2 + r_offset, -width_bottom - width_head_bottom)
+
+    points_bottom = [tail_bottom_top, head_bottom_point, head_bottom_bottom, tail_bottom_bottom, tip_top]
+    path_bottom = patches.Polygon(np.array(points_bottom)).get_path()
+
+    return shift_path_by_vec(path_top, np.array(origin)), shift_path_by_vec(path_bottom, np.array(origin))
 
 
 def filled_circular_arc(theta1, theta2, radius, width, origin=(0,0)):

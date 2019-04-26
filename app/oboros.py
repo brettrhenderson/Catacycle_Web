@@ -13,6 +13,7 @@ import io
 import base64
 import numpy as np
 import logging
+import app.drawing_helpers as dh
 
 log = logging.getLogger(__name__)
 # log.setLevel(logging.DEBUG)
@@ -24,54 +25,38 @@ fcolours = "#4286f4 #e2893b #de5eed #dd547d #4ee5ce #4286f4 #dd547d #4ee5ce #428
 rcolours = "#82abed #efb683 #edb2f4 #ef92ae #91f2e3 #82abed #ef92ae #91f2e3 #82abed #ef92ae #91f2e3".split()
 incolours = fcolours
 
-
+# scales the rates so they look nice in the cycle
+scale = 0.8
+radius = 3.0
 
 ######################################
 # 1. For Drawing Cycle (Curved Arrows)
 ######################################
-def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg', figsize=(8, 8)):
+def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8, 8)):
 
     # set defaults and declare variables
     img = io.BytesIO()    # file-like object to hold image
 
-    forward_rates = []
-    rev_rates = []
-    is_incoming = [False for i in range(MAX_STEPS)]   # no incoming swoops by default
-    is_outgoing = [False for i in range(MAX_STEPS)]  # no outgoing swoops by default
-
-    scale_type = 'Logarithmic'
-    gap = 5  # default gap without settings
-    scale = 23.9   # will scale pending on image size -- connects graph space to figure space
-
-    diameter = 6.0
-    radius = diameter / 2.0
-    angle_rotation = 0.0
-
-
-    # Read in the data from its source
-    if data is None:    # when data is provided via a csv file
-        data = open("data.dat", 'r')
-        for line in data:
-            if "f_rate" in line:
-                forward_rates.append(line.split()[2])
-            if "r_rate" in line:
-                rev_rates.append(line.split()[2])
-            if "gap" in line:
-                gap = float(line.split()[2])
-
-    else:    # when data is passed in as a python dictionary (as when it is collected from a web form)
-        forward_rates = data['forward_rates'][:data['num_steps']]
-        rev_rates = data['rev_rates'][:data['num_steps']]
-        fcolours = data['fcolours'][:data['num_steps']]
-        rcolours = data['rcolours'][:data['num_steps']]
-        incolours = fcolours
-        is_incoming = data['is_incoming'][:data['num_steps']]
-        is_outgoing = data['is_outgoing'][:data['num_steps']]
-        gap = float(data['gap'])
-        startrange *= data['multiplier']
-        stoprange *= data['multiplier']
-        scale_type = data['scale_type']
-        f_format = data['f_format'].split('.')[1]
+    # unpack data dictionary
+    forward_rates = data['forward_rates'][:data['num_steps']]
+    rev_rates = data['rev_rates'][:data['num_steps']]
+    fcolours = data['fcolours'][:data['num_steps']]
+    rcolours = data['rcolours'][:data['num_steps']]
+    incolours = fcolours
+    is_incoming = data['is_incoming'][:data['num_steps']]
+    is_outgoing = data['is_outgoing'][:data['num_steps']]
+    gap = float(data['gap'])
+    startrange *= data['multiplier']
+    stoprange *= data['multiplier']
+    scale_type = data['scale_type']
+    f_format = data['f_format'].split('.')[1]
+    swoop_width_scale = 1.0
+    swoop_radius_scale = 1.0
+    swoop_sweep_scale = 0.9
+    edgecolor = 'none'
+    rel_head_width = 0.5
+    rel_head_length_scaler = 1.0
+    swoop_head_length_scaler = 1.0
 
 
 
@@ -88,19 +73,9 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg', figsize=(8, 8
     num_segments = len(forward_rates)
     delta = 360.0/num_segments
 
-    # Coordinates for curves
-    transformed_rates_r = []
-    transformed_rates_f = []
-
     # transforming rates to line widths
-    for i in range(0, num_segments):
-        if rev_rates[i] == 0:
-            forward_rates[i] /= 2
-
-        log.debug('corrected forward rate {}: {}'.format(i+1, forward_rates[i]))
-        transformed_rates_f.append(float(forward_rates[i])*scale)
-        transformed_rates_r.append(float(rev_rates[i])*scale)
-
+    widths_f = [float(forward_rates[i]) * scale for i in range(num_segments)]
+    widths_r = [float(rev_rates[i]) * scale for i in range(num_segments)]
 
     # Drawing outside and inside curves
     for i in range(0, num_segments):
@@ -109,133 +84,59 @@ def draw(data=None, startrange=0.1, stoprange=0.8, f_format='svg', figsize=(8, 8
         # gap/2 is added to center the gap at the top
         theta1 = 90 - delta * (i + 1) + (gap / 2.0)
         theta2 = 90 - (gap / 2.0) - delta * i
+        rel_head_length = (0.1 + 0.015 * num_segments) * rel_head_length_scaler
+        print('Cycle: {}'.format(rel_head_length))
 
-        # set the diameter for the the circle on which the inner and outer arrows lie for each step
-        outer_diam = diameter + float(forward_rates[i]) / 2
-        inner_diam = diameter - float(rev_rates[i]) / 2
-        inner_diam_ss = diameter - float(forward_rates[i])/2
+        if rev_rates[i] == 0:    # draw an irreversible arrow
+            f_colour = fcolours[i]
+            arrow_path = dh.curved_arrow_single(theta1, theta2, radius, widths_f[i], origin=(0,0),
+                                                rel_head_width=rel_head_width, rel_head_len=rel_head_length,
+                                                abs_head_len=None, reverse=False)
+            arrow_patch = mpatches.PathPatch(arrow_path, facecolor=f_colour, edgecolor=edgecolor)
+            ax.add_patch(arrow_patch)
+        else:    # draw a reversible arrow
+            f_colour = fcolours[i]
+            r_colour = rcolours[i]
+            f_path, r_path = dh.curved_arrow_double(theta1, theta2, radius, widths_f[i], widths_r[i], origin=(0, 0),
+                                                    rel_head_width=rel_head_width, rel_head_len=rel_head_length,
+                                                    f_abs_head_len=None, r_abs_head_len=None, reverse=False)
+            f_patch = mpatches.PathPatch(f_path, facecolor=f_colour, edgecolor=edgecolor)
+            r_patch = mpatches.PathPatch(r_path, facecolor=r_colour, edgecolor=edgecolor)
+            ax.add_patch(f_patch)
+            ax.add_patch(r_patch)
 
-        # Outside Arrows / forward rates
-        if fcolours[i] == "blank" or fcolours[i] is None:    # Assign a random color if none is provided
-            r = lambda: random.randint(0,255)
-            col = ('#%02X%02X%02X' % (r(),r(),r()))
-        else:
-            col = fcolours[i]
-        curve = mpatches.Arc((0, 0), height=outer_diam, width=outer_diam, angle=angle_rotation,
-                             theta1=theta1, theta2=theta2, linewidth=transformed_rates_f[i], color=col)
-        ax.add_patch(curve)
-        col = rcolours[i]
-        curve = mpatches.Arc((0, 0), height=inner_diam, width=inner_diam, angle=angle_rotation,
-                             theta1=theta1, theta2=theta2, linewidth=transformed_rates_r[i], color=col)
-        ax.add_patch(curve)
-
-        a_angle = math.radians(theta1)  # Starting point angle for outside triangles
-        b_angle = math.radians(theta2)  # Starting point angle for inside triangles
-        col = fcolours[i]
-
-        f_angle_offset = math.radians(10*float(forward_rates[i])) + 0.1
-        r_angle_offset =math.radians(10*float(rev_rates[i])) + 0.1
-
-        # Outside Arrows
-        b_vec = radius + float(forward_rates[i])
-        c_vec = radius + float(forward_rates[i])
-        d_vec = radius + float(forward_rates[i]) / 2
-
-        a_x = radius * math.cos(a_angle)
-        a_y = radius * math.sin(a_angle)
-        b_x = b_vec * math.cos(a_angle)
-        b_y = b_vec * math.sin(a_angle)
-        c_x = c_vec * math.cos(a_angle + f_angle_offset)
-        c_y = c_vec * math.sin(a_angle + f_angle_offset)
-        d_x = d_vec * math.cos(a_angle + f_angle_offset)
-        d_y = d_vec * math.sin(a_angle + f_angle_offset)
-
-        tri1 = plt.Polygon(((a_x, a_y), (b_x, b_y), (c_x, c_y)), color='w')  # a white triangle to block out the color
-        tri2 = plt.Polygon(((a_x, a_y), (d_x, d_y), (c_x, c_y)), color=col)  # colored triangle to form arrowhead
-        ax.add_patch(tri1)
-        ax.add_patch(tri2)
-
-        # Inside Arrows / reverse rates
-        if rev_rates[i] != 0:
-            col = rcolours[i]
-
-            ex_radius_r = radius - (float(rev_rates[i]))
-            di_vec = radius - float(rev_rates[i]) / 2
-
-            ai_x = radius * math.cos(b_angle)
-            ai_y = radius * math.sin(b_angle)
-            bi_x = ex_radius_r * math.cos(b_angle)
-            bi_y = ex_radius_r * math.sin(b_angle)
-            ci_x = ex_radius_r * math.cos(b_angle - r_angle_offset)
-            ci_y = ex_radius_r * math.sin(b_angle - r_angle_offset)
-            di_x = di_vec * math.cos(b_angle - r_angle_offset)
-            di_y = di_vec * math.sin(b_angle - r_angle_offset)
-
-            tri3 = plt.Polygon(((ai_x, ai_y), (bi_x, bi_y), (ci_x, ci_y)), color='w')  # a white triangle to block out the color
-            tri4 = plt.Polygon(((ai_x, ai_y), (di_x, di_y), (ci_x, ci_y)), color=col)  # colored triangle to form arrowhead
-            ax.add_patch(tri3)
-            ax.add_patch(tri4)
-
-        if rev_rates[i] == 0.0:  # if reverse rate is 0, make forward arrowhead symmetrical
-
-            col = fcolours[i]
-            curve = mpatches.Arc((0, 0), height=inner_diam_ss, width=inner_diam_ss, angle=angle_rotation,
-                                 theta1=theta1, theta2=theta2, linewidth=transformed_rates_f[i], color=col)
-            ax.add_patch(curve)
-
-            b_vec = radius - float(forward_rates[i])
-            d_vec = radius - float(forward_rates[i]) / 2
-
-            a_x = radius * math.cos(a_angle)
-            a_y = radius * math.sin(a_angle)
-            b_x = b_vec * math.cos(a_angle)
-            b_y = b_vec*math.sin(a_angle)
-            c_x = b_vec*math.cos(a_angle + f_angle_offset)
-            c_y = b_vec*math.sin(a_angle + f_angle_offset)
-            d_x = d_vec * math.cos(a_angle + f_angle_offset)
-            d_y = d_vec * math.sin(a_angle + f_angle_offset)
-
-            tri3 = plt.Polygon(((a_x, a_y), (b_x, b_y), (c_x, c_y)), color='w')
-            tri4 = plt.Polygon(((a_x, a_y), (d_x, d_y), (c_x, c_y)), color=col)
-            ax.add_patch(tri3)
-            ax.add_patch(tri4)
-
-        # input and output arrows below (some scaling and adjustment may be needed)
         # input arrows/swoops
-        central_angle = math.radians((theta1 + theta2) / 2.0 ) + f_angle_offset / 2  # starting angle halfway along step
-        width = transformed_rates_f[i] / 2  # may need to scale
-        shift = float(forward_rates[i]) / 4
-        swept_angle = math.radians((delta - gap) / 4)
+        arrowhead_angle = math.radians(theta2 - theta1) * rel_head_length
+        central_angle = math.radians(theta1 + theta2) / 2 + arrowhead_angle / 2  # shifted to be in center of tail
+        swoop_width = widths_f[i] * swoop_width_scale  # may need to scale
+        swoop_radius = radius / (num_segments / 2) * swoop_radius_scale
+        swoop_sweep_angle = 180 * swoop_sweep_scale
+        swoop_head_len = 0.3 / swoop_sweep_scale * swoop_head_length_scaler
+        shift = widths_f[i] / 2 - swoop_width / 2    # aligns swoop inner arc with cycle outer arc
+        swoop_start_angle = math.degrees(central_angle) + 90 + (180 - swoop_sweep_angle) / 2 + math.degrees(swoop_head_len) / 2
+        swoop_end_angle = math.degrees(central_angle) + 270 - (180 - swoop_sweep_angle) / 2 + math.degrees(swoop_head_len) / 2
+        dist_to_swoop_center = radius + shift + swoop_radius
+        swoop_origin = (dist_to_swoop_center * math.cos(central_angle), dist_to_swoop_center * math.sin(central_angle))
 
-        if is_incoming[i]:
-            col = fcolours[i]
-            angle = central_angle # + math.radians(2.0)  # shift slightly off-center to avoid creating angle with outgoing
-            style="simple,tail_width=" + str(width)+ ",head_width="+ str(width)+",head_length=0.001"
-           # style="wedge,tail_width=" + str(width)+ ",shrink_factor=0.5"
-            kw = dict(arrowstyle=style, color=col)
+        if is_incoming[i] and is_outgoing[i]:
+            swoop_path = dh.curved_arrow_single(swoop_start_angle, swoop_end_angle, swoop_radius, swoop_width,
+                                                origin=swoop_origin, rel_head_width=rel_head_width,
+                                                rel_head_len=swoop_head_len, abs_head_len=swoop_head_len, reverse=True)
+            swoop_patch = mpatches.PathPatch(swoop_path, facecolor=f_colour, edgecolor=edgecolor)
+            ax.add_patch(swoop_patch)
 
-            x1 = (3.0+shift)*math.cos(angle)
-            x2 = (4.0+shift)*math.cos(angle + swept_angle)
-            y1 = (3.0+shift)*math.sin(angle)
-            y2 = (4.0+shift)*math.sin(angle + swept_angle)
+        elif is_outgoing[i]:
+            swoop_path = dh.curved_arrow_single(math.degrees(central_angle) + 180, swoop_end_angle, swoop_radius,
+                                                swoop_width, origin=swoop_origin, rel_head_width=rel_head_width,
+                                                rel_head_len=swoop_head_len, abs_head_len=swoop_head_len, reverse=True)
+            swoop_patch = mpatches.PathPatch(swoop_path, facecolor=f_colour, edgecolor=edgecolor)
+            ax.add_patch(swoop_patch)
 
-            arrow = mpatches.FancyArrowPatch((x2, y2), (x1, y1), connectionstyle="arc3,rad=0.3", **kw)
-            ax.add_patch(arrow)
-
-        if is_outgoing[i]:
-            col = fcolours[i]
-            angle = central_angle #- math.radians(2.0)  # shift slightly off-center to avoid creating angle with incoming
-            style="simple,tail_width=" + str(width)+ ",head_width="+ str(width*3) + ",head_length="+str(width * 2)
-           # style="wedge,tail_width=" + str(width)+ ",shrink_factor=0.5"
-            kw = dict(arrowstyle=style, color=col)
-
-            x1 = (3.0 + shift) * math.cos(angle)
-            x2 = (4.0 + shift) * math.cos(angle - swept_angle)
-            y1 = (3.0 + shift) * math.sin(angle)
-            y2 = (4.0 + shift) * math.sin(angle - swept_angle)
-
-            arrow = mpatches.FancyArrowPatch((x1, y1), (x2, y2), connectionstyle="arc3,rad=0.4", **kw)
-            ax.add_patch(arrow)
+        elif is_incoming[i]:
+            swoop_path = dh.filled_circular_arc(swoop_start_angle, math.degrees(central_angle) + 180, swoop_radius,
+                                                swoop_width, origin=swoop_origin)
+            swoop_patch = mpatches.PathPatch(swoop_path, facecolor=f_colour, edgecolor=edgecolor)
+            ax.add_patch(swoop_patch)
     plt.draw()
 
     # correct mimetype based on filetype (for displaying in browser)
@@ -263,25 +164,14 @@ def draw_straight(data, startrange=0.1, stoprange=0.8, f_format='svg', figsize=(
     # set defaults and declare variables
     img = io.BytesIO()    # file-like object to hold image
 
-    # will use the whole list of forward and reverse rates for scaling our straight rates
-    forward_rates = []
-    rev_rates = []
-    is_incoming = False   # no incoming swoop by default
-    is_outgoing = False  # no outgoing swoop by default
-
-    scale_type = 'Logarithmic'
-    gap = 5  # default gap without settings
-    scale = 23.9   # will scale pending on image size -- connects graph space to figure space
-
-    diameter = 6.0
-    radius = diameter / 2.0
-    angle_rotation = 0.0
-
     # data is passed in as a python dictionary (which is collected from a web form)
     forward_rates = data['forward_rates'][:data['num_steps']]
     rev_rates = data['rev_rates'][:data['num_steps']]
-    forward_rates.append(data['f_rate_straight'])
-    rev_rates.append(data['r_rate_straight'])
+    rev_rate = data['r_rate_straight']
+    for_rate = data['f_rate_straight']
+    forward_rates.append(for_rate)
+    rev_rates.append(rev_rate)
+    gap = float(data['gap'])
     fcolour = data['f_color_straight']
     rcolour = data['r_color_straight']
     is_incoming = data['incoming_straight']
@@ -290,6 +180,25 @@ def draw_straight(data, startrange=0.1, stoprange=0.8, f_format='svg', figsize=(
     stoprange *= data['multiplier']
     scale_type = data['scale_type']
     f_format = data['f_format'].split('.')[1]
+    swoop_width_scale = 1.0
+    swoop_radius_scale = 1.0
+    swoop_sweep_scale = 1.0
+    edgecolor = 'none'
+    rel_head_width = 0.5
+    rel_head_length_scaler = 1.0
+    swoop_head_length_scaler = 1.0
+
+    # Splitting circle by number of forward reactions
+    num_segments = len(forward_rates) - 1
+    delta = 360.0 / num_segments
+
+    # calculate the length of a segment and use the same length for a straight line to preserve scaling
+    theta1 = 90 - delta + (gap / 2.0)
+    theta2 = 90 - (gap / 2.0)
+
+    length = math.radians(theta2 - theta1) * radius
+    rel_head_length = (0.1 + 0.015 * num_segments) * rel_head_length_scaler
+
 
     # Call Sofia's Scaler function, convert rates to arrow size
     forward_rates, rev_rates, _ = scaler(forward_rates, rev_rates, startrange=startrange,
@@ -298,6 +207,8 @@ def draw_straight(data, startrange=0.1, stoprange=0.8, f_format='svg', figsize=(
     # we only need the scaled rates for the straight arrow rxn
     f_rate_scaled, r_rate_scaled = forward_rates[-1], rev_rates[-1]
 
+    f_width, r_width = scale * f_rate_scaled, scale * r_rate_scaled
+
 
     # Figure initialization
     fig = plt.figure(1, figsize=figsize)
@@ -305,7 +216,51 @@ def draw_straight(data, startrange=0.1, stoprange=0.8, f_format='svg', figsize=(
     plt.axis('off')
 
     # add arrows to the axes
+    if rev_rate == 0:  # draw an irreversible arrow
+        arrow_path = dh.straight_arrow_single(length, f_width, origin=(0, 0),
+                                              rel_head_width=rel_head_width, rel_head_len=rel_head_length,
+                                              abs_head_len=None, reverse=False)
+        arrow_patch = mpatches.PathPatch(arrow_path, facecolor=fcolour, edgecolor=edgecolor)
+        ax.add_patch(arrow_patch)
+    else:  # draw a reversible arrow
+        f_path, r_path = dh.straight_arrow_double(length, f_width, r_width, origin=(0,0), rel_head_width=rel_head_width,
+                                                f_abs_head_len=None, r_abs_head_len=None, rel_head_len=rel_head_length,
+                                                reverse=False)
+        f_patch = mpatches.PathPatch(f_path, facecolor=fcolour, edgecolor=edgecolor)
+        r_patch = mpatches.PathPatch(r_path, facecolor=rcolour, edgecolor=edgecolor)
+        ax.add_patch(f_patch)
+        ax.add_patch(r_patch)
 
+    # input arrows/swoops
+    move_center = np.array([-rel_head_length * length / 2, 0])  # shift to account for arrowhead
+    swoop_width = f_width * swoop_width_scale
+    swoop_radius = radius / (num_segments / 2) * swoop_radius_scale
+    swoop_sweep_angle = 180 * swoop_sweep_scale
+    swoop_head_len = 0.3 / swoop_sweep_scale * swoop_head_length_scaler
+    shift = f_width / 2 - swoop_width / 2  # aligns swoop inner arc with cycle outer arc
+    swoop_start_angle = 180 + (180 - swoop_sweep_angle) / 2 + math.degrees(swoop_head_len) / 6
+    swoop_end_angle = 360 - (180 - swoop_sweep_angle) / 2 + math.degrees(swoop_head_len) / 6
+    swoop_origin = (-rel_head_length * length / 2, shift + swoop_radius)
+
+    if is_incoming and is_outgoing:
+        swoop_path = dh.curved_arrow_single(swoop_start_angle, swoop_end_angle, swoop_radius, swoop_width,
+                                            origin=swoop_origin, rel_head_width=rel_head_width,
+                                            rel_head_len=swoop_head_len, abs_head_len=swoop_head_len, reverse=True)
+        swoop_patch = mpatches.PathPatch(swoop_path, facecolor=fcolour, edgecolor=edgecolor)
+        ax.add_patch(swoop_patch)
+
+    elif is_outgoing:
+        swoop_path = dh.curved_arrow_single(270, swoop_end_angle, swoop_radius,
+                                            swoop_width, origin=swoop_origin, rel_head_width=rel_head_width,
+                                            rel_head_len=swoop_head_len, abs_head_len=swoop_head_len, reverse=True)
+        swoop_patch = mpatches.PathPatch(swoop_path, facecolor=fcolour, edgecolor=edgecolor)
+        ax.add_patch(swoop_patch)
+
+    elif is_incoming:
+        swoop_path = dh.filled_circular_arc(swoop_start_angle, 270, swoop_radius,
+                                            swoop_width, origin=swoop_origin)
+        swoop_patch = mpatches.PathPatch(swoop_path, facecolor=fcolour, edgecolor=edgecolor)
+        ax.add_patch(swoop_patch)
 
     # draw on the axes
     plt.draw()

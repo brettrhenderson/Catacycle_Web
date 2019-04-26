@@ -88,7 +88,7 @@ class RatesForm(FlaskForm):
 
     # Outside Reactions (straight arrows) tab
     f_rate_straight = FloatField('f_rate_straight', validators=[DataRequired()], default=1.0)
-    r_rate_straight = FloatField('r_rate_straight', default=1.0)
+    r_rate_straight = FloatField('r_rate_straight', default=0.0)
     incoming_straight = BooleanField('incoming_straight', default=False)
     outgoing_straight = BooleanField('outgoing_straight', default=False)
     f_color_straight = StringField('f_color_straight', default='#000000')
