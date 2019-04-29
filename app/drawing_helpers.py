@@ -2,8 +2,9 @@ from matplotlib.path import Path
 import math
 import matplotlib.patches as patches
 import numpy as np
+import matplotlib.path as mpath
 
-def curved_arrow_single(theta1, theta2, radius, width, origin=(0,0), rel_head_width=0.5, rel_head_len=0.1,
+def curved_arrow_single(theta1, theta2, radius, width, origin=(0,0), rel_head_width=1.5, rel_head_len=0.1,
                         abs_head_len=None, reverse=False):
     """Construct the path for an irreversible curved arrow"""
     # set the angle swept by the arrowhead
@@ -13,27 +14,45 @@ def curved_arrow_single(theta1, theta2, radius, width, origin=(0,0), rel_head_wi
         f_angle_offset = abs_head_len
 
     # Define the radii of the inside and outside of the head and tail
-    head_out_radius = radius + width / 2.0 + width * rel_head_width
-    head_in_radius = radius - width / 2.0 - width * rel_head_width
+    head_width = width * rel_head_width
     tail_out_radius = radius + width / 2.0
     tail_in_radius = radius - width / 2.0
 
     if not reverse:
-        angle_tip = math.radians(theta1)
-        start = theta1 + math.degrees(f_angle_offset)
-        outer_arc = scale_arc(Path.arc(start, theta2), tail_out_radius)
-        inner_arc = scale_arc(path_arc_cw(theta2, start), tail_in_radius)
+        theta_tip = theta1
+        theta_tail = theta2
 
     else:
-        angle_tip = math.radians(theta2)
+        theta_tip = theta2
+        theta_tail = theta1
         f_angle_offset = -f_angle_offset
-        start = theta2 + math.degrees(f_angle_offset)
-        outer_arc = scale_arc(path_arc_cw(start, theta1), tail_out_radius)
-        inner_arc = scale_arc(Path.arc(theta1, start), tail_in_radius)
 
-    arrowhead_point = (radius * math.cos(angle_tip), radius * math.sin(angle_tip))
-    head_out_point = (head_out_radius * math.cos(angle_tip + f_angle_offset), head_out_radius * math.sin(angle_tip + f_angle_offset))
-    head_in_point = (head_in_radius * math.cos(angle_tip + f_angle_offset), head_in_radius * math.sin(angle_tip + f_angle_offset))
+    # head_in_point, arrowhead_point, head_out_point = get_perp_arrowhead(radius, theta_tip, f_angle_offset, width, rel_head_width)
+    head_in_point, arrowhead_point, head_out_point = get_isosceles_arrowhead(radius, math.radians(theta_tip),
+                                                                             math.radians(theta_tip) + f_angle_offset,
+                                                                             head_width)
+    print(head_in_point, head_out_point, tail_out_radius, tail_in_radius)
+    int_outer, ix_pts_outer = get_intersect_segment_circle(head_in_point, head_out_point, tail_out_radius)
+    int_inner, ix_pts_inner = get_intersect_segment_circle(head_in_point, head_out_point, tail_in_radius)
+    if int_outer:
+        start = math.degrees(cart2pol(*ix_pts_outer[0])[1])
+    else:
+        # make head wider if it doesn't intersect both sides of tail
+        return curved_arrow_single(theta1, theta2, radius, width, origin, rel_head_width + 0.1, rel_head_len,
+                        abs_head_len, reverse)
+    if int_inner:
+        end = math.degrees(cart2pol(*ix_pts_inner[0])[1])
+    else:
+        # make head wider if it doesn't intersect both sides of tail
+        return curved_arrow_single(theta1, theta2, radius, width, origin, rel_head_width + 0.1, rel_head_len,
+                                   abs_head_len, reverse)
+
+    if not reverse:
+        outer_arc = scale_arc(Path.arc(start, theta_tail), tail_out_radius)
+        inner_arc = scale_arc(path_arc_cw(theta_tail, end), tail_in_radius)
+    else:
+        outer_arc = scale_arc(path_arc_cw(start, theta_tail), tail_out_radius)
+        inner_arc = scale_arc(Path.arc(theta_tail, end), tail_in_radius)
     arrowhead = join_points([head_in_point, arrowhead_point, head_out_point])
 
     return shift_path_by_vec(concatenate_paths([outer_arc, inner_arc, arrowhead]), np.array(origin))
@@ -106,8 +125,8 @@ def straight_arrow_single(length, width, origin=(0,0), rel_head_width=0.5,
     tail_top = (-length / 2, width / 2)
     tail_bottom = (-length / 2, -width / 2)
     head_bottom = (length / 2 - f_offset, -width / 2)
-    head_bottom_point = (length / 2 - f_offset, -width / 2 - width_head_part)
-    head_top_point = (length / 2 - f_offset, width / 2 + width_head_part)
+    head_bottom_point = (length / 2 - f_offset, - width_head_part / 2)
+    head_top_point = (length / 2 - f_offset, width_head_part / 2)
     points = [start, tail_top, tail_bottom, head_bottom, head_bottom_point, tip, head_top_point]
     path = patches.Polygon(np.array(points)).get_path()
     return shift_path_by_vec(path, np.array(origin))
@@ -138,14 +157,14 @@ def straight_arrow_double(length, width_top, width_bottom, origin=(0,0), rel_hea
     start = (length / 2 - f_offset, width_top)
     tail_top_top = (-length / 2, width_top)
     tail_bottom_top = (-length / 2, 0)
-    head_top_point = (length / 2 - f_offset, width_top + width_head_top)
+    head_top_point = (length / 2 - f_offset, width_head_top / 2 + width_top / 2)
 
     points_top = [start, tail_top_top, tail_bottom_top, tip_top, head_top_point]
     path_top = patches.Polygon(np.array(points_top)).get_path()
 
     tail_bottom_bottom = (length / 2, -width_bottom)
     head_bottom_bottom = (-length / 2 + r_offset, -width_bottom)
-    head_bottom_point = (-length / 2 + r_offset, -width_bottom - width_head_bottom)
+    head_bottom_point = (-length / 2 + r_offset, -width_bottom / 2 - width_head_bottom / 2)
 
     points_bottom = [tail_bottom_top, head_bottom_point, head_bottom_bottom, tail_bottom_bottom, tip_top]
     path_bottom = patches.Polygon(np.array(points_bottom)).get_path()
@@ -183,6 +202,12 @@ def path_arc_cw(theta1, theta2):
     new_verts.append(verts[-1])
     return Path(np.array(new_verts), arc1.codes)
 
+def path_arc_smart(theta1, theta2):
+    if theta1 >= theta2:
+        return path_arc_cw(theta1, theta2)
+    else:
+        return Path.arc(theta1, theta2)
+
 def scale_arc(arc_path, scale):
     return Path(arc_path.vertices * scale, arc_path.codes)
 
@@ -218,3 +243,103 @@ def concatenate_paths(paths, connect=True):
 def shift_path_by_vec(path, vec):
     shifted_vertices = np.array([vert + vec for vert in path.vertices])
     return Path(shifted_vertices, path.codes)
+
+def set_ax_lims(ax, paths):
+    bbox_pts = mpath.get_paths_extents(paths).get_points()
+    max_x_dim = np.max(np.abs(bbox_pts[:, 0]))
+    max_y_dim = np.max(np.abs(bbox_pts[:, 1]))
+    xlim = (-max_x_dim - 0.1, max_x_dim + 0.1)
+    ylim = (-max_y_dim - 0.5, max_y_dim + 0.1)
+    ax.set_xlim(xlim)
+    ax.set_ylim(ylim)
+    ax.set_aspect(1)
+
+def ensure_valid_gap(delta, gap, precision=1):
+    theta1 = 90 - delta + (gap / 2.0)
+    theta2 = 90 - (gap / 2.0)
+
+    while theta2 <= theta1:
+        gap -= precision
+        theta1 = 90 - delta + (gap / 2.0)
+        theta2 = 90 - (gap / 2.0)
+    return gap
+
+def get_isosceles_arrowhead(radius, theta1, theta2, base_width):
+    point1 = radius * np.array([math.cos(theta1), math.sin(theta1)])
+    point2 = radius * np.array([math.cos(theta2), math.sin(theta2)])
+    v_12 = point2 - point1
+    if v_12[0] == 0:    # vertical line.  We are at the right or left of the circle
+        u_cross = np.array([1,0])
+    elif v_12[1] == 0:
+        u_cross = np.array([0, 1])
+    else:
+        u_cross = np.array([v_12[1], -v_12[0]]) / np.sqrt(v_12[1]**2 + v_12[0]**2)    # m expressed as unit vector
+    point4 = point2 + base_width / 2 * u_cross
+    point5 = point2 - base_width / 2 * u_cross
+
+    if np.linalg.norm(point4) > np.linalg.norm(point5):
+        return [point5, point1, point4]     # inside, tip, outside
+    else:
+        return [point4, point1, point5]     # inside, tip, outside
+
+def get_isosceles_arrowhead_old(radius, theta1, theta2, base_width):
+    point1 = radius * np.array([math.cos(theta1), math.sin(theta1)])
+    point2 = radius * np.array([math.cos(theta2), math.sin(theta2)])
+    if point1[0] == 0:    # vertical line.  We are at the top or bottom of the circle
+        delx = point2[0] - point1[0]
+        point3 = point1 + np.array([delx, 0])
+        u_m = np.array([0,1])
+    elif point1[1] == 0:
+        dely = point2[1] - point1[1]
+        point3 = point1 + np.array([0, dely])
+        u_m = np.array([1, 0])
+    else:
+        m = math.sin(theta1)/math.cos(theta1)
+        line1 = np.array([m, 0])    # m, b in y=mx+b
+        line2 = np.array([m, point2[1] - m * point2[0]])    # || to line 1 but through point 2
+        line3 = np.array([-1 / m, point1[1] + 1 / m * point1[0]])    # normal to lines 1 and 2 and through point 1
+        point3_x = (line3[1] - line2[1]) / (m + 1 / m)
+        point3 = np.array([point3_x, m * point3_x + line2[1]])    # intersection of line 3 and line 2
+        u_m = np.array([1, m]) / np.sqrt(1**2 + m**2)    # m expressed as unit vector
+    point4 = point3 + base_width / 2 * u_m
+    point5 = point3 - base_width / 2 * u_m
+
+    return [point5, point1, point4]     # inside, tip, outside
+
+def get_perp_arrowhead(radius, theta_tip, f_angle_offset, width, rel_head_width, reverse):
+    head_out_radius = radius + width / 2.0 + width * rel_head_width
+    head_in_radius = radius - width / 2.0 - width * rel_head_width
+
+    angle_tip = math.radians(theta_tip)
+
+    arrowhead_point = (radius * math.cos(angle_tip), radius * math.sin(angle_tip))
+    head_out_point = (head_out_radius * math.cos(angle_tip + f_angle_offset), head_out_radius * math.sin(angle_tip + f_angle_offset))
+    head_in_point = (head_in_radius * math.cos(angle_tip + f_angle_offset), head_in_radius * math.sin(angle_tip + f_angle_offset))
+    return [head_in_point, arrowhead_point, head_out_point]
+
+def get_intersect_segment_circle(p1, p2, r, p_cent=np.array([0,0])):
+    """https://codereview.stackexchange.com/questions/86421/line-segment-to-circle-collision-algorithm"""
+    V = p2 - p1
+    a = V.dot(V)
+    b = 2 * V.dot(p1 - p_cent)
+    c = p1.dot(p1) + p_cent.dot(p_cent) - 2 * p1.dot(p_cent) - r**2
+
+    disc = b**2 - 4 * a * c
+    if disc < 0:  # line misses circle
+        return False, []
+    else:
+        t1 = (-b + np.sqrt(disc)) / (2 * a)
+        t2 = (-b - np.sqrt(disc)) / (2 * a)
+    if not (0 <= t1 <= 1 or 0 <= t2 <= 1):    # line segment doesn't extend far enough to intersect circle
+        return False, None
+    else:
+        pts = []
+        for mult in [t1, t2]:
+            if 0 <= mult <= 1:
+                pts.append(p1 + mult * V)
+        return True, pts
+
+def cart2pol(x, y):
+    rho = np.sqrt(x**2 + y**2)
+    phi = np.arctan2(y, x)
+    return rho, phi

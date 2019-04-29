@@ -6,9 +6,9 @@
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.patches as mpatches
+import matplotlib.path as mpath
 import matplotlib.pyplot as plt
 import math
-import random
 import io
 import base64
 import numpy as np
@@ -16,7 +16,7 @@ import logging
 import app.drawing_helpers as dh
 
 log = logging.getLogger(__name__)
-#log.setLevel(logging.DEBUG)
+log.setLevel(logging.DEBUG)
 
 MAX_STEPS = 10
 
@@ -26,13 +26,16 @@ rcolours = "#82abed #efb683 #edb2f4 #ef92ae #91f2e3 #82abed #ef92ae #91f2e3 #82a
 incolours = fcolours
 
 # scales the rates so they look nice in the cycle
-scale = 0.8
+scale = 0.5
 radius = 3.0
 
 ######################################
 # 1. For Drawing Cycle (Curved Arrows)
 ######################################
 def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8, 8)):
+
+    # keep track of all paths to set the bounds of the canvas
+    paths = []
 
     # set defaults and declare variables
     img = io.BytesIO()    # file-like object to hold image
@@ -42,24 +45,24 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
     rev_rates = data['rev_rates'][:data['num_steps']]
     fcolours = data['fcolours'][:data['num_steps']]
     rcolours = data['rcolours'][:data['num_steps']]
-    incolours = fcolours
     is_incoming = data['is_incoming'][:data['num_steps']]
     is_outgoing = data['is_outgoing'][:data['num_steps']]
     gap = float(data['gap'])
+    thickness = data['multiplier']
     startrange *= data['multiplier']
     stoprange *= data['multiplier']
     scale_type = data['scale_type']
     f_format = data['f_format'].split('.')[1]
     swoop_width_scale = 1.0
-    swoop_radius_scale = 1.0
-    swoop_sweep_scale = 0.9
+    swoop_radius_scale = 1.5
+    swoop_sweep_scale = 1.0
     edgecolor_f = fcolours   #'k' 'none'
     edgecolor_r = rcolours  # 'k' 'none'
     edgecolor_swoops = ['none' for _ in range(len(fcolours))]
-    rel_head_width = 0.5
+    rel_head_width = 1.8
     rel_head_length_scaler = 1.0
     swoop_head_length_scaler = 1.0
-
+    swoop_start_angle_shift_multiplier = 0.1
 
 
     # Call Sofia's Scaler function, convert rates to arrow size
@@ -68,7 +71,7 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
 
     # Figure initialization
     fig = plt.figure(1, figsize=figsize)
-    ax = fig.add_subplot(111, autoscale_on=False, xlim=(-5, 5), ylim=(-5, 5))
+    ax = fig.add_subplot(111, autoscale_on=False) #, xlim=(-6.5, 6.5), ylim=(-6.5, 6.5))
     plt.axis('off')
 
     # Splitting circle by number of forward reactions
@@ -84,15 +87,18 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
 
         # starting and ending angle for each arrow (moving counterclockwise)
         # gap/2 is added to center the gap at the top
+        # make sure the gap isnt so large that the arrow length becomes 0 or negative
+        gap = dh.ensure_valid_gap(delta, gap)
         theta1 = 90 - delta * (i + 1) + (gap / 2.0)
         theta2 = 90 - (gap / 2.0) - delta * i
-        rel_head_length = (0.1 + 0.015 * num_segments) * rel_head_length_scaler
+        rel_head_length = (0.06 + 0.015 * num_segments) * rel_head_length_scaler
 
         if rev_rates[i] == 0:    # draw an irreversible arrow
             f_colour = fcolours[i]
             arrow_path = dh.curved_arrow_single(theta1, theta2, radius, widths_f[i], origin=(0,0),
                                                 rel_head_width=rel_head_width, rel_head_len=rel_head_length,
                                                 abs_head_len=None, reverse=False)
+            paths.append(arrow_path)
             arrow_patch = mpatches.PathPatch(arrow_path, facecolor=f_colour, edgecolor=edgecolor_f[i])
             ax.add_patch(arrow_patch)
         else:    # draw a reversible arrow
@@ -101,6 +107,7 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
             f_path, r_path = dh.curved_arrow_double(theta1, theta2, radius, widths_f[i], widths_r[i], origin=(0, 0),
                                                     rel_head_width=rel_head_width, rel_head_len=rel_head_length,
                                                     f_abs_head_len=None, r_abs_head_len=None, reverse=False)
+            paths += [f_path, r_path]
             r_patch = mpatches.PathPatch(r_path, facecolor=r_colour, edgecolor=edgecolor_r[i])
             f_patch = mpatches.PathPatch(f_path, facecolor=f_colour, edgecolor=edgecolor_f[i])
             ax.add_patch(f_patch)
@@ -111,14 +118,15 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
         if rev_rates[i] != 0:
             move_center_dist = widths_f[i] / 2
         arrowhead_angle = math.radians(theta2 - theta1) * rel_head_length
-        central_angle = math.radians(theta1 + theta2) / 2 + arrowhead_angle / 2  # shifted to be in center of tail
+        central_angle = math.radians(theta1 + theta2) / 2  + arrowhead_angle / 2  # shifted to be in center of tail
         swoop_width = widths_f[i] * swoop_width_scale  # may need to scale
-        swoop_radius = radius / (num_segments / 2) * swoop_radius_scale
+        swoop_radius = max(((radius - (num_segments * 0.25) - (gap * 0.015) - (thickness * 0.1) - 0.5), 0.18)) * swoop_radius_scale
+        log.debug("Cycle Swoop Radius: {}".format(swoop_radius))
         swoop_sweep_angle = 180 * swoop_sweep_scale
         swoop_head_len = 0.3 / swoop_sweep_scale * swoop_head_length_scaler
         shift = widths_f[i] / 2 - swoop_width / 2    # aligns swoop inner arc with cycle outer arc
-        swoop_start_angle = math.degrees(central_angle) + 90 + (180 - swoop_sweep_angle) / 2 + math.degrees(swoop_head_len) / 2
-        swoop_end_angle = math.degrees(central_angle) + 270 - (180 - swoop_sweep_angle) / 2 + math.degrees(swoop_head_len) / 2
+        swoop_start_angle = math.degrees(central_angle) + 90 + (180 - swoop_sweep_angle) / 2 + math.degrees(swoop_head_len) * swoop_start_angle_shift_multiplier
+        swoop_end_angle = math.degrees(central_angle) + 270 - (180 - swoop_sweep_angle) / 2 + math.degrees(swoop_head_len)  * swoop_start_angle_shift_multiplier
         dist_to_swoop_center = radius + shift + swoop_radius + move_center_dist
         swoop_origin = (dist_to_swoop_center * math.cos(central_angle), dist_to_swoop_center * math.sin(central_angle))
 
@@ -126,6 +134,7 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
             swoop_path = dh.curved_arrow_single(swoop_start_angle, swoop_end_angle, swoop_radius, swoop_width,
                                                 origin=swoop_origin, rel_head_width=rel_head_width,
                                                 rel_head_len=swoop_head_len, abs_head_len=swoop_head_len, reverse=True)
+            paths.append(swoop_path)
             swoop_patch = mpatches.PathPatch(swoop_path, facecolor=f_colour, edgecolor=edgecolor_swoops[i])
             ax.add_patch(swoop_patch)
 
@@ -133,14 +142,17 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
             swoop_path = dh.curved_arrow_single(math.degrees(central_angle) + 180, swoop_end_angle, swoop_radius,
                                                 swoop_width, origin=swoop_origin, rel_head_width=rel_head_width,
                                                 rel_head_len=swoop_head_len, abs_head_len=swoop_head_len, reverse=True)
+            paths.append(swoop_path)
             swoop_patch = mpatches.PathPatch(swoop_path, facecolor=f_colour, edgecolor=edgecolor_swoops[i])
             ax.add_patch(swoop_patch)
 
         elif is_incoming[i]:
             swoop_path = dh.filled_circular_arc(swoop_start_angle, math.degrees(central_angle) + 180, swoop_radius,
                                                 swoop_width, origin=swoop_origin)
+            paths.append(swoop_path)
             swoop_patch = mpatches.PathPatch(swoop_path, facecolor=f_colour, edgecolor=edgecolor_swoops[i])
             ax.add_patch(swoop_patch)
+    dh.set_ax_lims(ax, paths)
     plt.draw()
 
     # correct mimetype based on filetype (for displaying in browser)
@@ -165,6 +177,9 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
 
 def draw_straight(data, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8, 8)):
 
+    # keep track of all paths to set the bounds of the canvas
+    paths = []
+
     # set defaults and declare variables
     img = io.BytesIO()    # file-like object to hold image
 
@@ -185,14 +200,15 @@ def draw_straight(data, startrange=0.15, stoprange=0.85, f_format='svg', figsize
     scale_type = data['scale_type']
     f_format = data['f_format'].split('.')[1]
     swoop_width_scale = 1.0
-    swoop_radius_scale = 1.0
+    swoop_radius_scale = 1.5
     swoop_sweep_scale = 1.0
     edgecolor_f = fcolour  #'k' #'none'
     edgecolor_r = rcolour  #'k' #'none'
     edgecolor_swoop = 'none'
-    rel_head_width = 0.5
+    rel_head_width = 2.0
     rel_head_length_scaler = 1.0
     swoop_head_length_scaler = 1.0
+    swoop_start_angle_shift_multiplier = 0.1
 
     # Splitting circle by number of forward reactions
     num_segments = len(forward_rates) - 1
@@ -203,7 +219,7 @@ def draw_straight(data, startrange=0.15, stoprange=0.85, f_format='svg', figsize
     theta2 = 90 - (gap / 2.0)
 
     length = math.radians(theta2 - theta1) * radius
-    rel_head_length = (0.1 + 0.015 * num_segments) * rel_head_length_scaler
+    rel_head_length = (0.06 + 0.015 * num_segments) * rel_head_length_scaler
 
 
     # Call Sofia's Scaler function, convert rates to arrow size
@@ -226,12 +242,14 @@ def draw_straight(data, startrange=0.15, stoprange=0.85, f_format='svg', figsize
         arrow_path = dh.straight_arrow_single(length, f_width, origin=(0, 0),
                                               rel_head_width=rel_head_width, rel_head_len=rel_head_length,
                                               abs_head_len=None, reverse=False)
+        paths.append(arrow_path)
         arrow_patch = mpatches.PathPatch(arrow_path, facecolor=fcolour, edgecolor=edgecolor_f)
         ax.add_patch(arrow_patch)
     else:  # draw a reversible arrow
         f_path, r_path = dh.straight_arrow_double(length, f_width, r_width, origin=(0,0), rel_head_width=rel_head_width,
                                                 f_abs_head_len=None, r_abs_head_len=None, rel_head_len=rel_head_length,
                                                 reverse=False)
+        paths += [f_path, r_path]
         r_patch = mpatches.PathPatch(r_path, facecolor=rcolour, edgecolor=edgecolor_r)
         f_patch = mpatches.PathPatch(f_path, facecolor=fcolour, edgecolor=edgecolor_f)
         ax.add_patch(f_patch)
@@ -242,18 +260,20 @@ def draw_straight(data, startrange=0.15, stoprange=0.85, f_format='svg', figsize
     if rev_rate != 0:
         move_center_y = f_width / 2
     swoop_width = f_width * swoop_width_scale
-    swoop_radius = radius / (num_segments / 2) * swoop_radius_scale
+    swoop_radius = max(((radius - num_segments * 0.2 - (gap * 0.015) - 1), 0.2)) * swoop_radius_scale
+    log.debug("Straight Swoop Radius: {}".format(swoop_radius))
     swoop_sweep_angle = 180 * swoop_sweep_scale
     swoop_head_len = 0.3 / swoop_sweep_scale * swoop_head_length_scaler
     shift = f_width / 2 - swoop_width / 2  # aligns swoop inner arc with cycle outer arc
-    swoop_start_angle = 180 + (180 - swoop_sweep_angle) / 2 + math.degrees(swoop_head_len) / 6
-    swoop_end_angle = 360 - (180 - swoop_sweep_angle) / 2 + math.degrees(swoop_head_len) / 6
+    swoop_start_angle = 180 + (180 - swoop_sweep_angle) / 2 + math.degrees(swoop_head_len) * swoop_start_angle_shift_multiplier
+    swoop_end_angle = 360 - (180 - swoop_sweep_angle) / 2 + math.degrees(swoop_head_len) * swoop_start_angle_shift_multiplier
     swoop_origin = (-rel_head_length * length / 2, shift + swoop_radius + move_center_y)
 
     if is_incoming and is_outgoing:
         swoop_path = dh.curved_arrow_single(swoop_start_angle, swoop_end_angle, swoop_radius, swoop_width,
                                             origin=swoop_origin, rel_head_width=rel_head_width,
                                             rel_head_len=swoop_head_len, abs_head_len=swoop_head_len, reverse=True)
+        paths.append(swoop_path)
         swoop_patch = mpatches.PathPatch(swoop_path, facecolor=fcolour, edgecolor=edgecolor_swoop)
         ax.add_patch(swoop_patch)
 
@@ -261,15 +281,18 @@ def draw_straight(data, startrange=0.15, stoprange=0.85, f_format='svg', figsize
         swoop_path = dh.curved_arrow_single(270, swoop_end_angle, swoop_radius,
                                             swoop_width, origin=swoop_origin, rel_head_width=rel_head_width,
                                             rel_head_len=swoop_head_len, abs_head_len=swoop_head_len, reverse=True)
+        paths.append(swoop_path)
         swoop_patch = mpatches.PathPatch(swoop_path, facecolor=fcolour, edgecolor=edgecolor_swoop)
         ax.add_patch(swoop_patch)
 
     elif is_incoming:
         swoop_path = dh.filled_circular_arc(swoop_start_angle, 270, swoop_radius,
                                             swoop_width, origin=swoop_origin)
+        paths.append(swoop_path)
         swoop_patch = mpatches.PathPatch(swoop_path, facecolor=fcolour, edgecolor=edgecolor_swoop)
         ax.add_patch(swoop_patch)
 
+    dh.set_ax_lims(ax, paths)
     # draw on the axes
     plt.draw()
 
@@ -336,15 +359,11 @@ def scaler(forward_rates, rev_rates, startrange=0.1, stoprange=0.8, scale_type='
     else:
         r_min = np.min(rev_rates[r_nonzero])
 
-    log.debug('f_min, f_max: {}'.format((f_min, f_max)))
-    log.debug('r_min, r_max: {}'.format((r_min, r_max)))
-
     maxima = max(f_max, r_max)
     minima = min(f_min, r_min)
 
     ranger = stoprange - startrange
 
-    # incase k range = 0
     if minima == maxima:
         if scale_type == 'Preserve Multiples':
             forward_rates[f_nonzero] = stoprange / 2.0
@@ -358,6 +377,7 @@ def scaler(forward_rates, rev_rates, startrange=0.1, stoprange=0.8, scale_type='
             forward_rates = forward_rates / maxima * stoprange
             rev_rates = rev_rates / maxima * stoprange
         else:
+            log.debug("Max != Min")
             # otherwise, scale and move the rates to be between the desired endpoints
             forward_rates[f_nonzero] = ((forward_rates[f_nonzero] - minima) / (maxima - minima) * ranger + startrange)
             rev_rates[r_nonzero] = ((rev_rates[r_nonzero] - minima) / (maxima - minima) * ranger + startrange)
