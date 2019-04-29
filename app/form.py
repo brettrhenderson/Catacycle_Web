@@ -9,9 +9,9 @@ class RatesForm(FlaskForm):
     MAX_ROWS = 10
 
     # Styling tab
-    gap = IntegerField('gap', default=15)
-    thickness = IntegerField('thickness', default=15)
-    scale_type = StringField('scale_type', default="Linear")
+    gap = IntegerField('gap', default=25)
+    thickness = IntegerField('thickness', default=25)
+    scale_type = StringField('scale_type', default="Logarithmic")
 
     # Step Rates tab
     f_rate1 = FloatField('f_rate1', validators=[DataRequired()], default=1.0)
@@ -98,7 +98,7 @@ class RatesForm(FlaskForm):
     submit = SubmitField('Graph')
 
     def num_rows(self):
-        for i in range(1, self.MAX_ROWS):
+        for i in range(1, self.MAX_ROWS+1):
             frate = getattr(self, 'f_rate{}'.format(i)).data
             if frate and frate > 0.0:
                 rows = i
@@ -127,7 +127,7 @@ class RatesForm(FlaskForm):
                 'r_color_straight': self.r_color_straight.data,
                 'gap': self.gap.data,
                 'thickness': self.thickness.data,
-                'multiplier': float(self.thickness.data)/15.0,
+                'multiplier': float(self.thickness.data)/25.0,
                 'scale_type': self.scale_type.data,
                 'f_format': self.f_format.data}
 
@@ -158,7 +158,7 @@ class RatesForm(FlaskForm):
                 'r_color_straight': self.r_color_straight.default,
                 'gap': self.gap.default,
                 'thickness': self.thickness.default,
-                'multiplier': float(self.thickness.default)/15.0,
+                'multiplier': float(self.thickness.default)/25.0,
                 'scale_type': self.scale_type.default,
                 'num_steps': 4,
                 'f_format': '.svg'}
