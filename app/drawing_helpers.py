@@ -36,15 +36,17 @@ def curved_arrow_single(theta1, theta2, radius, width, origin=(0,0), rel_head_wi
     if int_outer:
         start = math.degrees(cart2pol(*ix_pts_outer[0])[1])
     else:
+        start = theta_tip + math.degrees(f_angle_offset)
         # make head wider if it doesn't intersect both sides of tail
-        return curved_arrow_single(theta1, theta2, radius, width, origin, rel_head_width + 0.1, rel_head_len,
-                        abs_head_len, reverse)
+        # return curved_arrow_single(theta1, theta2, radius, width, origin, rel_head_width + 0.1, rel_head_len,
+        #                 abs_head_len, reverse)
     if int_inner:
         end = math.degrees(cart2pol(*ix_pts_inner[0])[1])
     else:
+        end = theta_tip + math.degrees(f_angle_offset)
         # make head wider if it doesn't intersect both sides of tail
-        return curved_arrow_single(theta1, theta2, radius, width, origin, rel_head_width + 0.1, rel_head_len,
-                                   abs_head_len, reverse)
+        # return curved_arrow_single(theta1, theta2, radius, width, origin, rel_head_width + 0.1, rel_head_len,
+        #                            abs_head_len, reverse)
 
     if not reverse:
         outer_arc = scale_arc(Path.arc(start, theta_tail), tail_out_radius)
@@ -84,16 +86,6 @@ def curved_arrow_double(theta1, theta2, radius, width_outer, width_inner, origin
         tail_out_radius = radius + width_outer
         tail_in_radius = radius - width_inner
 
-        print("Head_out_width: {}".format(head_out_width))
-        print("Head_in_width: {}".format(head_in_width))
-        print("Width outer: {}".format(width_outer))
-        print("Width inner: {}".format(width_inner))
-
-        # arrowtip_out_xy = (radius * math.cos(angle_tip_out), radius * math.sin(angle_tip_out))
-        # arrowtip_in_xy = (radius * math.cos(angle_tip_in), radius * math.sin(angle_tip_in))
-        # head_out_xy = (head_out_radius * math.cos(angle_tip_out + f_angle_offset), head_out_radius * math.sin(angle_tip_out + f_angle_offset))
-        # head_in_xy = (head_in_radius * math.cos(angle_tip_in - r_angle_offset), head_in_radius * math.sin(angle_tip_in - r_angle_offset))
-
         head_out_in_xy, arrowtip_out_xy, head_out_out_xy = get_isosceles_arrowhead(radius, angle_tip_out,
                                                                   angle_tip_out + f_angle_offset, head_out_width)
         head_in_in_xy, arrowtip_in_xy, head_in_out_xy = get_isosceles_arrowhead(radius, angle_tip_in,
@@ -108,7 +100,7 @@ def curved_arrow_double(theta1, theta2, radius, width_outer, width_inner, origin
         if int_inner:
             end_inner_arc = math.degrees(cart2pol(*ix_pts_inner[0])[1])
         else:
-            end_inner_arc = theta2 - math.degrees(f_angle_offset)
+            end_inner_arc = theta2 - math.degrees(r_angle_offset)
 
         outer_arc = scale_arc(Path.arc(start_outer_arc, theta2), tail_out_radius)
         middle_arc = scale_arc(path_arc_cw(theta2, theta1), radius)
