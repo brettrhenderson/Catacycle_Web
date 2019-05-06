@@ -16,7 +16,7 @@ import logging
 import app.drawing_helpers as dh
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+#log.setLevel(logging.DEBUG)
 
 MAX_STEPS = 10
 

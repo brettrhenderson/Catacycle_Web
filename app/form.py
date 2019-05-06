@@ -11,7 +11,7 @@ class RatesForm(FlaskForm):
     # Styling tab
     gap = IntegerField('gap', default=25)
     thickness = IntegerField('thickness', default=25)
-    scale_type = StringField('scale_type', default="Logarithmic")
+    scale_type = StringField('scale_type', default="Preserve Multiples")
 
     # Step Rates tab
     f_rate1 = FloatField('f_rate1', validators=[DataRequired()], default=1.0)
@@ -92,7 +92,7 @@ class RatesForm(FlaskForm):
     incoming_straight = BooleanField('incoming_straight', default=False)
     outgoing_straight = BooleanField('outgoing_straight', default=False)
     f_color_straight = StringField('f_color_straight', default='#000000')
-    r_color_straight = StringField('r_color_straight', default='#000000')
+    r_color_straight = StringField('r_color_straight', default='#333333')
 
     # Submit
     submit = SubmitField('Graph')

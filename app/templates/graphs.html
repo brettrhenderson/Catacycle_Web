@@ -48,9 +48,9 @@
     </div>
     <div class="container-fluid">
         <div class="row d-flex">
-            <div class="col-md-1 col-lg-1"></div>
-            <div class="col-md-5 col-lg-5 d-flex flex-column align-items-center justify-content-center max-vw-100" style="overflow: auto;">
-                <form id="cycle-form"  style="width: 100%;" action="" method="post" nonvalidate>
+            <!--<div class="col-md-1 col-lg-1"></div>-->
+            <div class="col-md-6 col-lg-6 d-flex flex-column align-items-center justify-content-center max-vw-100" style="overflow: auto;">
+                <form id="cycle-form"  style="width: 90%;" action="" method="post" nonvalidate>
                     {{ form.hidden_tag() }}
                     <div class="card">
                         <div class="card-header">
@@ -88,11 +88,28 @@
                                         <tbody id="rate-body">
                                             {% for i in range(rows) %}
                                             <tr id="row{{ i+1 }}">
-                                                <td>{{ i+1 }}</td>
-                                                <td><input id="f_rate{{ i+1 }}" class="form-control rate" type="text" name="f_rate{{ i+1 }}" value="{{ form_values["forward_rates"][i] }}"></td>
-                                                <td><input id="r_rate{{ i+1 }}" class="form-control rate" type="text" name="r_rate{{ i+1 }}" value="{{ form_values["rev_rates"][i] }}"></td>
-                                                <td><div class="pt-2"><input id="is_incoming{{ i+1 }}" name="is_incoming{{ i+1 }}" class="form-control pt-2 income-check" type="checkbox"></div></td>
-                                                <td><div class="pt-2"><input id="is_outgoing{{ i+1 }}" name="is_outgoing{{ i+1 }}" class="form-control pt-2 income-check" type="checkbox"></div></td>
+                                                <td width="10%">{{ i+1 }}</td>
+                                                <td>
+                                                    <select id="f_rate{{ i+1 }}" class="form-control frate" name="f_rate{{ i+1 }}">
+                                                        <option value="1">Very Slow</option>
+                                                        <option value="2">Slow</option>
+                                                        <option value="3" selected>Average</option>
+                                                        <option value="4">Fast</option>
+                                                        <option value="5">Very Fast</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select id="r_rate{{ i+1 }}" class="form-control rrate" name="r_rate{{ i+1 }}">
+                                                        <option value="0" selected>None</option>
+                                                        <option value="1">Very Slow</option>
+                                                        <option value="2">Slow</option>
+                                                        <option value="3">Average</option>
+                                                        <option value="4">Fast</option>
+                                                        <option value="5">Very Fast</option>
+                                                    </select>
+                                                </td>
+                                                <td width="15%"><div class="pt-2"><input id="is_incoming{{ i+1 }}" name="is_incoming{{ i+1 }}" class="form-control pt-2 income-check" type="checkbox"></div></td>
+                                                <td width="15%"><div class="pt-2"><input id="is_outgoing{{ i+1 }}" name="is_outgoing{{ i+1 }}" class="form-control pt-2 income-check" type="checkbox"></div></td>
                                             </tr>
                                             {% endfor %}
                                         </tbody>
@@ -169,14 +186,16 @@
                                     </div>
                                 </div>
                                 <div class="tab-pane" id="arrowsstyle">
+                                    <!--
                                     <div class="form-group">
                                         <label for="scale_type">Scaling:</label>
                                         <select class="form-control" id="scale_type" name="scale_type">
                                             <option>Logarithmic</option>
                                             <option>Linear</option>
-                                            <!--<option>Preserve Multiples</option>-->
+                                            <option>Preserve Multiples</option>
                                         </select>
                                     </div>
+                                    -->
                                     <div class="form-group form-row">
                                         <label class="col-sm-2 col-form-label" for="gap">Gap:</label>
                                         <span class="col-sm-2">
@@ -230,11 +249,24 @@
                                     <div class="form-row">
                                         <div class="form-group col">
                                              <label for="f_rate_straight">Forward Rate</label>
-                                             <input type="text" class="form-control" id="f_rate_straight" name="f_rate_straight" value="{{ form_values["f_rate_straight"] }}">
+                                             <select class="form-control" id="f_rate_straight" name="f_rate_straight">
+                                                 <option value="1">Very Slow</option>
+                                                 <option value="2">Slow</option>
+                                                 <option value="3" selected>Average</option>
+                                                 <option value="4">Fast</option>
+                                                 <option value="5">Very Fast</option>
+                                             </select>
                                         </div>
                                         <div class="form-group col">
                                              <label for="r_rate_straight">Reverse Rate</label>
-                                             <input type="text" class="form-control" id="r_rate_straight" name="r_rate_straight" value="{{ form_values["r_rate_straight"] }}">
+                                             <select class="form-control" id="r_rate_straight" name="r_rate_straight">
+                                                 <option value="0" selected>None</option>
+                                                 <option value="1">Very Slow</option>
+                                                 <option value="2">Slow</option>
+                                                 <option value="3">Average</option>
+                                                 <option value="4">Fast</option>
+                                                 <option value="5">Very Fast</option>
+                                             </select>
                                         </div>
                                     </div>
                                     <div class="form-row">
