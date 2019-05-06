@@ -21,15 +21,15 @@ def graphs():
         #log.debug('gap: {}'.format(data['gap']))
         #log.debug('scale type: {}'.format(data['scale_type']))
         #log.debug('thickness: {}'.format(data['thickness']))
-        return jsonify(data=[draw(data), draw_straight(data)])
+        return jsonify(data=[draw(data, startrange=0.15, stoprange=0.65,), draw_straight(data, startrange=0.15, stoprange=0.65,)])
 
     # log.debug('gap: {}'.format(data['gap']))
     # log.debug('scale type: {}'.format(data['scale_type']))
     # log.debug('thickness: {}'.format(data['thickness']))
     log.debug(data)
     return render_template('graphs.html',
-                           graph1=draw(data),
-                           graph2=draw_straight(data),
+                           graph1=draw(data, startrange=0.15, stoprange=0.65,),
+                           graph2=draw_straight(data, startrange=0.15, stoprange=0.65,),
                            rows=data['num_steps'],
                            form=form,
                            form_values=data)

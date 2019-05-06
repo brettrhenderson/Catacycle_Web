@@ -57,7 +57,7 @@ def curved_arrow_single(theta1, theta2, radius, width, origin=(0,0), rel_head_wi
     return shift_path_by_vec(concatenate_paths([outer_arc, inner_arc, arrowhead]), np.array(origin))
 
 
-def curved_arrow_double(theta1, theta2, radius, width_outer, width_inner, origin=(0,0), rel_head_width=0.5,
+def curved_arrow_double(theta1, theta2, radius, width_outer, width_inner, origin=(0,0), rel_head_width=1.5,
                         f_abs_head_len=None, r_abs_head_len=None, rel_head_len=0.1, reverse=False):
     """Construct the paths a double-sided reversible curved arrow.
 
@@ -79,24 +79,42 @@ def curved_arrow_double(theta1, theta2, radius, width_outer, width_inner, origin
             r_angle_offset = r_abs_head_len
 
         # Define the radii of the inside and outside of the head and tail
-        head_out_radius = radius + width_outer + width_outer * rel_head_width
-        head_in_radius = radius - width_inner - width_inner * rel_head_width
+        head_out_width = width_outer * (rel_head_width + 1)
+        head_in_width = width_inner * (rel_head_width + 1)
         tail_out_radius = radius + width_outer
         tail_in_radius = radius - width_inner
 
-        arrowtip_out_xy = (radius * math.cos(angle_tip_out), radius * math.sin(angle_tip_out))
-        arrowtip_in_xy = (radius * math.cos(angle_tip_in), radius * math.sin(angle_tip_in))
-        head_out_xy = (head_out_radius * math.cos(angle_tip_out + f_angle_offset), head_out_radius * math.sin(angle_tip_out + f_angle_offset))
-        head_in_xy = (head_in_radius * math.cos(angle_tip_in - r_angle_offset), head_in_radius * math.sin(angle_tip_in - r_angle_offset))
+        print("Head_out_width: {}".format(head_out_width))
+        print("Head_in_width: {}".format(head_in_width))
+        print("Width outer: {}".format(width_outer))
+        print("Width inner: {}".format(width_inner))
 
-        # construct the path for the outer arrow using the above points and angles
-        start_outer_arc = theta1 + math.degrees(f_angle_offset)
-        end_inner_arc = theta2 - math.degrees(f_angle_offset)
+        # arrowtip_out_xy = (radius * math.cos(angle_tip_out), radius * math.sin(angle_tip_out))
+        # arrowtip_in_xy = (radius * math.cos(angle_tip_in), radius * math.sin(angle_tip_in))
+        # head_out_xy = (head_out_radius * math.cos(angle_tip_out + f_angle_offset), head_out_radius * math.sin(angle_tip_out + f_angle_offset))
+        # head_in_xy = (head_in_radius * math.cos(angle_tip_in - r_angle_offset), head_in_radius * math.sin(angle_tip_in - r_angle_offset))
+
+        head_out_in_xy, arrowtip_out_xy, head_out_out_xy = get_isosceles_arrowhead(radius, angle_tip_out,
+                                                                  angle_tip_out + f_angle_offset, head_out_width)
+        head_in_in_xy, arrowtip_in_xy, head_in_out_xy = get_isosceles_arrowhead(radius, angle_tip_in,
+                                                                angle_tip_in - r_angle_offset, head_in_width)
+
+        int_outer, ix_pts_outer = get_intersect_segment_circle(head_out_in_xy, head_out_out_xy, tail_out_radius)
+        int_inner, ix_pts_inner = get_intersect_segment_circle(head_in_in_xy, head_in_out_xy, tail_in_radius)
+        if int_outer:
+            start_outer_arc = math.degrees(cart2pol(*ix_pts_outer[0])[1])
+        else:
+            start_outer_arc = theta1 + math.degrees(f_angle_offset)
+        if int_inner:
+            end_inner_arc = math.degrees(cart2pol(*ix_pts_inner[0])[1])
+        else:
+            end_inner_arc = theta2 - math.degrees(f_angle_offset)
+
         outer_arc = scale_arc(Path.arc(start_outer_arc, theta2), tail_out_radius)
         middle_arc = scale_arc(path_arc_cw(theta2, theta1), radius)
         inner_arc = scale_arc(Path.arc(theta1, end_inner_arc), tail_in_radius)
-        outer_arrowhead = join_points([arrowtip_out_xy, head_out_xy])
-        inner_arrowhead = join_points([head_in_xy, arrowtip_in_xy])
+        outer_arrowhead = join_points([head_out_out_xy])
+        inner_arrowhead = join_points([head_in_in_xy])
 
         outer_path = shift_path_by_vec(concatenate_paths([outer_arc, middle_arc, outer_arrowhead]), np.array(origin))
         inner_path = shift_path_by_vec(concatenate_paths([middle_arc, inner_arc, inner_arrowhead]), np.array(origin))
