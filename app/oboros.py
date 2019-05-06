@@ -49,8 +49,8 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
     is_outgoing = data['is_outgoing'][:data['num_steps']]
     gap = float(data['gap'])
     thickness = data['multiplier']
-    startrange *= data['multiplier']
-    stoprange *= data['multiplier']
+    startrange *= thickness
+    stoprange *= thickness
     scale_type = data['scale_type']
     f_format = data['f_format'].split('.')[1]
     swoop_width_scale = 1.0
@@ -118,9 +118,11 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
         if rev_rates[i] != 0:
             move_center_dist = widths_f[i] / 2
         arrowhead_angle = math.radians(theta2 - theta1) * rel_head_length
-        central_angle = math.radians(theta1 + theta2) / 2  + arrowhead_angle / 2  # shifted to be in center of tail
+        central_angle = math.radians(theta1 + theta2) / 2 + arrowhead_angle / 2  # shifted to be in center of tail
         swoop_width = widths_f[i] * swoop_width_scale  # may need to scale
-        swoop_radius = max(((radius - (num_segments * 0.25) - (gap * 0.015) - (thickness * 0.1) - 0.5), 0.18)) * swoop_radius_scale
+        min_inner_rad = 0.1
+        swoop_radius = max([(radius - (num_segments * 0.25) - (gap * 0.015) - (thickness * 0.1) - 0.5) * swoop_radius_scale,
+                             (swoop_width / 2 + min_inner_rad), (swoop_width / 2 + min_inner_rad) * swoop_radius_scale])
         log.debug("Cycle Swoop Radius: {}".format(swoop_radius))
         swoop_sweep_angle = 180 * swoop_sweep_scale
         swoop_head_len = 0.3 / swoop_sweep_scale * swoop_head_length_scaler
@@ -195,8 +197,9 @@ def draw_straight(data, startrange=0.15, stoprange=0.85, f_format='svg', figsize
     rcolour = data['r_color_straight']
     is_incoming = data['incoming_straight']
     is_outgoing = data['outgoing_straight']
-    startrange *= data['multiplier']
-    stoprange *= data['multiplier']
+    thickness = data['multiplier']
+    startrange *= thickness
+    stoprange *= thickness
     scale_type = data['scale_type']
     f_format = data['f_format'].split('.')[1]
     swoop_width_scale = 1.0
@@ -260,7 +263,9 @@ def draw_straight(data, startrange=0.15, stoprange=0.85, f_format='svg', figsize
     if rev_rate != 0:
         move_center_y = f_width / 2
     swoop_width = f_width * swoop_width_scale
-    swoop_radius = max(((radius - num_segments * 0.2 - (gap * 0.015) - 1), 0.2)) * swoop_radius_scale
+    min_inner_rad = 0.1
+    swoop_radius = max([(radius - (num_segments * 0.25) - (gap * 0.015) - (thickness * 0.1) - 0.5) * swoop_radius_scale,
+                        (swoop_width / 2 + min_inner_rad), (swoop_width / 2 + min_inner_rad) * swoop_radius_scale])
     log.debug("Straight Swoop Radius: {}".format(swoop_radius))
     swoop_sweep_angle = 180 * swoop_sweep_scale
     swoop_head_len = 0.3 / swoop_sweep_scale * swoop_head_length_scaler

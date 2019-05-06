@@ -31,7 +31,6 @@ def curved_arrow_single(theta1, theta2, radius, width, origin=(0,0), rel_head_wi
     head_in_point, arrowhead_point, head_out_point = get_isosceles_arrowhead(radius, math.radians(theta_tip),
                                                                              math.radians(theta_tip) + f_angle_offset,
                                                                              head_width)
-    print(head_in_point, head_out_point, tail_out_radius, tail_in_radius)
     int_outer, ix_pts_outer = get_intersect_segment_circle(head_in_point, head_out_point, tail_out_radius)
     int_inner, ix_pts_inner = get_intersect_segment_circle(head_in_point, head_out_point, tail_in_radius)
     if int_outer:
