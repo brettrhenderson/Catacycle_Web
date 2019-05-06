@@ -78,8 +78,12 @@ function add_colorpicker(id, auto_lighten, other_id) {
             ]
         })
         .on('change', function (e) {
+            col_lightness = e.color.api('lightness');
+            lighten = e.color.api('lighten', 0.5).api('lightness')
+            lighter = Math.max(col_lightness + 20, lighten)
+            new_lightness = Math.min(lighter, 90)
             $(other_id)
-            .colorpicker('setValue', e.color.api('lighten', '0.50').api('fade', '0.4').toHexString());
+            .colorpicker('setValue', e.color.api('lightness', new_lightness).toHexString());
              // .colorpicker('setValue', e.color.api('lighten', '0.50').api('fade', '0.4').api('desaturate', '0.0').toHexString());
         });
     }
