@@ -126,8 +126,6 @@ class RatesForm(FlaskForm):
                 'thickness': self.thickness.data,
                 'multiplier': float(self.thickness.data)/25.0,
                 'scale_type': self.scale_type.data,
-                'image_index': self.image_index.data,
-                'f_format': self.f_format.data
                 }
 
         for i in range(1, self.MAX_ROWS+1):
@@ -159,9 +157,7 @@ class RatesForm(FlaskForm):
                 'thickness': self.thickness.default,
                 'multiplier': float(self.thickness.default)/25.0,
                 'scale_type': self.scale_type.default,
-                'num_steps': 4,
-                'image_index': 0,
-                'f_format': 'svg'}
+                'num_steps': 4}
 
         for i in range(1, self.MAX_ROWS + 1):
             data['forward_rates'].append(getattr(self, 'f_rate{}'.format(i)).default)
