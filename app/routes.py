@@ -1,9 +1,11 @@
-from flask import render_template, request, jsonify, send_file, redirect, url_for
+from flask import render_template, request, jsonify, send_file, redirect, url_for, Response, make_response
 from werkzeug.utils import secure_filename
+from werkzeug.wsgi import FileWrapper
 from app.form import RatesForm, DownloadForm
 from app.oboros import draw, draw_straight
 from app import app
 import os
+
 import logging
 
 log = logging.getLogger(__name__)
@@ -46,7 +48,11 @@ def download():
             filename = secure_filename('straight.{}'.format(data['f_format']))
             img, mimetype = draw_straight(data, startrange=0.15, stoprange=0.65, f_format=data['f_format'], return_image=True)
         img.seek(0)
-        return send_file(img, mimetype=mimetype, attachment_filename=filename, as_attachment=True)
+        img = FileWrapper(img)
+        response = make_response(Response(img, mimetype=mimetype, direct_passthrough=True))
+        response.headers.set('Content-Disposition', 'attachment', filename=filename)
+        return response
+        #return send_file(img, mimetype=mimetype, attachment_filename=filename, as_attachment=True)
     else:
         log.debug("Not sending anything")
         return '', 204
