@@ -181,7 +181,7 @@ function addrow(rows) {
 
 function submitForm(csrf_token, form_url, response_handler) {
     var postData = $('#cycle-form').serialize();
-    // console.log(postData);
+    console.log(postData);
     var formURL = form_url;
 
     $.ajax(
@@ -214,7 +214,6 @@ function submitForm(csrf_token, form_url, response_handler) {
 }
 
 
-
 function submitHandler(csrf_token) {
     $('#cycle-form').submit(function(e)
     {
@@ -223,6 +222,57 @@ function submitHandler(csrf_token) {
             document.getElementById('graph').src = response.data[0];
             document.getElementById('straight-graph').src = response.data[1];
         });
+
+    });
+}
+
+function downloadHandler() {
+    var permanent = ['csrf_token', 'scale_type', 'gap', 'thickness', 'f_rate_straight', 'r_rate_straight', 'f_color_straight', 'r_color_straight'];
+    var cycleForm = $('#cycle-form').serializeArray();
+    for(let i = 0; i < cycleForm.length; i++){
+        if (permanent.includes(cycleForm[i].name)){
+            $('<input />').attr('type', 'hidden')
+            .attr('name', cycleForm[i].name)
+            .attr('value', cycleForm[i].value)
+            .appendTo('#download-form');
+        }
+    }
+    $('<input />').attr('type', 'hidden')
+        .attr('name', "image_index")
+        .attr('value', $('#imageCarousel .active').index())
+        .appendTo('#download-form');
+
+    $('#fake-submit').on("click", function(e)
+    {
+        var cycleForm = $('#cycle-form').serializeArray();
+
+        // create the changing fields
+        for(let i = 0; i < cycleForm.length; i++){
+            if (!permanent.includes(cycleForm[i].name)) {
+                $('<input />').attr('type', 'hidden')
+                .attr('name', cycleForm[i].name)
+                .attr('value', cycleForm[i].value)
+                .appendTo('#download-form');
+            }
+        }
+
+        for(let i = 0; i < cycleForm.length; i++){
+            console.log(1, cycleForm[i].name, cycleForm[i].value, $("#download-form input[name=" + cycleForm[i].name + "]").val());
+            $("#download-form input[name=" + cycleForm[i].name + "]").val(cycleForm[i].value);
+            console.log(2, cycleForm[i].name, cycleForm[i].value, $("#download-form input[name=" + cycleForm[i].name + "]").val());
+        }
+        console.log($("#download-form input[name=image_index]").val());
+        $("#download-form input[name=image_index]").val($('#imageCarousel .active').index());
+        console.log($("#download-form input[name=image_index]").val());
+        console.log($('#download-form')[0]);
+        $("#download-form")[0].submit();
+
+        // remove the changing fields
+        for(let i = 0; i < cycleForm.length; i++){
+            if (!permanent.includes(cycleForm[i].name)) {
+                $("#download-form input[name=" + cycleForm[i].name + "]").remove();
+            }
+        }
 
     });
 }

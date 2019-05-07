@@ -83,9 +83,6 @@ class RatesForm(FlaskForm):
     r_color9 = StringField('r_color9', default='#000000')
     r_color10 = StringField('r_color10', default='#000000')
 
-    # File Format Tab
-    f_format = StringField('f_format', default='.svg')
-
     # Outside Reactions (straight arrows) tab
     f_rate_straight = FloatField('f_rate_straight', validators=[DataRequired()], default=1.0)
     r_rate_straight = FloatField('r_rate_straight', default=0.0)
@@ -129,7 +126,7 @@ class RatesForm(FlaskForm):
                 'thickness': self.thickness.data,
                 'multiplier': float(self.thickness.data)/25.0,
                 'scale_type': self.scale_type.data,
-                'f_format': self.f_format.data}
+                }
 
         for i in range(1, self.MAX_ROWS+1):
             data['forward_rates'].append(getattr(self, 'f_rate{}'.format(i)).data)
@@ -160,8 +157,7 @@ class RatesForm(FlaskForm):
                 'thickness': self.thickness.default,
                 'multiplier': float(self.thickness.default)/25.0,
                 'scale_type': self.scale_type.default,
-                'num_steps': 4,
-                'f_format': '.svg'}
+                'num_steps': 4}
 
         for i in range(1, self.MAX_ROWS + 1):
             data['forward_rates'].append(getattr(self, 'f_rate{}'.format(i)).default)
@@ -175,4 +171,17 @@ class RatesForm(FlaskForm):
         for i in range(0, 4):
             data['forward_rates'][i] = 1.0
 
+        return data
+
+
+class DownloadForm(RatesForm):
+
+    # File Format Tab
+    f_format = StringField('f_format', default='.svg')
+    image_index = IntegerField('image_index', default=0)
+
+    def draw_data(self):
+        data = super().draw_data()
+        data['f_format'] = self.f_format.data
+        data['image_index'] = self.image_index.data
         return data
