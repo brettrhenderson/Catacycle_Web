@@ -137,9 +137,13 @@ function addrow(rows) {
             ccols += '<td>' + counter + '</td>';
             var prefixes = ['f', 'r']
             for (prefix in prefixes) {
+                cval = "#000000"
+                if (prefixes[prefix] == 'r') {
+                    cval = "#333333"
+                }
                 ccols += `<td>
                              <div id="${prefixes[prefix]}_color-picker-component${counter}" class="input-group colorpicker-component">
-                                 <input id="${prefixes[prefix]}_color${counter}" name="${prefixes[prefix]}_color${counter}" type="text" value="#000000" class="form-control color"/>
+                                 <input id="${prefixes[prefix]}_color${counter}" name="${prefixes[prefix]}_color${counter}" type="text" value=${cval} class="form-control color"/>
                                  <span class="input-group-append">
                                      <span class="input-group-text colorpicker-input-addon"><i></i></span>
                                  </span>
