@@ -14,7 +14,7 @@ class RatesForm(FlaskForm):
     scale_type = StringField('scale_type', default="Preserve Multiples")
 
     # Step Rates tab
-    f_rate1 = FloatField('f_rate1', validators=[DataRequired()], default=1.0)
+    f_rate1 = FloatField('f_rate1', validators=[DataRequired()], default=3.0)
     f_rate2 = FloatField('f_rate2', default=0.0)
     f_rate3 = FloatField('f_rate3', default=0.0)
     f_rate4 = FloatField('f_rate4', default=0.0)
@@ -84,7 +84,7 @@ class RatesForm(FlaskForm):
     r_color10 = StringField('r_color10', default='#000000')
 
     # Outside Reactions (straight arrows) tab
-    f_rate_straight = FloatField('f_rate_straight', validators=[DataRequired()], default=1.0)
+    f_rate_straight = FloatField('f_rate_straight', validators=[DataRequired()], default=3.0)
     r_rate_straight = FloatField('r_rate_straight', default=0.0)
     incoming_straight = BooleanField('incoming_straight', default=False)
     outgoing_straight = BooleanField('outgoing_straight', default=False)
@@ -169,7 +169,7 @@ class RatesForm(FlaskForm):
 
         # have four arrows displayed by default
         for i in range(0, 4):
-            data['forward_rates'][i] = 1.0
+            data['forward_rates'][i] = 3.0
 
         return data
 
