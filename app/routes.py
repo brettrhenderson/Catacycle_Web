@@ -1,7 +1,9 @@
 from flask import render_template, request, jsonify, send_file, redirect, url_for
-from app.form import RatesForm
+from werkzeug.utils import secure_filename
+from app.form import RatesForm, DownloadForm
 from app.oboros import draw, draw_straight
 from app import app
+import os
 import logging
 
 log = logging.getLogger(__name__)
@@ -18,14 +20,8 @@ def graphs():
     if request.method == 'POST' and form.validate():
         data = form.draw_data()
         log.debug(data)
-        #log.debug('gap: {}'.format(data['gap']))
-        #log.debug('scale type: {}'.format(data['scale_type']))
-        #log.debug('thickness: {}'.format(data['thickness']))
         return jsonify(data=[draw(data, startrange=0.15, stoprange=0.65,), draw_straight(data, startrange=0.15, stoprange=0.65,)])
 
-    # log.debug('gap: {}'.format(data['gap']))
-    # log.debug('scale type: {}'.format(data['scale_type']))
-    # log.debug('thickness: {}'.format(data['thickness']))
     log.debug(data)
     return render_template('graphs.html',
                            graph1=draw(data, startrange=0.15, stoprange=0.65,),
@@ -33,3 +29,24 @@ def graphs():
                            rows=data['num_steps'],
                            form=form,
                            form_values=data)
+
+
+@app.route('/download', methods=['GET', 'POST'])
+def download():
+
+    d_form = RatesForm(request.form)
+
+    if request.method == 'POST' and d_form.validate():
+        data = d_form.draw_data()
+        log.debug(data)
+        if data['image_index'] == 0:
+            filename = secure_filename('cycle.{}'.format(data['f_format']))
+            img, mimetype = draw(data, startrange=0.15, stoprange=0.65, f_format=data['f_format'], return_image=True)
+        else:
+            filename = secure_filename('straight.{}'.format(data['f_format']))
+            img, mimetype = draw_straight(data, startrange=0.15, stoprange=0.65, f_format=data['f_format'], return_image=True)
+        img.seek(0)
+        return send_file(img, mimetype=mimetype, attachment_filename=filename, as_attachment=True)
+    else:
+        log.debug("Not sending anything")
+        return '', 204

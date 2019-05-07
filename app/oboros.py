@@ -32,7 +32,7 @@ radius = 3.0
 ######################################
 # 1. For Drawing Cycle (Curved Arrows)
 ######################################
-def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8, 8)):
+def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8, 8), return_image=False):
 
     # keep track of all paths to set the bounds of the canvas
     paths = []
@@ -52,7 +52,6 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
     startrange *= thickness
     stoprange *= thickness
     scale_type = data['scale_type']
-    f_format = data['f_format'].split('.')[1]
     swoop_width_scale = 1.0
     swoop_radius_scale = 1.5
     swoop_sweep_scale = 1.0
@@ -162,22 +161,30 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
         mimetype = 'image/svg+xml'
     elif f_format == 'png':
         mimetype = 'image/png'
+    elif f_format == 'jpg':
+        mimetype = 'image/jpg'
+    elif f_format == 'pdf':
+        mimetype = 'application/pdf'
+    elif f_format == 'eps':
+        mimetype = 'application/postscript'
     else:
         raise ValueError('Image format {} not supported.'.format(format))
 
     plt.savefig(img, format=f_format, transparent=True)
     plt.close()
     img.seek(0)
-    graph_url = base64.b64encode(img.getvalue()).decode()
-
-    return 'data:{};base64,{}'.format(mimetype, graph_url)
+    if not return_image:
+        graph_url = base64.b64encode(img.getvalue()).decode()
+        return 'data:{};base64,{}'.format(mimetype, graph_url)
+    else:
+        return img, mimetype
 
 
 ###################################################
 # 2. For Drawing Straight Arrows for Side Reactions
 ###################################################
 
-def draw_straight(data, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8, 8)):
+def draw_straight(data, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8, 8), return_image=False):
 
     # keep track of all paths to set the bounds of the canvas
     paths = []
@@ -201,7 +208,6 @@ def draw_straight(data, startrange=0.15, stoprange=0.85, f_format='svg', figsize
     startrange *= thickness
     stoprange *= thickness
     scale_type = data['scale_type']
-    f_format = data['f_format'].split('.')[1]
     swoop_width_scale = 1.0
     swoop_radius_scale = 1.5
     swoop_sweep_scale = 1.0
@@ -306,6 +312,12 @@ def draw_straight(data, startrange=0.15, stoprange=0.85, f_format='svg', figsize
         mimetype = 'image/svg+xml'
     elif f_format == 'png':
         mimetype = 'image/png'
+    elif f_format == 'jpg':
+        mimetype = 'image/jpg'
+    elif f_format == 'pdf':
+        mimetype = 'application/pdf'
+    elif f_format == 'eps':
+        mimetype = 'application/postscript'
     else:
         raise ValueError('Image format {} not supported.'.format(format))
 
@@ -313,9 +325,11 @@ def draw_straight(data, startrange=0.15, stoprange=0.85, f_format='svg', figsize
     plt.savefig(img, format=f_format, transparent=True)
     plt.close()
     img.seek(0)
-    graph_url = base64.b64encode(img.getvalue()).decode()
-
-    return 'data:{};base64,{}'.format(mimetype, graph_url)
+    if not return_image:
+        graph_url = base64.b64encode(img.getvalue()).decode()
+        return 'data:{};base64,{}'.format(mimetype, graph_url)
+    else:
+        return img, mimetype
 
 
 ########################################################################################################

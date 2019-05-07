@@ -17,6 +17,7 @@
     $(document).ready(addrow({{ rows|tojson }}));
     $(document).ready(clear());
     $(document).ready(submitHandler("{{ form.csrf_token._value() }}"));
+    $(document).ready(downloadHandler());
 </script>
 <script>
     // link tabs to correct carousel images
@@ -46,11 +47,11 @@
     <div class="container pb-2 mt-4 mb-2 border-bottom">
         <h1>Catalytic Cycle Generator</h1>
     </div>
-    <div class="container-fluid">
+    <div class="container-fluid" >
         <div class="row d-flex">
             <!--<div class="col-md-1 col-lg-1"></div>-->
-            <div class="col-md-6 col-lg-6 d-flex flex-column align-items-center justify-content-center max-vw-100" style="overflow: auto;">
-                <form id="cycle-form"  style="width: 90%;" action="" method="post" nonvalidate>
+            <div class="col-md-6 col-lg-6 d-flex flex-column align-items-center justify-content-center max-vw-50" style="overflow: auto;">
+                <form id="cycle-form" style="width: 90%;" action="" method="post" nonvalidate>
                     {{ form.hidden_tag() }}
                     <div class="card">
                         <div class="card-header">
@@ -63,9 +64,6 @@
                                 </li>
                                 <li class="nav-item">
                                     <a id="arrowslink" class="nav-link" data-toggle="tab" href="#arrowsstyle">Styling</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#fileformat">File Format</a>
                                 </li>
                                 <li class="nav-item">
                                     <a id="outsiderxnlink" class="nav-link" data-toggle="tab" href="#outsiderxns">Side Reactions</a>
@@ -214,18 +212,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="tab-pane" id="fileformat">
-                                    <div class="form-group form-row">
-                                        <label class="col-sm-2 col-form-label" for="f_format">Image Format:</label>
-                                        <div class="col-sm-4">
-                                            <select class="form-control" id="f_format" name="f_format">
-                                                <option selected>.svg</option>
-                                                <option>.png</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-sm-6"></div>
-                                    </div>
-                                </div>
                                 <div class="tab-pane" id="outsiderxns">
                                     <div class="form-row">
                                         <div class="form-group col">
@@ -284,7 +270,7 @@
                     </div>
                 </form>
             </div>
-            <div class="col-md-6 col-lg-6 d-flex flex-column align-items-center justify-content-start max-vw-100">
+            <div class="col-md-6 col-lg-6 d-flex flex-column align-items-center justify-content-start max-vw-50">
                 <div id="imageCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
                      <ol class="carousel-indicators">
                           <li data-target="#imageCarousel" data-slide-to="0" class="active"></li>
@@ -307,19 +293,24 @@
                           <span class="sr-only">Next</span>
                      </a>
                 </div>
-                <form id="download-form"  style="width: 90%;" action="" method="post" nonvalidate>
+                <form id="download-form"  style="width: 100%;" action="/download" method="post" nonvalidate>
                     <div class="form-group row">
-                        <label class="col-form-label col-sm-4" for="dloadFormat">File Type</label>
-                        <select id="dloadFormat" class="col-sm-3">
-                            <option value="svg" selected>SVG</option>
-                            <option value="png">PNG</option>
-                            <option value="jpg">JPG</option>
-                            <option value="eps">EPS</option>
-                            <option value="pdf">PDF</option>
-                        </select>
-                        <input type="submit" class="form-control btn btn-primary" value="Download">
+                        <div class="col-sm-4"></div>
+                        <div class="col-sm-2">
+                            <select id="dloadFormat" class="form-control" name="f_format">
+                                <option value="svg" selected>SVG</option>
+                                <option value="png">PNG</option>
+                                <option value="eps">EPS</option>
+                                <option value="pdf">PDF</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2">
+                            <button id="fake-submit" type="button" class="form-control btn btn-primary">
+                                <i class="fa fa-lg fa-download"></i>
+                            </button>
+                        </div>
+                        <div class="col-sm-4"></div>
                     </div>
-
                 </form>
             </div>
         </div>
