@@ -91,9 +91,6 @@ class RatesForm(FlaskForm):
     f_color_straight = StringField('f_color_straight', default='#000000')
     r_color_straight = StringField('r_color_straight', default='#333333')
 
-    image_index = IntegerField('image_index', default=0)
-    f_format = StringField('f_format', default='svg')
-
     # Submit
     submit = SubmitField('Graph')
 

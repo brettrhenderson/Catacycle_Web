@@ -34,7 +34,7 @@ def graphs():
 @app.route('/download', methods=['GET', 'POST'])
 def download():
 
-    d_form = RatesForm(request.form)
+    d_form = DownloadForm(request.form)
 
     if request.method == 'POST' and d_form.validate():
         data = d_form.draw_data()
