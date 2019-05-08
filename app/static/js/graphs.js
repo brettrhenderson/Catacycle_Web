@@ -81,7 +81,7 @@ function add_colorpicker(id, auto_lighten, other_id) {
         .on('change', function (e) {
             col_lightness = e.color.api('lightness');
             lighten = e.color.api('lighten', 0.5).api('lightness')
-            lighter = Math.max(col_lightness + 20, lighten)
+            lighter = Math.max(col_lightness + 25, lighten)
             new_lightness = Math.min(lighter, 90)
             $(other_id)
             .colorpicker('setValue', e.color.api('lightness', new_lightness).toHexString());
@@ -140,7 +140,7 @@ function addrow(rows) {
             for (prefix in prefixes) {
                 cval = "#000000"
                 if (prefixes[prefix] == 'r') {
-                    cval = "#333333"
+                    cval = "#404040"
                 }
                 ccols += `<td>
                              <div id="${prefixes[prefix]}_color-picker-component${counter}" class="input-group colorpicker-component">
