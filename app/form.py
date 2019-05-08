@@ -89,7 +89,7 @@ class RatesForm(FlaskForm):
     incoming_straight = BooleanField('incoming_straight', default=False)
     outgoing_straight = BooleanField('outgoing_straight', default=False)
     f_color_straight = StringField('f_color_straight', default='#000000')
-    r_color_straight = StringField('r_color_straight', default='#333333')
+    r_color_straight = StringField('r_color_straight', default='#404040')
 
     # Submit
     submit = SubmitField('Graph')
