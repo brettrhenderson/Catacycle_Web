@@ -46,11 +46,9 @@ function clear() {
 
     $("#clearcolors").on("click", function (event) {
         // $('.color').val('#000000')
-        var prefixes = ['f', 'r', 'incoming'];
-        for (prefix in prefixes) {
-            for (i = 1; i < counter; i++) {
-                $('#' + prefixes[prefix] + '_color-picker-component' + i).colorpicker('setValue', '#000000')
-            }
+        for (i = 1; i < counter; i++) {
+            $('#f_color-picker-component' + i).colorpicker('setValue', '#000000')
+            $('#r_color-picker-component' + i).colorpicker('setValue', '#404040')
         }
     });
 }

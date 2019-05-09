@@ -1,0 +1,518 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="49.989002mm"
+   height="30.028mm"
+   viewBox="0 0 49.989004 30.028"
+   version="1.1"
+   id="svg4850"
+   inkscape:version="0.92.4 (33fec40, 2019-01-16)"
+   sodipodi:docname="swoop_thickness_small.svg">
+  <defs
+     id="defs4844"
+     style="stroke-linecap:butt;stroke-linejoin:round">
+    <style
+       type="text/css"
+       id="style3792">
+*{stroke-linecap:butt;stroke-linejoin:round;}
+  </style>
+    <clipPath
+       style="stroke-linecap:butt;stroke-linejoin:round"
+       id="pde93cf82e2">
+      <rect
+         style="stroke-linecap:butt;stroke-linejoin:round"
+         height="443.51999"
+         width="446.39999"
+         x="72"
+         y="69.120003"
+         id="rect3822" />
+    </clipPath>
+    <clipPath
+       style="stroke-linecap:butt;stroke-linejoin:round"
+       id="clipPath3858"
+       clipPathUnits="userSpaceOnUse">
+      <rect
+         transform="rotate(15.999998)"
+         y="15.316932"
+         x="208.90549"
+         height="133.92857"
+         width="310.71423"
+         id="rect3860"
+         style="stroke-width:0.93749994;stroke-linecap:butt;stroke-linejoin:round" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath4908"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         style="stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:round"
+         id="rect4910"
+         width="205.61905"
+         height="111.125"
+         x="75.595238"
+         y="173.02379" />
+    </clipPath>
+    <style
+       id="style4978"
+       type="text/css">
+*{stroke-linecap:butt;stroke-linejoin:round;}
+  </style>
+    <clipPath
+       id="p8740b71b66"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         id="rect4990"
+         y="247.76862"
+         x="72"
+         width="446.39999"
+         height="86.222755"
+         style="stroke-linecap:butt;stroke-linejoin:round" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath5012"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         style="stroke-width:0.62425077;stroke-linecap:butt;stroke-linejoin:round"
+         id="rect5014"
+         width="140.87679"
+         height="85.09816"
+         x="380.43878"
+         y="220.59006" />
+    </clipPath>
+    <style
+       id="style5076"
+       type="text/css">
+*{stroke-linecap:butt;stroke-linejoin:round;}
+  </style>
+    <clipPath
+       id="p611e2c59fd"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         id="rect5088"
+         y="204.16171"
+         x="72"
+         width="446.39999"
+         height="173.43658"
+         style="stroke-linecap:butt;stroke-linejoin:round" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath5112"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         style="stroke-width:0.49898684;stroke-linecap:butt;stroke-linejoin:round"
+         id="rect5114"
+         width="141.92549"
+         height="107.30951"
+         x="373.85251"
+         y="212.53227" />
+    </clipPath>
+    <style
+       id="style5176"
+       type="text/css">
+*{stroke-linecap:butt;stroke-linejoin:round;}
+  </style>
+    <clipPath
+       id="p7288243ab2"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         id="rect5200"
+         y="69.120003"
+         x="106.56291"
+         width="377.27417"
+         height="443.51999"
+         style="stroke-linecap:butt;stroke-linejoin:round" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath5230"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         style="stroke-width:0.7532571;stroke-linecap:butt;stroke-linejoin:round"
+         id="rect5232"
+         width="290.77417"
+         height="180.86845"
+         x="269.13925"
+         y="67.145187" />
+    </clipPath>
+    <style
+       id="style5253"
+       type="text/css">
+*{stroke-linecap:butt;stroke-linejoin:round;}
+  </style>
+    <clipPath
+       id="p48ebc2c273"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         id="rect5277"
+         y="69.120003"
+         x="99.071465"
+         width="392.25708"
+         height="443.51999"
+         style="stroke-linecap:butt;stroke-linejoin:round" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath5307"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         style="stroke-width:0.74402177;stroke-linecap:butt;stroke-linejoin:round"
+         id="rect5309"
+         width="293.37033"
+         height="184.33006"
+         x="264.81216"
+         y="69.741379" />
+    </clipPath>
+    <style
+       id="style3792-6"
+       type="text/css">
+*{stroke-linecap:butt;stroke-linejoin:round;}
+  </style>
+    <clipPath
+       id="pde93cf82e2-1"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         id="rect3822-8"
+         y="69.120003"
+         x="72"
+         width="446.39999"
+         height="443.51999"
+         style="stroke-linecap:butt;stroke-linejoin:round" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath3858-7"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         style="stroke-width:0.93749994;stroke-linecap:butt;stroke-linejoin:round"
+         id="rect3860-9"
+         width="310.71423"
+         height="133.92857"
+         x="208.90549"
+         y="15.316932"
+         transform="rotate(15.999998)" />
+    </clipPath>
+    <clipPath
+       style="stroke-linecap:butt;stroke-linejoin:round"
+       id="clipPath4908-2"
+       clipPathUnits="userSpaceOnUse">
+      <rect
+         y="173.02379"
+         x="75.595238"
+         height="111.125"
+         width="205.61905"
+         id="rect4910-0"
+         style="stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:round" />
+    </clipPath>
+    <style
+       type="text/css"
+       id="style4978-2">
+*{stroke-linecap:butt;stroke-linejoin:round;}
+  </style>
+    <clipPath
+       style="stroke-linecap:butt;stroke-linejoin:round"
+       id="p8740b71b66-3">
+      <rect
+         style="stroke-linecap:butt;stroke-linejoin:round"
+         height="86.222755"
+         width="446.39999"
+         x="72"
+         y="247.76862"
+         id="rect4990-7" />
+    </clipPath>
+    <clipPath
+       style="stroke-linecap:butt;stroke-linejoin:round"
+       id="clipPath5012-5"
+       clipPathUnits="userSpaceOnUse">
+      <rect
+         y="220.59006"
+         x="380.43878"
+         height="85.09816"
+         width="140.87679"
+         id="rect5014-9"
+         style="stroke-width:0.62425077;stroke-linecap:butt;stroke-linejoin:round" />
+    </clipPath>
+    <style
+       type="text/css"
+       id="style5076-2">
+*{stroke-linecap:butt;stroke-linejoin:round;}
+  </style>
+    <clipPath
+       style="stroke-linecap:butt;stroke-linejoin:round"
+       id="p611e2c59fd-2">
+      <rect
+         style="stroke-linecap:butt;stroke-linejoin:round"
+         height="173.43658"
+         width="446.39999"
+         x="72"
+         y="204.16171"
+         id="rect5088-8" />
+    </clipPath>
+    <clipPath
+       style="stroke-linecap:butt;stroke-linejoin:round"
+       id="clipPath5112-9"
+       clipPathUnits="userSpaceOnUse">
+      <rect
+         y="212.53227"
+         x="373.85251"
+         height="107.30951"
+         width="141.92549"
+         id="rect5114-7"
+         style="stroke-width:0.49898684;stroke-linecap:butt;stroke-linejoin:round" />
+    </clipPath>
+    <style
+       type="text/css"
+       id="style5176-3">
+*{stroke-linecap:butt;stroke-linejoin:round;}
+  </style>
+    <clipPath
+       style="stroke-linecap:butt;stroke-linejoin:round"
+       id="p7288243ab2-6">
+      <rect
+         style="stroke-linecap:butt;stroke-linejoin:round"
+         height="443.51999"
+         width="377.27417"
+         x="106.56291"
+         y="69.120003"
+         id="rect5200-1" />
+    </clipPath>
+    <clipPath
+       style="stroke-linecap:butt;stroke-linejoin:round"
+       id="clipPath5230-2"
+       clipPathUnits="userSpaceOnUse">
+      <rect
+         y="67.145187"
+         x="269.13925"
+         height="180.86845"
+         width="290.77417"
+         id="rect5232-9"
+         style="stroke-width:0.7532571;stroke-linecap:butt;stroke-linejoin:round" />
+    </clipPath>
+    <style
+       id="style5408"
+       type="text/css">
+*{stroke-linecap:butt;stroke-linejoin:round;}
+  </style>
+    <clipPath
+       id="pc65883765a"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         id="rect5432"
+         y="69.120003"
+         x="81.358597"
+         width="427.6828"
+         height="443.51999"
+         style="stroke-linecap:butt;stroke-linejoin:round" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath5462"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         style="stroke-width:0.71546298;stroke-linecap:butt;stroke-linejoin:round"
+         id="rect5464"
+         width="282.46393"
+         height="170.3342"
+         x="258.75436"
+         y="74.217758" />
+    </clipPath>
+    <style
+       id="style5485"
+       type="text/css">
+*{stroke-linecap:butt;stroke-linejoin:round;}
+  </style>
+    <clipPath
+       id="pe482df4e8b"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         id="rect5509"
+         y="69.120003"
+         x="98.584946"
+         width="393.2301"
+         height="443.51999"
+         style="stroke-linecap:butt;stroke-linejoin:round" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath5539"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         style="stroke-width:0.78968889;stroke-linecap:butt;stroke-linejoin:round"
+         id="rect5541"
+         width="291.34204"
+         height="177.89798"
+         x="264.63422"
+         y="73.755272" />
+    </clipPath>
+    <style
+       id="style5562"
+       type="text/css">
+*{stroke-linecap:butt;stroke-linejoin:round;}
+  </style>
+    <clipPath
+       id="pc75266af80"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         id="rect5586"
+         y="95.494255"
+         x="72"
+         width="446.39999"
+         height="390.77148"
+         style="stroke-linecap:butt;stroke-linejoin:round" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath5616"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         style="stroke-width:0.65994;stroke-linecap:butt;stroke-linejoin:round"
+         id="rect5618"
+         width="260.39612"
+         height="154.90649"
+         x="265.79251"
+         y="95.494255" />
+    </clipPath>
+    <style
+       id="style5717"
+       type="text/css">
+*{stroke-linecap:butt;stroke-linejoin:round;}
+  </style>
+    <clipPath
+       id="p32c778e5e8"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         id="rect5741"
+         y="69.120003"
+         x="86.751312"
+         width="416.89737"
+         height="443.51999"
+         style="stroke-linecap:butt;stroke-linejoin:round" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath5771"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         style="stroke-width:0.74587637;stroke-linecap:butt;stroke-linejoin:round"
+         id="rect5773"
+         width="292.50494"
+         height="178.27226"
+         x="263.7688"
+         y="72.515556" />
+    </clipPath>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.86665192"
+     inkscape:cx="272.25487"
+     inkscape:cy="-52.910603"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1052"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4847">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-86.132902,15.765884)">
+    <g
+       id="figure_1"
+       style="stroke-linecap:butt;stroke-linejoin:round"
+       transform="matrix(0.17089968,0,0,0.16843899,41.054899,-27.980331)"
+       clip-path="url(#clipPath5771)">
+      <g
+         id="patch_1"
+         style="stroke-linecap:butt;stroke-linejoin:round">
+        <path
+           id="path5721"
+           style="fill:none;stroke-linecap:butt;stroke-linejoin:round"
+           d="M 0,576 H 576 V 0 H 0 Z"
+           inkscape:connector-curvature="0" />
+      </g>
+      <g
+         id="axes_1"
+         style="stroke-linecap:butt;stroke-linejoin:round">
+        <g
+           id="patch_2"
+           style="stroke-linecap:butt;stroke-linejoin:round">
+          <path
+             id="path5724"
+             style="stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter"
+             d="m 433.52943,230.54813 c -8.51909,-23.18665 -22.73279,-43.86346 -41.32955,-60.12249 -18.59676,-16.25903 -40.98643,-27.58432 -65.10303,-32.93084 l -2.05786,9.28242 c 22.45705,4.9786 43.31503,15.49935 60.66648,30.6001 17.35145,15.10075 30.6508,34.30671 38.68181,55.86149 l -4.54952,1.339 14.59844,15.92648 3.64346,-21.29537 z"
+             clip-path="url(#p32c778e5e8)"
+             inkscape:connector-curvature="0" />
+        </g>
+        <g
+           id="patch_3"
+           style="stroke-linecap:butt;stroke-linejoin:round">
+          <path
+             id="path5727"
+             style="stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter"
+             d="m 485.28383,175.5818 c -14.11385,11.11879 -31.76413,16.80332 -49.71408,16.01116 -17.94994,-0.79216 -35.03085,-8.00944 -48.11035,-20.32831 -13.0795,-12.31887 -21.30601,-28.93726 -23.17093,-46.80763 -1.86491,-17.87037 2.7532,-35.8292 13.00745,-50.583127 l 3.12293,2.170489 c -9.70676,13.966188 -14.09426,30.958908 -12.3622,47.878588 1.73205,16.91967 9.47154,32.67096 21.80673,44.38073 12.33518,11.70977 28.46751,18.61995 45.45435,19.47008 16.98684,0.85014 33.7285,-4.4148 47.17119,-14.83447 l -1.36563,-1.29116 17.7715,-13.26084 -12.2445,18.48644 z"
+             clip-path="url(#p32c778e5e8)"
+             inkscape:connector-curvature="0" />
+        </g>
+        <g
+           id="patch_4"
+           style="stroke-linecap:butt;stroke-linejoin:round">
+          <path
+             id="path5730"
+             style="stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter"
+             d="m 346.02409,419.70164 c 23.18664,-8.51908 43.86345,-22.73278 60.12248,-41.32954 16.25903,-18.59676 27.58432,-40.98643 32.93084,-65.10303 l -9.28241,-2.05786 c -4.97861,22.45704 -15.49935,43.31503 -30.60011,60.66648 -15.10075,17.35145 -34.30671,30.65079 -55.86148,38.68181 l -1.339,-4.54953 -15.92649,14.59845 21.29537,3.64346 z"
+             clip-path="url(#p32c778e5e8)"
+             inkscape:connector-curvature="0" />
+        </g>
+        <g
+           id="patch_5"
+           style="stroke-linecap:butt;stroke-linejoin:round">
+          <path
+             id="path5733"
+             style="stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter"
+             d="m 156.87057,332.1963 c 8.51909,23.18665 22.73279,43.86345 41.32955,60.12248 18.59676,16.25903 40.98643,27.58432 65.10303,32.93084 l 2.05786,-9.28241 c -22.45705,-4.97861 -43.31504,-15.49935 -60.66648,-30.6001 -17.35145,-15.10075 -30.6508,-34.30672 -38.68181,-55.86149 l 4.54952,-1.339 -14.59844,-15.92648 -3.64346,21.29537 z"
+             clip-path="url(#p32c778e5e8)"
+             inkscape:connector-curvature="0" />
+        </g>
+        <g
+           id="patch_6"
+           style="stroke-linecap:butt;stroke-linejoin:round">
+          <path
+             id="path5736"
+             style="stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter"
+             d="m 244.37591,143.04278 c -23.18665,8.51909 -43.86345,22.73279 -60.12248,41.32955 -16.25903,18.59676 -27.58432,40.98643 -32.93084,65.10303 l 9.28241,2.05786 c 4.97861,-22.45705 15.49935,-43.31503 30.60011,-60.66648 15.10075,-17.35145 34.30671,-30.6508 55.86148,-38.68181 l 1.339,4.54952 15.92649,-14.59844 -21.29537,-3.64346 z"
+             clip-path="url(#p32c778e5e8)"
+             inkscape:connector-curvature="0" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
