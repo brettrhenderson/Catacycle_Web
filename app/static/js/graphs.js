@@ -22,6 +22,13 @@ function slider_vals(input, output) {
 
 slider_vals("gap", "gapval")
 slider_vals("thickness", "thicknessval")
+slider_vals("headlength", "headlengthval")
+slider_vals("headwidth", "headwidthval")
+slider_vals("swoopwidth", "swoopwidthval")
+slider_vals("swoopradius", "swoopradiusval")
+slider_vals("swoopsweep", "swoopsweepval")
+slider_vals("swoopheadlength", "swoopheadlengthval")
+slider_vals("swooprotation", "swooprotationval")
 
 
 function link_click_to_carousel(id, carouselid, carousel_num) {

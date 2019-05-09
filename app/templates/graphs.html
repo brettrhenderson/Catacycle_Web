@@ -167,6 +167,7 @@
                                     </div>
                                 </div>
                                 <div class="tab-pane" id="arrowsstyle">
+                                    <p class="h4">General Settings</p>
                                     <div class="form-group">
                                         <label for="scale_type">Scaling:</label>
                                         <select class="form-control" id="scale_type" name="scale_type">
@@ -209,6 +210,133 @@
                                         </span>
                                         <div class="col-sm-2">
                                             <input class="form-control" type="text" id="thicknessval" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-row">
+                                        <label class="col-sm-2 col-form-label" for="headwidth">Arrowhead Width:</label>
+                                        <span class="col-sm-2">
+                                            <img src="{{url_for('.static', filename='images/Thickness_small.png')}}" alt="thin arrow"
+                                             srcset="{{url_for('.static', filename='images/Thickness_small.svg')}}" width="60" height="60">
+                                        </span>
+                                        <div class="pt-3 col-sm-4">
+                                            <input id="headwidth" name="rel_head_width" class="form-control-range slider" type="range" min="1.0"
+                                                   max="4.0" step="0.1" value="{{ form_values['rel_head_width'] }}">
+                                        </div>
+                                        <span class="col-sm-2">
+                                            <img src="{{url_for('.static', filename='images/Thickness_big.png')}}" alt="thick arrow"
+                                             srcset="{{url_for('.static', filename='images/Thickness_big.svg')}}" width="60" height="60">
+                                        </span>
+                                        <div class="col-sm-2">
+                                            <input class="form-control" type="text" id="headwidthval" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-row">
+                                        <label class="col-sm-2 col-form-label" for="headlength">Arrowhead Length:</label>
+                                        <span class="col-sm-2">
+                                            <img src="{{url_for('.static', filename='images/Thickness_small.png')}}" alt="thin arrow"
+                                             srcset="{{url_for('.static', filename='images/Thickness_small.svg')}}" width="60" height="60">
+                                        </span>
+                                        <div class="pt-3 col-sm-4">
+                                            <input id="headlength" name="rel_head_length_scaler" class="form-control-range slider" type="range" min="0.1"
+                                                   max="3.0" step="0.1" value="{{ form_values['rel_head_length_scaler'] }}">
+                                        </div>
+                                        <span class="col-sm-2">
+                                            <img src="{{url_for('.static', filename='images/Thickness_big.png')}}" alt="thick arrow"
+                                             srcset="{{url_for('.static', filename='images/Thickness_big.svg')}}" width="60" height="60">
+                                        </span>
+                                        <div class="col-sm-2">
+                                            <input class="form-control" type="text" id="headlengthval" readonly>
+                                        </div>
+                                    </div>
+                                    <p class="h4">Outside Reaction Arrows</p>
+                                    <div class="form-group form-row">
+                                        <label class="col-sm-2 col-form-label" for="swoopwidth">Thickness:</label>
+                                        <span class="col-sm-2">
+                                            <img src="{{url_for('.static', filename='images/Thickness_small.png')}}" alt="thin arrow"
+                                             srcset="{{url_for('.static', filename='images/Thickness_small.svg')}}" width="60" height="60">
+                                        </span>
+                                        <div class="pt-3 col-sm-4">
+                                            <input id="swoopwidth" name="swoop_width_scale" class="form-control-range slider" type="range" min="0.1"
+                                                   max="1" step="0.1" value="{{ form_values['swoop_width_scale'] }}">
+                                        </div>
+                                        <span class="col-sm-2">
+                                            <img src="{{url_for('.static', filename='images/Thickness_big.png')}}" alt="thick arrow"
+                                             srcset="{{url_for('.static', filename='images/Thickness_big.svg')}}" width="60" height="60">
+                                        </span>
+                                        <div class="col-sm-2">
+                                            <input class="form-control" type="text" id="swoopwidthval" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-row">
+                                        <label class="col-sm-2 col-form-label" for="swoopradius">Radius:</label>
+                                        <span class="col-sm-2">
+                                            <img src="{{url_for('.static', filename='images/Thickness_small.png')}}" alt="thin arrow"
+                                             srcset="{{url_for('.static', filename='images/Thickness_small.svg')}}" width="60" height="60">
+                                        </span>
+                                        <div class="pt-3 col-sm-4">
+                                            <input id="swoopradius" name="swoop_radius_scale" class="form-control-range slider" type="range" min="0.5"
+                                                   max="2.0" step="0.05" value="{{ form_values['swoop_radius_scale'] }}">
+                                        </div>
+                                        <span class="col-sm-2">
+                                            <img src="{{url_for('.static', filename='images/Thickness_big.png')}}" alt="thick arrow"
+                                             srcset="{{url_for('.static', filename='images/Thickness_big.svg')}}" width="60" height="60">
+                                        </span>
+                                        <div class="col-sm-2">
+                                            <input class="form-control" type="text" id="swoopradiusval" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-row">
+                                        <label class="col-sm-2 col-form-label" for="swoopsweep">Extent:</label>
+                                        <span class="col-sm-2">
+                                            <img src="{{url_for('.static', filename='images/Thickness_small.png')}}" alt="thin arrow"
+                                             srcset="{{url_for('.static', filename='images/Thickness_small.svg')}}" width="60" height="60">
+                                        </span>
+                                        <div class="pt-3 col-sm-4">
+                                            <input id="swoopsweep" name="swoop_sweep_scale" class="form-control-range slider" type="range" min="0.3"
+                                                   max="1.0" step=".01" value="{{ form_values['swoop_sweep_scale'] }}">
+                                        </div>
+                                        <span class="col-sm-2">
+                                            <img src="{{url_for('.static', filename='images/Thickness_big.png')}}" alt="thick arrow"
+                                             srcset="{{url_for('.static', filename='images/Thickness_big.svg')}}" width="60" height="60">
+                                        </span>
+                                        <div class="col-sm-2">
+                                            <input class="form-control" type="text" id="swoopsweepval" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-row">
+                                        <label class="col-sm-2 col-form-label" for="swoopheadlength">Arrowhead Length:</label>
+                                        <span class="col-sm-2">
+                                            <img src="{{url_for('.static', filename='images/Thickness_small.png')}}" alt="thin arrow"
+                                             srcset="{{url_for('.static', filename='images/Thickness_small.svg')}}" width="60" height="60">
+                                        </span>
+                                        <div class="pt-3 col-sm-4">
+                                            <input id="swoopheadlength" name="swoop_head_length_scaler" class="form-control-range slider" type="range" min="0.05"
+                                                   max="2.0" step="0.01" value="{{ form_values['swoop_head_length_scaler'] }}">
+                                        </div>
+                                        <span class="col-sm-2">
+                                            <img src="{{url_for('.static', filename='images/Thickness_big.png')}}" alt="thick arrow"
+                                             srcset="{{url_for('.static', filename='images/Thickness_big.svg')}}" width="60" height="60">
+                                        </span>
+                                        <div class="col-sm-2">
+                                            <input class="form-control" type="text" id="swoopheadlengthval" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-row">
+                                        <label class="col-sm-2 col-form-label" for="swooprotation">Rotation:</label>
+                                        <span class="col-sm-2">
+                                            <img src="{{url_for('.static', filename='images/Thickness_small.png')}}" alt="thin arrow"
+                                             srcset="{{url_for('.static', filename='images/Thickness_small.svg')}}" width="60" height="60">
+                                        </span>
+                                        <div class="pt-3 col-sm-4">
+                                            <input id="swooprotation" name="swoop_start_angle_shift_multiplier" class="form-control-range slider" type="range" min="0"
+                                                   max="0.5" step="0.01" value="{{ form_values['swoop_start_angle_shift_multiplier'] }}">
+                                        </div>
+                                        <span class="col-sm-2">
+                                            <img src="{{url_for('.static', filename='images/Thickness_big.png')}}" alt="thick arrow"
+                                             srcset="{{url_for('.static', filename='images/Thickness_big.svg')}}" width="60" height="60">
+                                        </span>
+                                        <div class="col-sm-2">
+                                            <input class="form-control" type="text" id="swooprotationval" readonly>
                                         </div>
                                     </div>
                                 </div>
