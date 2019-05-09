@@ -1,7 +1,5 @@
 # Ouroboros Chart
 # Cyclic reaction pathway figure generator - Rusty Shackleford 2018
-# Set up for a 8x8 inch figure
-# Still needs scale for real kinetic data. Transform to 0.1 to 1 for clean image.
 
 import matplotlib
 matplotlib.use('Agg')
@@ -16,7 +14,7 @@ import logging
 import app.drawing_helpers as dh
 
 log = logging.getLogger(__name__)
-#log.setLevel(logging.DEBUG)
+log.setLevel(logging.DEBUG)
 
 MAX_STEPS = 10
 
