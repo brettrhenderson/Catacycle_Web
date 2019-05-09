@@ -22,6 +22,13 @@ function slider_vals(input, output) {
 
 slider_vals("gap", "gapval")
 slider_vals("thickness", "thicknessval")
+slider_vals("headlength", "headlengthval")
+slider_vals("headwidth", "headwidthval")
+slider_vals("swoopwidth", "swoopwidthval")
+slider_vals("swoopradius", "swoopradiusval")
+slider_vals("swoopsweep", "swoopsweepval")
+slider_vals("swoopheadlength", "swoopheadlengthval")
+slider_vals("swooprotation", "swooprotationval")
 
 
 function link_click_to_carousel(id, carouselid, carousel_num) {
@@ -40,11 +47,9 @@ function clear() {
 
     $("#clearcolors").on("click", function (event) {
         // $('.color').val('#000000')
-        var prefixes = ['f', 'r', 'incoming'];
-        for (prefix in prefixes) {
-            for (i = 1; i < counter; i++) {
-                $('#' + prefixes[prefix] + '_color-picker-component' + i).colorpicker('setValue', '#000000')
-            }
+        for (i = 1; i < counter; i++) {
+            $('#f_color-picker-component' + i).colorpicker('setValue', '#000000')
+            $('#r_color-picker-component' + i).colorpicker('setValue', '#404040')
         }
     });
 }

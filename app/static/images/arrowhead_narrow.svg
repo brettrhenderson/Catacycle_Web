@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="43.062mm"
+   height="30.049mm"
+   viewBox="0 0 43.062 30.049"
+   version="1.1"
+   id="svg4468"
+   inkscape:version="0.92.4 (33fec40, 2019-01-16)"
+   sodipodi:docname="arrowhead_narrow.svg">
+  <defs
+     id="defs4462"
+     style="stroke-linecap:butt;stroke-linejoin:round">
+    <style
+       id="style71"
+       type="text/css">
+*{stroke-linecap:butt;stroke-linejoin:round;}
+  </style>
+    <clipPath
+       id="pf3f8cd5545"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         id="rect83"
+         y="245.03201"
+         x="72"
+         width="446.39999"
+         height="91.695969"
+         style="stroke-linecap:butt;stroke-linejoin:round" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath108"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         style="stroke-width:0.74999994;stroke-linecap:butt;stroke-linejoin:round"
+         id="rect110"
+         width="103.35773"
+         height="63.634426"
+         x="421.57227"
+         y="236.38245" />
+    </clipPath>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.35"
+     inkscape:cx="118.51986"
+     inkscape:cy="-43.214487"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1052"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4465">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-74.474953,-107.3505)">
+    <g
+       id="layer1-9"
+       inkscape:label="Layer 1"
+       style="stroke-linecap:butt;stroke-linejoin:round"
+       transform="translate(-6.3236963,6.0678526)">
+      <g
+         transform="matrix(1.1810003,0,0,1.3385564,-21.071902,-53.326984)"
+         style="stroke-linecap:butt;stroke-linejoin:round"
+         inkscape:label="Layer 1"
+         id="layer1-6">
+        <g
+           id="figure_1"
+           transform="matrix(0.35277778,0,0,0.35277778,-62.463474,32.114282)"
+           style="stroke-linecap:butt;stroke-linejoin:round"
+           clip-path="url(#clipPath108)">
+          <g
+             id="patch_1"
+             style="stroke-linecap:butt;stroke-linejoin:round">
+            <path
+               id="path75"
+               style="fill:none;stroke-linecap:butt;stroke-linejoin:round"
+               d="M 0,576 H 576 V 0 H 0 Z"
+               inkscape:connector-curvature="0" />
+          </g>
+          <g
+             id="axes_1"
+             style="stroke-linecap:butt;stroke-linejoin:round">
+            <g
+               id="patch_2"
+               style="stroke-linecap:butt;stroke-linejoin:round">
+              <path
+                 id="path78"
+                 style="stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter"
+                 d="M 456.9128,259.62001 H 82.419997 V 280.46 H 456.9128 v 4.168 l 51.0672,-14.58799 -51.0672,-14.588 z"
+                 clip-path="url(#pf3f8cd5545)"
+                 inkscape:connector-curvature="0" />
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

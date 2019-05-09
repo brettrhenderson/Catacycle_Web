@@ -16,7 +16,7 @@ import logging
 import app.drawing_helpers as dh
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+#log.setLevel(logging.DEBUG)
 
 MAX_STEPS = 10
 
@@ -52,17 +52,17 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
     startrange *= thickness
     stoprange *= thickness
     scale_type = data['scale_type']
-    swoop_width_scale = 1.0
-    swoop_radius_scale = 1.5
-    swoop_sweep_scale = 1.0
+    swoop_width_scale = try_fallback(data, 'swoop_width_scale', 1.0)
+    swoop_radius_scale = try_fallback(data, 'swoop_radius_scale', 1.0)
+    swoop_sweep_scale = try_fallback(data, 'swoop_sweep_scale', 1.0)
+    rel_head_width = try_fallback(data, 'rel_head_width', 2.0)
+    rel_head_length_scaler = try_fallback(data, 'rel_head_length_scaler', 1.0)
+    swoop_head_length_scaler = try_fallback(data, 'swoop_head_length_scaler', 1.0)
+    swoop_start_angle_shift_multiplier = try_fallback(data, 'swoop_start_angle_shift_multiplier', 0.0)
     edgecolor_f = fcolours   #'k' 'none'
     edgecolor_r = rcolours  # 'k' 'none'
-    edgecolor_swoops = ['none' for _ in range(len(fcolours))]
-    rel_head_width = 1.8
-    rel_head_length_scaler = 1.0
-    swoop_head_length_scaler = 1.0
-    swoop_start_angle_shift_multiplier = 0.1
-
+    #edgecolor_swoops = ['none' for _ in range(len(fcolours))]
+    edgecolor_swoops = fcolours
 
     # Call Sofia's Scaler function, convert rates to arrow size
     forward_rates, rev_rates, _ = scaler(forward_rates, rev_rates, startrange=startrange,
@@ -120,14 +120,14 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
         central_angle = math.radians(theta1 + theta2) / 2 + arrowhead_angle / 2  # shifted to be in center of tail
         swoop_width = widths_f[i] * swoop_width_scale  # may need to scale
         min_inner_rad = 0.1
-        swoop_radius = max([(radius - (num_segments * 0.25) - (gap * 0.015) - (thickness * 0.1) - 0.5) * swoop_radius_scale,
-                             (swoop_width / 2 + min_inner_rad), (swoop_width / 2 + min_inner_rad) * swoop_radius_scale])
+        swoop_radius = max([(radius - (num_segments * 0.25) - (gap * 0.015) - (thickness * 0.1) - 0.5) * 1.5 * swoop_radius_scale,
+                             (swoop_width / 2 + min_inner_rad), (swoop_width / 2 + min_inner_rad) * 1.5 * swoop_radius_scale])
         log.debug("Cycle Swoop Radius: {}".format(swoop_radius))
         swoop_sweep_angle = 180 * swoop_sweep_scale
         swoop_head_len = 0.3 / swoop_sweep_scale * swoop_head_length_scaler
         shift = widths_f[i] / 2 - swoop_width / 2    # aligns swoop inner arc with cycle outer arc
-        swoop_start_angle = math.degrees(central_angle) + 90 + (180 - swoop_sweep_angle) / 2 + math.degrees(swoop_head_len) * swoop_start_angle_shift_multiplier
-        swoop_end_angle = math.degrees(central_angle) + 270 - (180 - swoop_sweep_angle) / 2 + math.degrees(swoop_head_len)  * swoop_start_angle_shift_multiplier
+        swoop_start_angle = math.degrees(central_angle) + 90 + (180 - swoop_sweep_angle) / 2 + (swoop_sweep_angle / 2) * swoop_start_angle_shift_multiplier
+        swoop_end_angle = math.degrees(central_angle) + 270 - (180 - swoop_sweep_angle) / 2 + (swoop_sweep_angle / 2) * swoop_start_angle_shift_multiplier
         dist_to_swoop_center = radius + shift + swoop_radius + move_center_dist
         swoop_origin = (dist_to_swoop_center * math.cos(central_angle), dist_to_swoop_center * math.sin(central_angle))
 
@@ -208,16 +208,16 @@ def draw_straight(data, startrange=0.15, stoprange=0.85, f_format='svg', figsize
     startrange *= thickness
     stoprange *= thickness
     scale_type = data['scale_type']
-    swoop_width_scale = 1.0
-    swoop_radius_scale = 1.5
-    swoop_sweep_scale = 1.0
-    edgecolor_f = fcolour  #'k' #'none'
-    edgecolor_r = rcolour  #'k' #'none'
-    edgecolor_swoop = 'none'
-    rel_head_width = 2.0
-    rel_head_length_scaler = 1.0
-    swoop_head_length_scaler = 1.0
-    swoop_start_angle_shift_multiplier = 0.1
+    swoop_width_scale = try_fallback(data, 'swoop_width_scale', 1.0)
+    swoop_radius_scale = try_fallback(data, 'swoop_radius_scale', 1.0)
+    swoop_sweep_scale = try_fallback(data, 'swoop_sweep_scale', 1.0)
+    rel_head_width = try_fallback(data, 'rel_head_width', 2.0)
+    rel_head_length_scaler = try_fallback(data, 'rel_head_length_scaler', 1.0)
+    swoop_head_length_scaler = try_fallback(data, 'swoop_head_length_scaler', 1.0)
+    swoop_start_angle_shift_multiplier = try_fallback(data, 'swoop_start_angle_shift_multiplier', 0.0)
+    edgecolor_f = fcolour  # 'k' #'none'
+    edgecolor_r = rcolour  # 'k' #'none'
+    edgecolor_swoop = fcolour    # 'none'
 
     # Splitting circle by number of forward reactions
     num_segments = len(forward_rates) - 1
@@ -270,14 +270,14 @@ def draw_straight(data, startrange=0.15, stoprange=0.85, f_format='svg', figsize
         move_center_y = f_width / 2
     swoop_width = f_width * swoop_width_scale
     min_inner_rad = 0.1
-    swoop_radius = max([(radius - (num_segments * 0.25) - (gap * 0.015) - (thickness * 0.1) - 0.5) * swoop_radius_scale,
-                        (swoop_width / 2 + min_inner_rad), (swoop_width / 2 + min_inner_rad) * swoop_radius_scale])
+    swoop_radius = max([(radius - (num_segments * 0.25) - (gap * 0.015) - (thickness * 0.1) - 0.5) * 1.5 * swoop_radius_scale,
+                        (swoop_width / 2 + min_inner_rad), (swoop_width / 2 + min_inner_rad) * 1.5 * swoop_radius_scale])
     log.debug("Straight Swoop Radius: {}".format(swoop_radius))
     swoop_sweep_angle = 180 * swoop_sweep_scale
     swoop_head_len = 0.3 / swoop_sweep_scale * swoop_head_length_scaler
     shift = f_width / 2 - swoop_width / 2  # aligns swoop inner arc with cycle outer arc
-    swoop_start_angle = 180 + (180 - swoop_sweep_angle) / 2 + math.degrees(swoop_head_len) * swoop_start_angle_shift_multiplier
-    swoop_end_angle = 360 - (180 - swoop_sweep_angle) / 2 + math.degrees(swoop_head_len) * swoop_start_angle_shift_multiplier
+    swoop_start_angle = 180 + (180 - swoop_sweep_angle) / 2 + (swoop_sweep_angle / 2) * swoop_start_angle_shift_multiplier
+    swoop_end_angle = 360 - (180 - swoop_sweep_angle) / 2 + (swoop_sweep_angle / 2) * swoop_start_angle_shift_multiplier
     swoop_origin = (-rel_head_length * length / 2, shift + swoop_radius + move_center_y)
 
     if is_incoming and is_outgoing:
@@ -415,3 +415,9 @@ def scaler(forward_rates, rev_rates, startrange=0.1, stoprange=0.8, scale_type='
     log.debug("final reverse: {}".format(rev_rates))
 
     return forward_rates, rev_rates, maxima - minima
+
+def try_fallback(dictionary, key, fb):
+    try:
+        return dictionary[key]
+    except KeyError:
+        return fb

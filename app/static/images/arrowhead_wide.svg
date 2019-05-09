@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="42.983002mm"
+   height="29.987999mm"
+   viewBox="0 0 42.983002 29.987999"
+   version="1.1"
+   id="svg4661"
+   inkscape:version="0.92.4 (33fec40, 2019-01-16)"
+   sodipodi:docname="arrowhead_wide.svg">
+  <defs
+     id="defs4655"
+     style="stroke-linecap:butt;stroke-linejoin:round">
+    <style
+       type="text/css"
+       id="style3955">
+*{stroke-linecap:butt;stroke-linejoin:round;}
+  </style>
+    <clipPath
+       id="padf21bd488"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         height="125.03996"
+         width="446.39999"
+         x="72"
+         y="228.36002"
+         id="rect3967"
+         style="stroke-linecap:butt;stroke-linejoin:round" />
+    </clipPath>
+    <clipPath
+       id="clipPath3993"
+       clipPathUnits="userSpaceOnUse"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         y="210.85712"
+         x="390.85715"
+         height="113.57143"
+         width="160.71429"
+         id="rect3995"
+         style="stroke-width:0.74999994;stroke-linecap:butt;stroke-linejoin:round" />
+    </clipPath>
+    <clipPath
+       id="clipPath3999"
+       clipPathUnits="userSpaceOnUse"
+       style="stroke-linecap:butt;stroke-linejoin:round">
+      <rect
+         y="210.90912"
+         x="390.84967"
+         height="113.63577"
+         width="127.5099"
+         id="rect4001"
+         style="stroke-width:0.74999994;stroke-linecap:butt;stroke-linejoin:round" />
+    </clipPath>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.35"
+     inkscape:cx="126.94201"
+     inkscape:cy="5.2416657"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1052"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4658">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-72.246592,-120.23219)">
+    <g
+       id="layer1-3"
+       inkscape:label="Layer 1"
+       style="stroke-linecap:butt;stroke-linejoin:round"
+       transform="translate(-70.625766,5.8815187)">
+      <g
+         clip-path="url(#clipPath3999)"
+         transform="matrix(0.33709539,0,0,0.26389577,11.118736,58.692648)"
+         style="stroke-linecap:butt;stroke-linejoin:round"
+         id="figure_1">
+        <g
+           style="stroke-linecap:butt;stroke-linejoin:round"
+           id="patch_1">
+          <path
+             inkscape:connector-curvature="0"
+             d="M 0,576 H 576 V 0 H 0 Z"
+             style="fill:none;stroke-linecap:butt;stroke-linejoin:round"
+             id="path3959" />
+        </g>
+        <g
+           style="stroke-linecap:butt;stroke-linejoin:round"
+           id="axes_1">
+          <g
+             style="stroke-linecap:butt;stroke-linejoin:round"
+             id="patch_2">
+            <path
+               inkscape:connector-curvature="0"
+               clip-path="url(#padf21bd488)"
+               d="M 456.9128,259.62001 H 82.419997 V 280.46 H 456.9128 V 301.3 L 507.98,270.04001 456.9128,238.78002 Z"
+               style="stroke:#000000;stroke-linecap:butt;stroke-linejoin:miter"
+               id="path3962" />
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,15 +1,14 @@
-from flask import render_template, request, jsonify, send_file, redirect, url_for, Response, make_response
+from flask import render_template, request, jsonify, send_file, redirect, url_for, make_response, Response
 from werkzeug.utils import secure_filename
 from werkzeug.wsgi import FileWrapper
 from app.form import RatesForm, DownloadForm
 from app.oboros import draw, draw_straight
 from app import app
 import os
-
 import logging
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+#log.setLevel(logging.DEBUG)
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
@@ -52,7 +51,7 @@ def download():
         response = make_response(Response(img, mimetype=mimetype, direct_passthrough=True))
         response.headers.set('Content-Disposition', 'attachment', filename=filename)
         return response
-        #return send_file(img, mimetype=mimetype, attachment_filename=filename, as_attachment=True)
+        # return send_file(img, mimetype=mimetype, attachment_filename=filename, as_attachment=True)
     else:
         log.debug("Not sending anything")
         return '', 204

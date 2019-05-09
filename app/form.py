@@ -12,6 +12,13 @@ class RatesForm(FlaskForm):
     gap = IntegerField('gap', default=25)
     thickness = IntegerField('thickness', default=25)
     scale_type = StringField('scale_type', default="Preserve Multiples")
+    swoop_width_scale = FloatField('swoop_width_scale', default=1.0)
+    swoop_radius_scale = FloatField('swoop_radius_scale', default=1.0)
+    swoop_sweep_scale = FloatField('swoop_sweep_scale', default=1.0)
+    rel_head_width = FloatField('rel_head_width', default=2.0)
+    rel_head_length_scaler = FloatField('rel_head_length_scaler', default=1.0)
+    swoop_head_length_scaler = FloatField('swoop_head_length_scaler', default=1.0)
+    swoop_start_angle_shift_multiplier = FloatField('swoop_start_angle_shift_multiplier', default=0.0)
 
     # Step Rates tab
     f_rate1 = FloatField('f_rate1', validators=[DataRequired()], default=3.0)
@@ -126,7 +133,14 @@ class RatesForm(FlaskForm):
                 'thickness': self.thickness.data,
                 'multiplier': float(self.thickness.data)/25.0,
                 'scale_type': self.scale_type.data,
-                }
+                'swoop_width_scale' : self.swoop_width_scale.data,
+                'swoop_radius_scale' : self.swoop_radius_scale.data,
+                'swoop_sweep_scale' : self.swoop_sweep_scale.data,
+                'rel_head_width' : self.rel_head_width.data,
+                'rel_head_length_scaler' : self.rel_head_length_scaler.data,
+                'swoop_head_length_scaler' : self.swoop_head_length_scaler.data,
+                'swoop_start_angle_shift_multiplier' : self.swoop_start_angle_shift_multiplier.data
+        }
 
         for i in range(1, self.MAX_ROWS+1):
             data['forward_rates'].append(getattr(self, 'f_rate{}'.format(i)).data)
@@ -157,6 +171,13 @@ class RatesForm(FlaskForm):
                 'thickness': self.thickness.default,
                 'multiplier': float(self.thickness.default)/25.0,
                 'scale_type': self.scale_type.default,
+                'swoop_width_scale': self.swoop_width_scale.default,
+                'swoop_radius_scale': self.swoop_radius_scale.default,
+                'swoop_sweep_scale': self.swoop_sweep_scale.default,
+                'rel_head_width': self.rel_head_width.default,
+                'rel_head_length_scaler': self.rel_head_length_scaler.default,
+                'swoop_head_length_scaler': self.swoop_head_length_scaler.default,
+                'swoop_start_angle_shift_multiplier': self.swoop_start_angle_shift_multiplier.default,
                 'num_steps': 4}
 
         for i in range(1, self.MAX_ROWS + 1):

@@ -184,6 +184,7 @@
                                     </div>
                                 </div>
                                 <div class="tab-pane" id="arrowsstyle">
+                                    <p class="h4">General Settings</p>
                                     <!--
                                     <div class="form-group">
                                         <label for="scale_type">Scaling:</label>
@@ -193,41 +194,169 @@
                                             <option>Preserve Multiples</option>
                                         </select>
                                     </div>
-                                    -->
-                                    <div class="form-group form-row">
-                                        <label class="col-sm-2 col-form-label" for="gap">Gap:</label>
-                                        <span class="col-sm-2">
-                                            <img src="{{url_for('.static', filename='images/Gap_small.png')}}" alt="small gap"
-                                             srcset="{{url_for('.static', filename='images/Gap_small.svg')}}" width="60" height="30">
-                                        </span>
-                                        <div class="pt-3 col-sm-4">
-                                            <input id="gap" name="gap" class="form-control-range slider" type="range" min="0"
-                                                   max="50" step="1" value="{{ form_values['gap'] }}">
+                                    <div class="form-row">
+                                        <div class="form-group col-sm-6">
+                                            <label for="gap">Gap:</label>
+                                            <div class="form-row">
+                                                <span class="col-sm-4 d-flex justify-content-end">
+                                                    <img src="{{url_for('.static', filename='images/Gap_small.png')}}" alt="small gap"
+                                                 srcset="{{url_for('.static', filename='images/Gap_small.svg')}}" width="50" height="30">
+                                                </span>
+                                                <div class="col-sm-4">
+                                                    <input id="gap" name="gap" class="form-control" type="number" min="0"
+                                                           max="50" step="1" value="{{ form_values['gap'] }}">
+                                                </div>
+                                                <span class="col-sm-4">
+                                                    <img src="{{url_for('.static', filename='images/Gap_big.png')}}" alt="big gap"
+                                                     srcset="{{url_for('.static', filename='images/Gap_big.svg')}}" width="50" height="30">
+                                                </span>
+                                            </div>
                                         </div>
-                                        <span class="col-sm-2">
-                                            <img src="{{url_for('.static', filename='images/Gap_big.png')}}" alt="big gap"
-                                             srcset="{{url_for('.static', filename='images/Gap_big.svg')}}" width="60" height="30">
-                                        </span>
-                                        <div class="col-sm-2">
-                                            <input class="form-control" type="text" id="gapval" readonly>
+                                        <div class="form-group col-sm-6">
+                                            <label for="thickness">Thickness:</label>
+                                            <div class="form-row">
+                                                <span class="col-sm-4 d-flex justify-content-end">
+                                                    <img src="{{url_for('.static', filename='images/Thickness_small.png')}}" alt="thin arrow"
+                                                     srcset="{{url_for('.static', filename='images/Thickness_small.svg')}}" width="50" height="30">
+                                                </span>
+                                                <div class="col-sm-4">
+                                                    <input id="thickness" name="thickness" class="form-control" type="number" min="5"
+                                                           max="50" step="1" value="{{ form_values['thickness'] }}">
+                                                </div>
+                                                <span class="col-sm-4">
+                                                    <img src="{{url_for('.static', filename='images/Thickness_big.png')}}" alt="thick arrow"
+                                                     srcset="{{url_for('.static', filename='images/Thickness_big.svg')}}" width="50" height="30">
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="form-group form-row">
-                                        <label class="col-sm-2 col-form-label" for="thickness">Thickness:</label>
-                                        <span class="col-sm-2">
-                                            <img src="{{url_for('.static', filename='images/Thickness_small.png')}}" alt="thin arrow"
-                                             srcset="{{url_for('.static', filename='images/Thickness_small.svg')}}" width="60" height="60">
-                                        </span>
-                                        <div class="pt-3 col-sm-4">
-                                            <input id="thickness" name="thickness" class="form-control-range slider" type="range" min="5"
-                                                   max="50" step="1" value="{{ form_values['thickness'] }}">
+                                    <div class="form-row">
+                                        <div class="form-group col-sm-6">
+                                            <label for="headwidth">Arrowhead Width:</label>
+                                            <div class="form-row">
+                                                <span class="col-sm-4 d-flex justify-content-end">
+                                                    <img src="{{url_for('.static', filename='images/arrowhead_narrow.png')}}" alt="narrow arrowhead"
+                                                     srcset="{{url_for('.static', filename='images/arrowhead_narrow.svg')}}" width="50" height="30">
+                                                </span>
+                                                <div class="col-sm-4">
+                                                    <input id="headwidth" name="rel_head_width" class="form-control" type="number" min="1.0"
+                                                           max="4.0" step="0.1" value="{{ form_values['rel_head_width'] }}">
+                                                </div>
+                                                <span class="col-sm-4">
+                                                    <img src="{{url_for('.static', filename='images/arrowhead_wide.png')}}" alt="wide arrowhead"
+                                                     srcset="{{url_for('.static', filename='images/arrowhead_wide.svg')}}" width="50" height="30">
+                                                </span>
+                                            </div>
                                         </div>
-                                        <span class="col-sm-2">
-                                            <img src="{{url_for('.static', filename='images/Thickness_big.png')}}" alt="thick arrow"
-                                             srcset="{{url_for('.static', filename='images/Thickness_big.svg')}}" width="60" height="60">
-                                        </span>
-                                        <div class="col-sm-2">
-                                            <input class="form-control" type="text" id="thicknessval" readonly>
+                                        <div class="form-group col-sm-6">
+                                            <label for="headlength">Arrowhead Length:</label>
+                                            <div class="form-row">
+                                                <span class="col-sm-4 d-flex justify-content-end">
+                                                    <img src="{{url_for('.static', filename='images/arrowhead_short.png')}}" alt="long arrowhead"
+                                                     srcset="{{url_for('.static', filename='images/arrowhead_short.svg')}}" width="50" height="30">
+                                                </span>
+                                                <div class="col-sm-4">
+                                                    <input id="headlength" name="rel_head_length_scaler" class="form-control" type="number" min="0.1"
+                                                           max="3.0" step="0.1" value="{{ form_values['rel_head_length_scaler'] }}">
+                                                </div>
+                                                <span class="col-sm-4">
+                                                    <img src="{{url_for('.static', filename='images/arrowhead_long.png')}}" alt="short arrowhead"
+                                                     srcset="{{url_for('.static', filename='images/arrowhead_long.svg')}}" width="50" height="30">
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <p class="h4">Incoming/Outgoing Arrows</p>
+                                    <div class="form-row">
+                                        <div class="form-group col-sm-6">
+                                            <label for="swoopwidth">Thickness:</label>
+                                            <div class="form-row">
+                                                <span class="col-sm-4 d-flex justify-content-end">
+                                                    <img src="{{url_for('.static', filename='images/swoop_thickness_small.png')}}" alt="thin swoop"
+                                                     srcset="{{url_for('.static', filename='images/swoop_thickness_small.svg')}}" width="50" height="30">
+                                                </span>
+                                                <div class="col-sm-4">
+                                                    <input id="swoopwidth" name="swoop_width_scale" class="form-control" type="number" min="0.1"
+                                                           max="1" step="0.01" value="{{ form_values['swoop_width_scale'] }}">
+                                                </div>
+                                                <span class="col-sm-4">
+                                                    <img src="{{url_for('.static', filename='images/swoop_thickness_large.png')}}" alt="thick swoop"
+                                                     srcset="{{url_for('.static', filename='images/swoop_thickness_large.svg')}}" width="50" height="30">
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-sm-6">
+                                            <label for="swoopradius">Radius:</label>
+                                            <div class="form-row">
+                                                <span class="col-sm-4 d-flex justify-content-end">
+                                                    <img src="{{url_for('.static', filename='images/radius_small.png')}}" alt="small radius"
+                                                     srcset="{{url_for('.static', filename='images/radius_small.svg')}}" width="50" height="30">
+                                                </span>
+                                                <div class="col-sm-4">
+                                                    <input id="swoopradius" name="swoop_radius_scale" class="form-control" type="number" min="0.5"
+                                                           max="2.0" step="0.01" value="{{ form_values['swoop_radius_scale'] }}">
+                                                </div>
+                                                <span class="col-sm-4">
+                                                    <img src="{{url_for('.static', filename='images/radius_large.png')}}" alt="large radius"
+                                                     srcset="{{url_for('.static', filename='images/radius_large.svg')}}" width="50" height="30">
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-sm-6">
+                                            <label for="swoopsweep">Extent:</label>
+                                            <div class="form-row">
+                                                <span class="col-sm-4 d-flex justify-content-end">
+                                                    <img src="{{url_for('.static', filename='images/extent_small.png')}}" alt="less than semicircle"
+                                                     srcset="{{url_for('.static', filename='images/extent_small.svg')}}" width="50" height="30">
+                                                </span>
+                                                <div class="col-sm-4">
+                                                    <input id="swoopsweep" name="swoop_sweep_scale" class="form-control" type="number" min="0.3"
+                                                           max="1.0" step=".01" value="{{ form_values['swoop_sweep_scale'] }}">
+                                                </div>
+                                                <span class="col-sm-4">
+                                                    <img src="{{url_for('.static', filename='images/extent_large.png')}}" alt="semicircle"
+                                                     srcset="{{url_for('.static', filename='images/extent_large.svg')}}" width="50" height="30">
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-sm-6">
+                                            <label for="swoopheadlength">Arrowhead Length:</label>
+                                            <div class="form-row">
+                                                <span class="col-sm-4 d-flex justify-content-end">
+                                                    <img src="{{url_for('.static', filename='images/swoop_arrowhead_short.png')}}" alt="short arrowhead"
+                                                     srcset="{{url_for('.static', filename='images/swoop_arrowhead_short.svg')}}" width="50" height="30">
+                                                </span>
+                                                <div class="col-sm-4">
+                                                    <input id="swoopheadlength" name="swoop_head_length_scaler" class="form-control" type="number" min="0.05"
+                                                           max="2.0" step="0.01" value="{{ form_values['swoop_head_length_scaler'] }}">
+                                                </div>
+                                                <span class="col-sm-4">
+                                                    <img src="{{url_for('.static', filename='images/swoop_arrowhead_long.png')}}" alt="long arrowhead"
+                                                     srcset="{{url_for('.static', filename='images/swoop_arrowhead_long.svg')}}" width="50" height="30">
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-sm-6">
+                                            <label for="swooprotation">Rotation:</label>
+                                            <div class="form-row">
+                                                <span class="col-sm-4 d-flex justify-content-end">
+                                                    <img src="{{url_for('.static', filename='images/rotation_small.png')}}" alt="no rotation"
+                                                     srcset="{{url_for('.static', filename='images/rotation_small.svg')}}" width="50" height="30">
+                                                </span>
+                                                <div class="col-sm-4">
+                                                    <input id="swooprotation" name="swoop_start_angle_shift_multiplier" class="form-control" type="number" min="0"
+                                                           max="0.5" step="0.01" value="{{ form_values['swoop_start_angle_shift_multiplier'] }}">
+                                                </div>
+                                                <span class="col-sm-4">
+                                                    <img src="{{url_for('.static', filename='images/rotation_large.png')}}" alt="large rotation"
+                                                     srcset="{{url_for('.static', filename='images/rotation_large.svg')}}" width="50" height="30">
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
