@@ -107,8 +107,8 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
             paths += [f_path, r_path]
             r_patch = mpatches.PathPatch(r_path, facecolor=r_colour, edgecolor=edgecolor_r[i])
             f_patch = mpatches.PathPatch(f_path, facecolor=f_colour, edgecolor=edgecolor_f[i])
-            ax.add_patch(f_patch)
             ax.add_patch(r_patch)
+            ax.add_patch(f_patch)
 
         # input arrows/swoops
         move_center_dist = 0
@@ -259,8 +259,8 @@ def draw_straight(data, startrange=0.15, stoprange=0.85, f_format='svg', figsize
         paths += [f_path, r_path]
         r_patch = mpatches.PathPatch(r_path, facecolor=rcolour, edgecolor=edgecolor_r)
         f_patch = mpatches.PathPatch(f_path, facecolor=fcolour, edgecolor=edgecolor_f)
-        ax.add_patch(f_patch)
         ax.add_patch(r_patch)
+        ax.add_patch(f_patch)
 
     # input arrows/swoops
     move_center_y = 0
