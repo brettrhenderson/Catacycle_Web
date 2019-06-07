@@ -40,8 +40,7 @@ function link_click_to_carousel(id, carouselid, carousel_num) {
 
 function clear() {
     $("#clearrates").on("click", function (event) {
-        $('.frate').val('3')
-        $('.rrate').val('0')
+        $('.rate').val('0.0')
         $('.income-check').val('false')
     });
 
@@ -164,17 +163,11 @@ function addrow(rows) {
 
             var newRow = $('<tr id="row' + counter + '">');
             var cols = "";
-            cols += '<td width="10%">' + counter + '</td>';
-            cols += '<td><select id="f_rate' + counter + '" class="form-control frate" name="f_rate' + counter + '">';
-            cols += '<option value="1">Very Slow</option><option value="2">Slow</option><option value="3" selected>Average</option>';
-            cols += '<option value="4">Fast</option><option value="5">Very Fast</option></select>';
-            cols += '</td>';
-            cols += '<td><select id="r_rate' + counter + '" class="form-control rrate" name="r_rate' + counter + '">';
-            cols += '<option value="0" selected>None</option><option value="1">Very Slow</option><option value="2">Slow</option><option value="3">Average</option>';
-            cols += '<option value="4">Fast</option><option value="5">Very Fast</option></select>';
-            cols += '</td>';
-            cols += '<td width="15%"><input id="is_incoming' + counter + '" name="is_incoming' + counter + '" class="form-control" type="checkbox"</td>'
-            cols += '<td width="15%"><input id="is_outgoing' + counter + '" name="is_outgoing' + counter + '" class="form-control" type="checkbox"</td>'
+            cols += '<td>' + counter + '</td>';
+            cols += '<td><input type="text" id="f_rate' + counter + '" class="form-control rate" name="f_rate' + counter + '" value="1.0"/></td>';
+            cols += '<td><input type="text" id="r_rate' + counter + '" class="form-control rate" name="r_rate' + counter + '" value="0.0"/></td>';
+            cols += '<td><input id="is_incoming' + counter + '" name="is_incoming' + counter + '" class="form-control" type="checkbox"</td>'
+            cols += '<td><input id="is_outgoing' + counter + '" name="is_outgoing' + counter + '" class="form-control" type="checkbox"</td>'
 
             newRow.append(cols);
             $("table.rates-list").append(newRow);
