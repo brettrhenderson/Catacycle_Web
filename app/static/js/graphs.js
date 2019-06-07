@@ -163,11 +163,11 @@ function addrow(rows) {
 
             var newRow = $('<tr id="row' + counter + '">');
             var cols = "";
-            cols += '<td>' + counter + '</td>';
+            cols += '<td width="6%">' + counter + '</td>';
             cols += '<td><input type="text" id="f_rate' + counter + '" class="form-control rate" name="f_rate' + counter + '" value="1.0"/></td>';
             cols += '<td><input type="text" id="r_rate' + counter + '" class="form-control rate" name="r_rate' + counter + '" value="0.0"/></td>';
-            cols += '<td><input id="is_incoming' + counter + '" name="is_incoming' + counter + '" class="form-control" type="checkbox"</td>'
-            cols += '<td><input id="is_outgoing' + counter + '" name="is_outgoing' + counter + '" class="form-control" type="checkbox"</td>'
+            cols += '<td width="12%"><input id="is_incoming' + counter + '" name="is_incoming' + counter + '" class="form-control" type="checkbox"</td>'
+            cols += '<td width="12%"><input id="is_outgoing' + counter + '" name="is_outgoing' + counter + '" class="form-control" type="checkbox"</td>'
 
             newRow.append(cols);
             $("table.rates-list").append(newRow);
