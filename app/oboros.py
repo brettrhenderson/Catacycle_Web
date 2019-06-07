@@ -110,6 +110,7 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
             ax.add_patch(r_patch)
             ax.add_patch(f_patch)
 
+
         # input arrows/swoops
         move_center_dist = 0
         if rev_rates[i] != 0:
