@@ -14,7 +14,7 @@ import logging
 import app.drawing_helpers as dh
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+#log.setLevel(logging.DEBUG)
 
 MAX_STEPS = 10
 
@@ -92,7 +92,7 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
 
         if rev_rates[i] == 0:    # draw an irreversible arrow
             f_colour = fcolours[i]
-            arrow_path = dh.curved_arrow_single(theta1, theta2, radius, widths_f[i], origin=(0,0),
+            arrow_path = dh.curved_arrow_single(theta1, theta2, radius, widths_f[i], origin=(0, 0),
                                                 rel_head_width=rel_head_width, rel_head_len=rel_head_length,
                                                 abs_head_len=None, reverse=False)
             paths.append(arrow_path)
