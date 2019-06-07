@@ -11,7 +11,7 @@ class RatesForm(FlaskForm):
     # Styling tab
     gap = IntegerField('gap', default=25)
     thickness = IntegerField('thickness', default=25)
-    scale_type = StringField('scale_type', default="Logarithmic")
+    scale_type = StringField('scale_type', default="Preserve Multiples")
     swoop_width_scale = FloatField('swoop_width_scale', default=1.0)
     swoop_radius_scale = FloatField('swoop_radius_scale', default=1.0)
     swoop_sweep_scale = FloatField('swoop_sweep_scale', default=1.0)
@@ -21,7 +21,7 @@ class RatesForm(FlaskForm):
     swoop_start_angle_shift_multiplier = FloatField('swoop_start_angle_shift_multiplier', default=0.0)
 
     # Step Rates tab
-    f_rate1 = FloatField('f_rate1', validators=[DataRequired()], default=1.0)
+    f_rate1 = FloatField('f_rate1', validators=[DataRequired()], default=3.0)
     f_rate2 = FloatField('f_rate2', default=0.0)
     f_rate3 = FloatField('f_rate3', default=0.0)
     f_rate4 = FloatField('f_rate4', default=0.0)
@@ -91,7 +91,7 @@ class RatesForm(FlaskForm):
     r_color10 = StringField('r_color10', default='#000000')
 
     # Outside Reactions (straight arrows) tab
-    f_rate_straight = FloatField('f_rate_straight', validators=[DataRequired()], default=1.0)
+    f_rate_straight = FloatField('f_rate_straight', validators=[DataRequired()], default=3.0)
     r_rate_straight = FloatField('r_rate_straight', default=0.0)
     incoming_straight = BooleanField('incoming_straight', default=False)
     outgoing_straight = BooleanField('outgoing_straight', default=False)
@@ -190,7 +190,7 @@ class RatesForm(FlaskForm):
 
         # have four arrows displayed by default
         for i in range(0, 4):
-            data['forward_rates'][i] = 1.0
+            data['forward_rates'][i] = 3.0
 
         return data
 

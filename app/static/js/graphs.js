@@ -40,7 +40,8 @@ function link_click_to_carousel(id, carouselid, carousel_num) {
 
 function clear() {
     $("#clearrates").on("click", function (event) {
-        $('.rate').val('0.0')
+        $('.frate').val('3')
+        $('.rrate').val('0')
         $('.income-check').val('false')
     });
 
@@ -164,8 +165,14 @@ function addrow(rows) {
             var newRow = $('<tr id="row' + counter + '">');
             var cols = "";
             cols += '<td width="6%">' + counter + '</td>';
-            cols += '<td><input type="text" id="f_rate' + counter + '" class="form-control rate" name="f_rate' + counter + '" value="1.0"/></td>';
-            cols += '<td><input type="text" id="r_rate' + counter + '" class="form-control rate" name="r_rate' + counter + '" value="0.0"/></td>';
+            cols += '<td><select id="f_rate' + counter + '" class="form-control frate" name="f_rate' + counter + '">';
+            cols += '<option value="1">Very Low</option><option value="2">Low</option><option value="3" selected>Moderate</option>';
+            cols += '<option value="4">High</option><option value="5">Very High</option></select>';
+            cols += '</td>';
+            cols += '<td><select id="r_rate' + counter + '" class="form-control rrate" name="r_rate' + counter + '">';
+            cols += '<option value="0" selected>None</option><option value="1">Very Low</option><option value="2">Low</option><option value="3">Moderate</option>';
+            cols += '<option value="4">High</option><option value="5">Very High</option></select>';
+            cols += '</td>';
             cols += '<td width="12%"><input id="is_incoming' + counter + '" name="is_incoming' + counter + '" class="form-control" type="checkbox"</td>'
             cols += '<td width="12%"><input id="is_outgoing' + counter + '" name="is_outgoing' + counter + '" class="form-control" type="checkbox"</td>'
 

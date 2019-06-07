@@ -384,16 +384,24 @@ def scaler(forward_rates, rev_rates, startrange=0.1, stoprange=0.8, scale_type='
 
     if minima == maxima:
         if scale_type == 'Preserve Multiples':
-            forward_rates[f_nonzero] = stoprange / 2.0
-            rev_rates[r_nonzero] = stoprange / 2.0
+            # forward_rates[f_nonzero] = stoprange / 2.0
+            # rev_rates[r_nonzero] = stoprange / 2.0
+            increments = ranger / 5  # for simple scaling only
+            log.debug("Increment: {}".format(increments))
+            forward_rates = increments * forward_rates
+            rev_rates = increments * rev_rates
         else:
             # if all rates are the same, just set them to be a medium value in the desired range
             forward_rates[f_nonzero] = np.mean([stoprange, startrange])
             rev_rates[r_nonzero] = np.mean([stoprange, startrange])
     else:
         if scale_type == 'Preserve Multiples':
-            forward_rates = forward_rates / maxima * stoprange
-            rev_rates = rev_rates / maxima * stoprange
+            # forward_rates = forward_rates / maxima * stoprange
+            # rev_rates = rev_rates / maxima * stoprange
+            increments = ranger / 5    # for simple scaling only
+            log.debug("Increment: {}".format(increments))
+            forward_rates = increments * forward_rates
+            rev_rates = increments * rev_rates
         else:
             log.debug("Max != Min")
             # otherwise, scale and move the rates to be between the desired endpoints

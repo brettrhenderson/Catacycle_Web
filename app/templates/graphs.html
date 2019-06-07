@@ -87,8 +87,25 @@
                                             {% for i in range(rows) %}
                                             <tr id="row{{ i+1 }}">
                                                 <td width="6%">{{ i+1 }}</td>
-                                                <td><input id="f_rate{{ i+1 }}" class="form-control rate" type="text" name="f_rate{{ i+1 }}" value="{{ form_values["forward_rates"][i] }}"></td>
-                                                <td><input id="r_rate{{ i+1 }}" class="form-control rate" type="text" name="r_rate{{ i+1 }}" value="{{ form_values["rev_rates"][i] }}"></td>
+                                                <td>
+                                                    <select id="f_rate{{ i+1 }}" class="form-control frate" name="f_rate{{ i+1 }}">
+                                                        <option value="1">Very Low</option>
+                                                        <option value="2">Low</option>
+                                                        <option value="3" selected>Moderate</option>
+                                                        <option value="4">High</option>
+                                                        <option value="5">Very High</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select id="r_rate{{ i+1 }}" class="form-control rrate" name="r_rate{{ i+1 }}">
+                                                        <option value="0" selected>None</option>
+                                                        <option value="1">Very Low</option>
+                                                        <option value="2">Low</option>
+                                                        <option value="3">Moderate</option>
+                                                        <option value="4">High</option>
+                                                        <option value="5">Very High</option>
+                                                    </select>
+                                                </td>
                                                 <td width="12%"><div class="pt-2"><input id="is_incoming{{ i+1 }}" name="is_incoming{{ i+1 }}" class="form-control pt-2 income-check" type="checkbox"></div></td>
                                                 <td width="12%"><div class="pt-2"><input id="is_outgoing{{ i+1 }}" name="is_outgoing{{ i+1 }}" class="form-control pt-2 income-check" type="checkbox"></div></td>
                                             </tr>
@@ -168,14 +185,16 @@
                                 </div>
                                 <div class="tab-pane" id="arrowsstyle">
                                     <p class="h4">General Settings</p>
+                                    <!--
                                     <div class="form-group">
                                         <label for="scale_type">Scaling:</label>
                                         <select class="form-control" id="scale_type" name="scale_type">
                                             <option selected>Logarithmic</option>
                                             <option>Linear</option>
-                                            <!--<option>Preserve Multiples</option>-->
+                                            <option>Preserve Multiples</option>
                                         </select>
                                     </div>
+                                    -->
                                     <div class="form-row">
                                         <div class="form-group col-sm-6">
                                             <label for="gap">Gap:</label>
@@ -345,12 +364,25 @@
                                 <div class="tab-pane" id="outsiderxns">
                                     <div class="form-row">
                                         <div class="form-group col">
-                                             <label for="f_rate_straight">Forward Rate</label>
-                                             <input type="text" class="form-control" id="f_rate_straight" name="f_rate_straight" value="{{ form_values["f_rate_straight"] }}">
+                                             <label for="f_rate_straight">Forward Rate Constant</label>
+                                             <select class="form-control" id="f_rate_straight" name="f_rate_straight">
+                                                 <option value="1">Very Low</option>
+                                                 <option value="2">Low</option>
+                                                 <option value="3" selected>Moderate</option>
+                                                 <option value="4">High</option>
+                                                 <option value="5">Very High</option>
+                                             </select>
                                         </div>
                                         <div class="form-group col">
-                                             <label for="r_rate_straight">Reverse Rate</label>
-                                             <input type="text" class="form-control" id="r_rate_straight" name="r_rate_straight" value="{{ form_values["r_rate_straight"] }}">
+                                             <label for="r_rate_straight">Reverse Rate Constant</label>
+                                             <select class="form-control" id="r_rate_straight" name="r_rate_straight">
+                                                 <option value="0" selected>None</option>
+                                                 <option value="1">Very Low</option>
+                                                 <option value="2">Low</option>
+                                                 <option value="3">Moderate</option>
+                                                 <option value="4">High</option>
+                                                 <option value="5">Very High</option>
+                                             </select>
                                         </div>
                                     </div>
                                     <div class="form-row">
