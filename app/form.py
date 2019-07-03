@@ -9,6 +9,7 @@ class RatesForm(FlaskForm):
     MAX_ROWS = 10
 
     # Styling tab
+    flip = BooleanField('flip', default=False)
     gap = IntegerField('gap', default=25)
     thickness = IntegerField('thickness', default=25)
     scale_type = StringField('scale_type', default="Preserve Multiples")
@@ -129,6 +130,7 @@ class RatesForm(FlaskForm):
                 'outgoing_straight': self.outgoing_straight.data,
                 'f_color_straight': self.f_color_straight.data,
                 'r_color_straight': self.r_color_straight.data,
+                'flip': self.flip.data,
                 'gap': self.gap.data,
                 'thickness': self.thickness.data,
                 'multiplier': float(self.thickness.data)/25.0,
@@ -167,6 +169,7 @@ class RatesForm(FlaskForm):
                 'outgoing_straight': self.outgoing_straight.default,
                 'f_color_straight': self.f_color_straight.default,
                 'r_color_straight': self.r_color_straight.default,
+                'flip': self.flip.default,
                 'gap': self.gap.default,
                 'thickness': self.thickness.default,
                 'multiplier': float(self.thickness.default)/25.0,

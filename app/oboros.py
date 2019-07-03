@@ -61,6 +61,7 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
     edgecolor_r = rcolours  # 'k' 'none'
     #edgecolor_swoops = ['none' for _ in range(len(fcolours))]
     edgecolor_swoops = fcolours
+    flip = try_fallback(data, 'flip', False)
 
     # Call Sofia's Scaler function, convert rates to arrow size
     forward_rates, rev_rates, _ = scaler(forward_rates, rev_rates, startrange=startrange,
@@ -153,6 +154,8 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
             swoop_patch = mpatches.PathPatch(swoop_path, facecolor=f_colour, edgecolor=edgecolor_swoops[i])
             ax.add_patch(swoop_patch)
     dh.set_ax_lims(ax, paths)
+    if flip:
+        ax.invert_xaxis()
     plt.draw()
 
     # correct mimetype based on filetype (for displaying in browser)
@@ -217,6 +220,7 @@ def draw_straight(data, startrange=0.15, stoprange=0.85, f_format='svg', figsize
     edgecolor_f = fcolour  # 'k' #'none'
     edgecolor_r = rcolour  # 'k' #'none'
     edgecolor_swoop = fcolour    # 'none'
+    flip = try_fallback(data, 'flip', False)
 
     # Splitting circle by number of forward reactions
     num_segments = len(forward_rates) - 1
@@ -303,6 +307,8 @@ def draw_straight(data, startrange=0.15, stoprange=0.85, f_format='svg', figsize
         ax.add_patch(swoop_patch)
 
     dh.set_ax_lims(ax, paths)
+    # if flip:
+    #     ax.invert_xaxis()
     # draw on the axes
     plt.draw()
 
