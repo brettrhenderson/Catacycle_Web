@@ -21,6 +21,18 @@ class RatesForm(FlaskForm):
     swoop_head_length_scaler = FloatField('swoop_head_length_scaler', default=1.0)
     swoop_start_angle_shift_multiplier = FloatField('swoop_start_angle_shift_multiplier', default=0.0)
 
+    indgap = BooleanField('indgap', default=False)
+    gap_1 = IntegerField('gap_1', default=25)
+    gap_2 = IntegerField('gap_2', default=25)
+    gap_3 = IntegerField('gap_3', default=25)
+    gap_4 = IntegerField('gap_4', default=25)
+    gap_5 = IntegerField('gap_5', default=25)
+    gap_6 = IntegerField('gap_6', default=25)
+    gap_7 = IntegerField('gap_7', default=25)
+    gap_8 = IntegerField('gap_8', default=25)
+    gap_9 = IntegerField('gap_9', default=25)
+    gap_10 = IntegerField('gap_10', default=25)
+
     # Step Rates tab
     f_rate1 = FloatField('f_rate1', validators=[DataRequired()], default=3.0)
     f_rate2 = FloatField('f_rate2', default=0.0)
@@ -124,6 +136,7 @@ class RatesForm(FlaskForm):
                 'is_outgoing': [],
                 'fcolours': [],
                 'rcolours': [],
+                'gaps': [],
                 'f_rate_straight': self.f_rate_straight.data,
                 'r_rate_straight': self.r_rate_straight.data,
                 'incoming_straight': self.incoming_straight.data,
@@ -131,6 +144,7 @@ class RatesForm(FlaskForm):
                 'f_color_straight': self.f_color_straight.data,
                 'r_color_straight': self.r_color_straight.data,
                 'flip': self.flip.data,
+                'indgap': self.indgap.data,
                 'gap': self.gap.data,
                 'thickness': self.thickness.data,
                 'multiplier': float(self.thickness.data)/25.0,
@@ -151,6 +165,7 @@ class RatesForm(FlaskForm):
             data['is_outgoing'].append(getattr(self, 'is_outgoing{}'.format(i)).data)
             data['fcolours'].append(getattr(self, 'f_color{}'.format(i)).data)
             data['rcolours'].append(getattr(self, 'r_color{}'.format(i)).data)
+            data['gaps'].append(getattr(self, 'gap_{}'.format(i)).data)
 
         data['num_steps'] = self.num_rows()
 
@@ -163,6 +178,7 @@ class RatesForm(FlaskForm):
                 'is_outgoing': [],
                 'fcolours': [],
                 'rcolours': [],
+                'gaps': [],
                 'f_rate_straight': self.f_rate_straight.default,
                 'r_rate_straight': self.r_rate_straight.default,
                 'incoming_straight': self.incoming_straight.default,
@@ -170,6 +186,7 @@ class RatesForm(FlaskForm):
                 'f_color_straight': self.f_color_straight.default,
                 'r_color_straight': self.r_color_straight.default,
                 'flip': self.flip.default,
+                'indgap': self.indgap.default,
                 'gap': self.gap.default,
                 'thickness': self.thickness.default,
                 'multiplier': float(self.thickness.default)/25.0,
@@ -190,6 +207,7 @@ class RatesForm(FlaskForm):
             data['is_outgoing'].append(getattr(self, 'is_outgoing{}'.format(i)).default)
             data['fcolours'].append(getattr(self, 'f_color{}'.format(i)).default)
             data['rcolours'].append(getattr(self, 'r_color{}'.format(i)).default)
+            data['gaps'].append(getattr(self, 'gap_{}'.format(i)).default)
 
         # have four arrows displayed by default
         for i in range(0, 4):

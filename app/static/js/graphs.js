@@ -8,6 +8,15 @@ function setToken(token_val) {
     token = token_val;
 }
 
+function toggleGaps() {
+    $('#ind-gap').change(function() {
+        var dis = !this.checked;
+        $('.indygap').each(function() {
+            var $eachGap = $(this)[0]
+            $eachGap.disabled = dis;
+        });
+    });
+}
 
 function slider_vals(input, output) {
     var slider = document.getElementById(input);
@@ -20,15 +29,15 @@ function slider_vals(input, output) {
     }
 }
 
-slider_vals("gap", "gapval")
-slider_vals("thickness", "thicknessval")
-slider_vals("headlength", "headlengthval")
-slider_vals("headwidth", "headwidthval")
-slider_vals("swoopwidth", "swoopwidthval")
-slider_vals("swoopradius", "swoopradiusval")
-slider_vals("swoopsweep", "swoopsweepval")
-slider_vals("swoopheadlength", "swoopheadlengthval")
-slider_vals("swooprotation", "swooprotationval")
+//slider_vals("gap", "gapval")
+//slider_vals("thickness", "thicknessval")
+//slider_vals("headlength", "headlengthval")
+//slider_vals("headwidth", "headwidthval")
+//slider_vals("swoopwidth", "swoopwidthval")
+//slider_vals("swoopradius", "swoopradiusval")
+//slider_vals("swoopsweep", "swoopsweepval")
+//slider_vals("swoopheadlength", "swoopheadlengthval")
+//slider_vals("swooprotation", "swooprotationval")
 
 
 function link_click_to_carousel(id, carouselid, carousel_num) {
@@ -133,11 +142,49 @@ function addrow(rows) {
             $("#rate-body")[0].deleteRow(-1);
             $("#color-body")[0].deleteRow(-1);
             counter -= 1
+
+            // remove indygap inputs
+            if(counter % 4 != 1) {
+                $('#gaps-block').children().last().children().last().remove();
+            }
+            else {
+                $('#gaps-block').children().last().remove();
+            }
         }
     });
 
     $("#addcolorrow, #addrow").on("click", function () {
         if (counter < 11) {
+            // add new gap adjusters as new steps are added
+            if (counter % 4 != 1) {
+                // new input to add
+                var newGap = `<div class="form-group col-sm-3">
+                                  <label for="gap_${counter}">Gap ${counter}:</label>
+                                      <input id="gap_${counter}" name="gap_${counter}" class="form-control indygap" type="number" min="0"
+                                          max="50" step="1" value="25" disabled>
+                              </div>`;
+                // add to the last existing row
+                $('#gaps-block').children().last().append(newGap);
+            }
+            else {
+                var newGap = `<div class="form-row">
+                                  <div class="form-group col-sm-3">
+                                      <label for="gap_${counter}">Gap ${counter}:</label>
+                                          <input id="gap_${counter}" name="gap_${counter}" class="form-control indygap" type="number" min="0"
+                                              max="50" step="1" value="25" disabled>
+                                  </div>
+                              </div>`;
+                // add new row to the gaps-block
+                $('#gaps-block').append(newGap);
+            }
+
+            // enable or disable all gaps depending on whether the indygap box is checked
+            var dis = !($('#ind-gap')[0].checked);
+            $('.indygap').each(function() {
+                var $eachGap = $(this)[0]
+                $eachGap.disabled = dis;
+            });
+
             var newcolorRow = $('<tr id="crow' + counter + '">');
             var ccols = "";
             ccols += '<td>' + counter + '</td>';

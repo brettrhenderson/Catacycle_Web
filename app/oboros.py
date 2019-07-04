@@ -45,7 +45,9 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
     rcolours = data['rcolours'][:data['num_steps']]
     is_incoming = data['is_incoming'][:data['num_steps']]
     is_outgoing = data['is_outgoing'][:data['num_steps']]
+    gaps = data['gaps'][:data['num_steps']]
     gap = float(data['gap'])
+    indgap = data['indgap']
     thickness = data['multiplier']
     startrange *= thickness
     stoprange *= thickness
@@ -83,12 +85,20 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
     # Drawing outside and inside curves
     for i in range(0, num_segments):
 
-        # starting and ending angle for each arrow (moving counterclockwise)
-        # gap/2 is added to center the gap at the top
-        # make sure the gap isnt so large that the arrow length becomes 0 or negative
-        gap = dh.ensure_valid_gap(delta, gap)
-        theta1 = 90 - delta * (i + 1) + (gap / 2.0)
-        theta2 = 90 - (gap / 2.0) - delta * i
+        if not indgap:
+            gap = dh.ensure_valid_gap(delta, gap)
+            # starting and ending angle for each arrow (moving counterclockwise)
+            # gap/2 is added to center the gap at the top
+            # make sure the gap isnt so large that the arrow length becomes 0 or negative
+            theta1 = 90 - delta * (i + 1) + (gap / 2.0)
+            theta2 = 90 - (gap / 2.0) - delta * i
+        else:
+            g_1, g_0 = dh.ensure_valid_gaps(delta, gaps[i], gaps[i-1])
+            gap = (g_1 + g_0) / 2    # keep an average gap for sizing the swoops
+            theta1 = 90 - delta * (i + 1) + (gap / 2.0)
+            theta2 = 90 - (gap / 2.0) - delta * i
+
+
         rel_head_length = (0.06 + 0.015 * num_segments) * rel_head_length_scaler
 
         if rev_rates[i] == 0:    # draw an irreversible arrow

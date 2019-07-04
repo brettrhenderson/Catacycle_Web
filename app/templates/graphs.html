@@ -16,6 +16,7 @@
     $(document).ready(setToken("{{ form.csrf_token._value() }}"));
     $(document).ready(addrow({{ rows|tojson }}));
     $(document).ready(clear());
+    $(document).ready(toggleGaps());
     $(document).ready(submitHandler("{{ form.csrf_token._value() }}"));
     $(document).ready(downloadHandler());
 </script>
@@ -382,9 +383,22 @@
                                                         <div class="form-check">
                                                             <label class="form-check-label" for="ind-gap">
                                                                 <input class="form-check-input" type="checkbox" id="ind-gap" name="indgap">
-                                                                Adjust Gaps Separately
+                                                                Adjust Gaps Individually
                                                             </label>
                                                         </div>
+                                                    </div>
+                                                    <div id="gaps-block">
+                                                        {% for row in range(rows)|batch(4) %}
+                                                        <div class="form-row">
+                                                            {% for i in row %}
+                                                            <div class="form-group col-sm-3">
+                                                                <label for="gap_{{ i + 1 }}">Gap {{ i + 1 }}:</label>
+                                                                <input id="gap_{{ i + 1 }}" name="gap_{{ i + 1 }}" class="form-control indygap" type="number" min="0"
+                                                                       max="50" step="1" value="{{ form_values['gap'] }}" disabled>
+                                                            </div>
+                                                            {% endfor %}
+                                                        </div>
+                                                        {% endfor %}
                                                     </div>
                                                 </div>
                                             </div>
