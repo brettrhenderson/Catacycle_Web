@@ -84,7 +84,6 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
 
     # Drawing outside and inside curves
     for i in range(0, num_segments):
-
         if not indgap:
             gap = dh.ensure_valid_gap(delta, gap)
             # starting and ending angle for each arrow (moving counterclockwise)
@@ -93,10 +92,10 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
             theta1 = 90 - delta * (i + 1) + (gap / 2.0)
             theta2 = 90 - (gap / 2.0) - delta * i
         else:
-            g_1, g_0 = dh.ensure_valid_gaps(delta, gaps[i], gaps[i-1])
+            g_1, g_0 = dh.ensure_valid_gaps(delta, gaps[(i+1)%len(gaps)], gaps[i])
             gap = (g_1 + g_0) / 2    # keep an average gap for sizing the swoops
-            theta1 = 90 - delta * (i + 1) + (gap / 2.0)
-            theta2 = 90 - (gap / 2.0) - delta * i
+            theta1 = 90 - delta * (i + 1) + (g_1 / 2.0)
+            theta2 = 90 - (g_0 / 2.0) - delta * i
 
 
         rel_head_length = (0.06 + 0.015 * num_segments) * rel_head_length_scaler
@@ -211,7 +210,9 @@ def draw_straight(data, startrange=0.15, stoprange=0.85, f_format='svg', figsize
     for_rate = data['f_rate_straight']
     forward_rates.append(for_rate)
     rev_rates.append(rev_rate)
+    gaps = data['gaps'][:data['num_steps']]
     gap = float(data['gap'])
+    indgap = data['indgap']
     fcolour = data['f_color_straight']
     rcolour = data['r_color_straight']
     is_incoming = data['incoming_straight']
@@ -237,6 +238,11 @@ def draw_straight(data, startrange=0.15, stoprange=0.85, f_format='svg', figsize
     delta = 360.0 / num_segments
 
     # calculate the length of a segment and use the same length for a straight line to preserve scaling
+    if not indgap:
+        gap = dh.ensure_valid_gap(delta, gap)
+    else:
+        gaps = dh.ensure_all_valid_gaps(delta, gaps)
+        gap = sum(gaps) / len(gaps)  # keep an average gap for sizing the swoops
     theta1 = 90 - delta + (gap / 2.0)
     theta2 = 90 - (gap / 2.0)
 

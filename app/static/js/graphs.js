@@ -233,7 +233,7 @@ function addrow(rows) {
 
 function submitForm(csrf_token, form_url, response_handler) {
     var postData = $('#cycle-form').serialize();
-    console.log(postData);
+    // console.log(postData);
     var formURL = form_url;
 
     $.ajax(

@@ -284,6 +284,18 @@ def ensure_valid_gaps(delta, gap1, gap0, precision=1):
         theta2 = 90 - (gap0 / 2.0)
     return gap1, gap0
 
+def ensure_all_valid_gaps(delta, gaps, precision=1):
+    for i in range(len(gaps)):
+        theta1 = 90 - delta + (gaps[i] / 2.0)
+        theta2 = 90 - (gaps[i-1] / 2.0)
+
+        while theta2 <= theta1:
+            gaps[i] -= precision / 2
+            gaps[i-1] -= precision / 2
+            theta1 = 90 - delta + (gaps[i] / 2.0)
+            theta2 = 90 - (gaps[i-1] / 2.0)
+    return gaps
+
 def get_isosceles_arrowhead(radius, theta1, theta2, base_width):
     point1 = radius * np.array([math.cos(theta1), math.sin(theta1)])
     point2 = radius * np.array([math.cos(theta2), math.sin(theta2)])
