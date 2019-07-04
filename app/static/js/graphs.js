@@ -4,6 +4,9 @@ var token = ''
 // count number of steps in tables
 var counter = 4;
 
+// initialize a list of default colors
+var colorDefaults = ['#026FDD', '#B467FF', '#014949', '#E58B3C', '#490192', '#28E328', '#6FB7FF', '#920303', '#019292', '#924A02'];
+
 function setToken(token_val) {
     token = token_val;
 }
@@ -76,23 +79,23 @@ function add_colorpicker(id, auto_lighten, other_id) {
                         colors: {
                             'black': '#000000',
                             'gray': 'gray',
-                            'red': 'red',
-                            'blue': 'blue',
-                            'defaultf1': '#4286f4',
-                            'defaultf2': '#e2893b',
-                            'defaultf3': '#de5eed',
-                            'defaultf4': '#dd547d',
-                            'defaultr1': '#82abed',
-                            'defaultr2': '#efb683',
-                            'defaultr3': '#edb2f4',
-                            'defaultr4': '#ef92ae',
+                            'def1': '#026FDD',
+                            'def2': '#B266FD',
+                            'def3': '#004949',
+                            'def4': '#E2893B',
+                            'def5': '#490092',
+                            'def6': '#28E328',
+                            'def7': '#920303',
+                            'def8': '#6FB7FF',
+                            'def9': '#019292',
+                            'def10': '#009292',
                         },
                         namesAsValues: false
                     }
                 }
             ]
         })
-        .on('change', function (e) {
+        .on('colorpickerCreate colorpickerUpdate', function (e) {
             col_lightness = e.color.api('lightness');
             lighten = e.color.api('lighten', 0.5).api('lightness')
             lighter = Math.max(col_lightness + 25, lighten)
@@ -114,16 +117,16 @@ function add_colorpicker(id, auto_lighten, other_id) {
                         colors: {
                             'black': '#000000',
                             'gray': 'gray',
-                            'red': 'red',
-                            'blue': 'blue',
-                            'defaultf1': '#4286f4',
-                            'defaultf2': '#e2893b',
-                            'defaultf3': '#de5eed',
-                            'defaultf4': '#dd547d',
-                            'defaultr1': '#82abed',
-                            'defaultr2': '#efb683',
-                            'defaultr3': '#edb2f4',
-                            'defaultr4': '#ef92ae',
+                            'def1': '#026FDD',
+                            'def2': '#B266FD',
+                            'def3': '#004949',
+                            'def4': '#E2893B',
+                            'def5': '#490092',
+                            'def6': '#28E328',
+                            'def7': '#920303',
+                            'def8': '#6FB7FF',
+                            'def9': '#019292',
+                            'def10': '#009292',
                         },
                         namesAsValues: false
                     }
@@ -190,7 +193,7 @@ function addrow(rows) {
             ccols += '<td>' + counter + '</td>';
             var prefixes = ['f', 'r']
             for (prefix in prefixes) {
-                cval = "#000000"
+                var cval = colorDefaults[counter - 1];
                 if (prefixes[prefix] == 'r') {
                     cval = "#404040"
                 }
