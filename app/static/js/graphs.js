@@ -5,7 +5,7 @@ var token = ''
 var counter = 4;
 
 // initialize a list of default colors
-var colorDefaults = ['#026FDD', '#B467FF', '#014949', '#E58B3C', '#490192', '#28E328', '#6FB7FF', '#920303', '#019292', '#924A02'];
+var colorDefaults = ['#FD3506', '#026FDD', '#FB7602', '#A64535', '#7F00FF', '#3AE5D4', '#00DF00', '#000000', '#000000', '#000000'];
 
 function setToken(token_val) {
     token = token_val;
@@ -79,16 +79,13 @@ function add_colorpicker(id, auto_lighten, other_id) {
                         colors: {
                             'black': '#000000',
                             'gray': 'gray',
-                            'def1': '#026FDD',
-                            'def2': '#B467FF',
-                            'def3': '#014949',
-                            'def4': '#E58B3C',
-                            'def5': '#490192',
-                            'def6': '#28E328',
-                            'def7': '#6FB7FF',
-                            'def8': '#920303',
-                            'def9': '#019292',
-                            'def10': '#924A02',
+                            'def1': '#FD3506',
+                            'def2': '#026FDD',
+                            'def3': '#FB7602',
+                            'def4': '#A64535',
+                            'def5': '#7F00FF',
+                            'def6': '#3AE5D4',
+                            'def7': '#00DF00'
                         },
                         namesAsValues: false
                     }
@@ -117,16 +114,13 @@ function add_colorpicker(id, auto_lighten, other_id) {
                         colors: {
                             'black': '#000000',
                             'gray': 'gray',
-                            'def1': '#026FDD',
-                            'def2': '#B467FF',
-                            'def3': '#014949',
-                            'def4': '#E58B3C',
-                            'def5': '#490192',
-                            'def6': '#28E328',
-                            'def7': '#6FB7FF',
-                            'def8': '#920303',
-                            'def9': '#019292',
-                            'def10': '#924A02',
+                            'def1': '#FD3506',
+                            'def2': '#026FDD',
+                            'def3': '#FB7602',
+                            'def4': '#A64535',
+                            'def5': '#7F00FF',
+                            'def6': '#3AE5D4',
+                            'def7': '#00DF00'
                         },
                         namesAsValues: false
                     }
