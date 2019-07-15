@@ -5,7 +5,7 @@ var token = ''
 var counter = 4;
 
 // initialize a list of default colors
-var colorDefaults = ['#FD3506', '#026FDD', '#FB7602', '#A64535', '#7F00FF', '#3AE5D4', '#00DF00', '#000000', '#000000', '#000000'];
+var colorDefaults = ['#026FDD', '#FB7602', '#672CA2', '#BA2B2B', '#BC30AF', '#33962E', '#C03F17', '#000000', '#000000', '#000000'];
 
 function setToken(token_val) {
     token = token_val;
@@ -79,13 +79,13 @@ function add_colorpicker(id, auto_lighten, other_id) {
                         colors: {
                             'black': '#000000',
                             'gray': 'gray',
-                            'def1': '#FD3506',
-                            'def2': '#026FDD',
-                            'def3': '#FB7602',
-                            'def4': '#A64535',
-                            'def5': '#7F00FF',
-                            'def6': '#3AE5D4',
-                            'def7': '#00DF00'
+                            'def1': '#026FdD',
+                            'def2': '#FB7602',
+                            'def3': '#672CA2',
+                            'def4': '#BA2B2B',
+                            'def5': '#BC30AF',
+                            'def6': '#33962E',
+                            'def7': '#C03F17'
                         },
                         namesAsValues: false
                     }
@@ -114,13 +114,13 @@ function add_colorpicker(id, auto_lighten, other_id) {
                         colors: {
                             'black': '#000000',
                             'gray': 'gray',
-                            'def1': '#FD3506',
-                            'def2': '#026FDD',
-                            'def3': '#FB7602',
-                            'def4': '#A64535',
-                            'def5': '#7F00FF',
-                            'def6': '#3AE5D4',
-                            'def7': '#00DF00'
+                            'def1': '#026FdD',
+                            'def2': '#FB7602',
+                            'def3': '#672CA2',
+                            'def4': '#BA2B2B',
+                            'def5': '#BC30AF',
+                            'def6': '#33962E',
+                            'def7': '#C03F17' 
                         },
                         namesAsValues: false
                     }

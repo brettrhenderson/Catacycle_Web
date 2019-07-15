@@ -82,13 +82,13 @@ class RatesForm(FlaskForm):
 
 
     # Colors Tab
-    f_color1 = StringField('f_color1', default='#FD3506')
-    f_color2 = StringField('f_color2', default='#026FDD')
-    f_color3 = StringField('f_color3', default='#FB7602')
-    f_color4 = StringField('f_color4', default='#A64535')
-    f_color5 = StringField('f_color5', default='#7F00FF')
-    f_color6 = StringField('f_color6', default='#3AE5D4')
-    f_color7 = StringField('f_color7', default='#00DF00')
+    f_color1 = StringField('f_color1', default='#026FDD')
+    f_color2 = StringField('f_color2', default='#FB7602')
+    f_color3 = StringField('f_color3', default='#672CA2')
+    f_color4 = StringField('f_color4', default='#BA2B2B')
+    f_color5 = StringField('f_color5', default='#BC30AF')
+    f_color6 = StringField('f_color6', default='#33962E')
+    f_color7 = StringField('f_color7', default='#C03F17')
     f_color8 = StringField('f_color8', default='#000000')
     f_color9 = StringField('f_color9', default='#000000')
     f_color10 = StringField('f_color10', default='#000000')
