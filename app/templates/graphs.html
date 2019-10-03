@@ -1,11 +1,11 @@
 {% extends "bootstrap/base.html" %}
 {% block title %}Catacycle{% endblock %}
-
 {% block styles %}
 {{super()}}
 <link rel="stylesheet" href="{{url_for('.static', filename='css/graphs.css')}}">
 <link rel="stylesheet" href="{{url_for('.static', filename='css/bootstrap-colorpicker.css')}}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="icon" href="{{url_for('.static', filename='images/cycle_icon.png')}}">
 {% endblock %}
 
 {% block scripts %}
