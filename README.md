@@ -7,4 +7,8 @@ A web-based interface to generate visualizations of the rates of various steps i
 2. `python flask_app2.py`
 
 ## The Code
-The main python components lie within the **app** subdirectory.  *drawing_helpers.py* contains the implementation of drawing individual arrows using matplotlib functions. *oboros.py* strings together the drawing functions to create a cycle using the input from the web form.  *form.py* and *routes.py* contain the backend of the website using the flask framework.
+The main python components lie within the **app** subdirectory.  
+
+- *drawing_helpers.py* contains the implementation of drawing individual arrows using matplotlib functions. 
+- *oboros.py* strings together the drawing functions to create a cycle using the input from the web form.  
+- *form.py* and *routes.py* contain the backend of the website using the flask framework.
