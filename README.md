@@ -5,6 +5,7 @@ A web-based interface to generate visualizations of the rates of various steps i
 0. Create a python virtual environment with a python 3.7 interpreter. It may well work on earlier python versions but this is untested. 
 1. In the main Catacycle directory, and within the virtual environment, run `pip install -r requirements.txt`
 2. `python flask_app2.py`
+3. Visit [localhost:5000] in your web browser.
 
 ## The Code
 The main python components lie within the **app** subdirectory.  
