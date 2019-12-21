@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired
 
 class RatesForm(FlaskForm):
 
-    MAX_ROWS = 10
+    MAX_ROWS = 15
 
     # Styling tab
     flip = BooleanField('flip', default=False)
@@ -32,6 +32,11 @@ class RatesForm(FlaskForm):
     gap_8 = IntegerField('gap_8', default=25)
     gap_9 = IntegerField('gap_9', default=25)
     gap_10 = IntegerField('gap_10', default=25)
+    gap_11 = IntegerField('gap_11', default=25)
+    gap_12 = IntegerField('gap_12', default=25)
+    gap_13 = IntegerField('gap_13', default=25)
+    gap_14 = IntegerField('gap_14', default=25)
+    gap_15 = IntegerField('gap_15', default=25)
 
     # Step Rates tab
     f_rate1 = FloatField('f_rate1', validators=[DataRequired()], default=3.0)
@@ -44,6 +49,11 @@ class RatesForm(FlaskForm):
     f_rate8 = FloatField('f_rate8', default=0.0)
     f_rate9 = FloatField('f_rate9', default=0.0)
     f_rate10 = FloatField('f_rate10', default=0.0)
+    f_rate11 = FloatField('f_rate11', default=0.0)
+    f_rate12 = FloatField('f_rate12', default=0.0)
+    f_rate13 = FloatField('f_rate13', default=0.0)
+    f_rate14 = FloatField('f_rate14', default=0.0)
+    f_rate15 = FloatField('f_rate15', default=0.0)
     r_rate1 = FloatField('r_rate1', default=0.0)
     r_rate2 = FloatField('r_rate2', default=0.0)
     r_rate3 = FloatField('r_rate3', default=0.0)
@@ -54,6 +64,11 @@ class RatesForm(FlaskForm):
     r_rate8 = FloatField('r_rate8', default=0.0)
     r_rate9 = FloatField('r_rate9', default=0.0)
     r_rate10 = FloatField('r_rate10', default=0.0)
+    r_rate11 = FloatField('r_rate11', default=0.0)
+    r_rate12 = FloatField('r_rate12', default=0.0)
+    r_rate13 = FloatField('r_rate13', default=0.0)
+    r_rate14 = FloatField('r_rate14', default=0.0)
+    r_rate15 = FloatField('r_rate15', default=0.0)
 
 
     # Incoming Swoops
@@ -67,6 +82,11 @@ class RatesForm(FlaskForm):
     is_incoming8 = BooleanField('is_incoming8', default=False)
     is_incoming9 = BooleanField('is_incoming9', default=False)
     is_incoming10 = BooleanField('is_incoming10', default=False)
+    is_incoming11 = BooleanField('is_incoming11', default=False)
+    is_incoming12 = BooleanField('is_incoming12', default=False)
+    is_incoming13 = BooleanField('is_incoming13', default=False)
+    is_incoming14 = BooleanField('is_incoming14', default=False)
+    is_incoming15 = BooleanField('is_incoming15', default=False)
 
     # Outgoing Swoops
     is_outgoing1 = BooleanField('is_outgoing1', default=False)
@@ -79,6 +99,11 @@ class RatesForm(FlaskForm):
     is_outgoing8 = BooleanField('is_outgoing8', default=False)
     is_outgoing9 = BooleanField('is_outgoing9', default=False)
     is_outgoing10 = BooleanField('is_outgoing10', default=False)
+    is_outgoing11 = BooleanField('is_outgoing11', default=False)
+    is_outgoing12 = BooleanField('is_outgoing12', default=False)
+    is_outgoing13 = BooleanField('is_outgoing13', default=False)
+    is_outgoing14 = BooleanField('is_outgoing14', default=False)
+    is_outgoing15 = BooleanField('is_outgoing15', default=False)
 
 
     # Colors Tab
@@ -90,8 +115,13 @@ class RatesForm(FlaskForm):
     f_color6 = StringField('f_color6', default='#33962E')
     f_color7 = StringField('f_color7', default='#C03F17')
     f_color8 = StringField('f_color8', default='#000000')
-    f_color9 = StringField('f_color9', default='#000000')
-    f_color10 = StringField('f_color10', default='#000000')
+    f_color9 = StringField('f_color9', default='#026FDD')
+    f_color10 = StringField('f_color10', default='#FB7602')
+    f_color11 = StringField('f_color11', default='#672CA2')
+    f_color12 = StringField('f_color12', default='#BA2B2B')
+    f_color13 = StringField('f_color13', default='#BC30AF')
+    f_color14 = StringField('f_color14', default='#33962E')
+    f_color15 = StringField('f_color15', default='#C03F17')
     r_color1 = StringField('r_color1', default='#000000')
     r_color2 = StringField('r_color2', default='#000000')
     r_color3 = StringField('r_color3', default='#000000')
@@ -102,6 +132,11 @@ class RatesForm(FlaskForm):
     r_color8 = StringField('r_color8', default='#000000')
     r_color9 = StringField('r_color9', default='#000000')
     r_color10 = StringField('r_color10', default='#000000')
+    r_color11 = StringField('r_color11', default='#000000')
+    r_color12 = StringField('r_color12', default='#000000')
+    r_color13 = StringField('r_color13', default='#000000')
+    r_color14 = StringField('r_color14', default='#000000')
+    r_color15 = StringField('r_color15', default='#000000')
 
     # Outside Reactions (straight arrows) tab
     f_rate_straight = FloatField('f_rate_straight', validators=[DataRequired()], default=3.0)

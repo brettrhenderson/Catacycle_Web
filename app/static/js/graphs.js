@@ -5,7 +5,7 @@ var token = ''
 var counter = 4;
 
 // initialize a list of default colors
-var colorDefaults = ['#026FDD', '#FB7602', '#672CA2', '#BA2B2B', '#BC30AF', '#33962E', '#C03F17', '#000000', '#000000', '#000000'];
+var colorDefaults = ['#026FDD', '#FB7602', '#672CA2', '#BA2B2B', '#BC30AF', '#33962E', '#C03F17', '#000000', '#026FDD', '#FB7602', '#672CA2', '#BA2B2B', '#BC30AF', '#33962E', '#C03F17'];
 
 function setToken(token_val) {
     token = token_val;
@@ -139,6 +139,12 @@ function addrow(rows) {
             $("#rate-body")[0].deleteRow(-1);
             $("#color-body")[0].deleteRow(-1);
             counter -= 1
+            // rescale gaps
+            $('.indygap').each(function() {
+                var $eachGap = $(this)[0]
+                $eachGap.value = 32 - counter - Math.floor(counter/2)
+            });
+            $('#gap')[0].value = 32 - counter - Math.floor(counter/2)
 
             // remove indygap inputs
             if(counter % 4 != 1) {
@@ -151,14 +157,14 @@ function addrow(rows) {
     });
 
     $("#addcolorrow, #addrow").on("click", function () {
-        if (counter < 11) {
+        if (counter < 16) {
             // add new gap adjusters as new steps are added
             if (counter % 4 != 1) {
                 // new input to add
                 var newGap = `<div class="form-group col-sm-3">
                                   <label for="gap_${counter}">Gap ${counter}:</label>
                                       <input id="gap_${counter}" name="gap_${counter}" class="form-control indygap" type="number" min="0"
-                                          max="50" step="1" value="25" disabled>
+                                          max="50" step="1" value="${31 - counter - Math.floor(counter/2)}" disabled>
                               </div>`;
                 // add to the last existing row
                 $('#gaps-block').children().last().append(newGap);
@@ -168,19 +174,12 @@ function addrow(rows) {
                                   <div class="form-group col-sm-3">
                                       <label for="gap_${counter}">Gap ${counter}:</label>
                                           <input id="gap_${counter}" name="gap_${counter}" class="form-control indygap" type="number" min="0"
-                                              max="50" step="1" value="25" disabled>
+                                              max="50" step="1" value="${31 - counter - Math.floor(counter/2)}" disabled>
                                   </div>
                               </div>`;
                 // add new row to the gaps-block
                 $('#gaps-block').append(newGap);
             }
-
-            // enable or disable all gaps depending on whether the indygap box is checked
-            var dis = !($('#ind-gap')[0].checked);
-            $('.indygap').each(function() {
-                var $eachGap = $(this)[0]
-                $eachGap.disabled = dis;
-            });
 
             var newcolorRow = $('<tr id="crow' + counter + '">');
             var ccols = "";
@@ -224,6 +223,17 @@ function addrow(rows) {
             $("table.rates-list").append(newRow);
 
             counter++;
+
+            // enable or disable all gaps depending on whether the indygap box is checked
+            var dis = !($('#ind-gap')[0].checked);
+            $('.indygap').each(function() {
+                var $eachGap = $(this)[0]
+                $eachGap.disabled = dis;
+                $eachGap.value = 32 - counter - Math.floor(counter/2)
+            });
+
+            // adjust the gap to accommodate more/less steps
+            $('#gap')[0].value = 32 - counter - Math.floor(counter/2)
         }
     })
 };
