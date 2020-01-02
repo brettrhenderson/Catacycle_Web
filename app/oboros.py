@@ -1,4 +1,4 @@
-# Ouroboros Chart
+ # Ouroboros Chart
 # Cyclic reaction pathway figure generator - Rusty Shackleford 2018
 
 import matplotlib
