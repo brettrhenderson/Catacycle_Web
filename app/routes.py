@@ -12,8 +12,11 @@ log = logging.getLogger(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
-@app.route('/graphs', methods=['GET', 'POST'])
-def graphs():
+def index():
+    return render_template('index.html')
+
+@app.route('/cycle', methods=['GET', 'POST'])
+def cycle():
 
     form = RatesForm(request.form)  # initialize the backend of the web form
     data = form.default_data()  # initialize the form with some default data on the front end
@@ -30,7 +33,6 @@ def graphs():
                            rows=data['num_steps'],
                            form=form,
                            form_values=data)
-
 
 @app.route('/download', methods=['GET', 'POST'])
 def download():
@@ -55,3 +57,11 @@ def download():
     else:
         log.debug("Not sending anything")
         return '', 204
+
+@app.route('/aboutus', methods=['GET', 'POST'])
+def aboutus():
+    return render_template('aboutus.html')
+
+@app.route('/vtna', methods=['GET', 'POST'])
+def vtna():
+    return render_template('vtna.html')
