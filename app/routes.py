@@ -24,7 +24,7 @@ def graphs():
         return jsonify(data=[draw(data, startrange=0.15, stoprange=0.65,), draw_straight(data, startrange=0.15, stoprange=0.65,)])
 
     log.debug(data)
-    return render_template('graphs.html',
+    return render_template('cycle.html',
                            graph1=draw(data, startrange=0.15, stoprange=0.65,),
                            graph2=draw_straight(data, startrange=0.15, stoprange=0.65,),
                            rows=data['num_steps'],
