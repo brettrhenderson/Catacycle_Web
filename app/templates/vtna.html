@@ -8,7 +8,6 @@
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
@@ -24,9 +23,50 @@
   </div>
 </nav>
 <br>
-<p>
-  <a class="btn btn-light btn" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">How to format your data</a>
+<!dropdown how-to format data>
+<div class="accordion" id="accordionExample">
+  <div class="card">
+    <div class="card-header" id="headingOne">
+      <h2 class="mb-0">
+        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          Formatting your data
+        </button>
+      </h2>
+    </div>
 
+    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+      <div class="card-body">
+          <div class="media">
+            <img class="mr-3" src="../static/images/examplexls.png" width="210" height="130">
+              <div class="media-body align-self-center">
+                  Upload your data as an xlsx or xls file.
+                  Each sheet is a separate experiment. Make the first column time and each subsequent column the abundance of a species.
+                  There can be any number of sheets, rows and columns. The titles of your sheets and columns do not matter.
+              </div>
+          </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header" id="headingTwo">
+      <h2 class="mb-0">
+        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+          Format Concentrations
+        </button>
+      </h2>
+    </div>
+    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+      <div class="card-body">
+          Input the starting concentrations for the reagent in the order they appear in each column separated by a comma.
+          Separate each sheet by a semicolon.
+          Include units as you would like them to appear on the plots.
+      </div>
+    </div>
+  </div>
+<!option for instructions
+<p>
+  <a class="btn btn-primary btn" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">How to format your data</a>
+  <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">Format Concentrations</button>
 </p>
 <div class="row">
   <div class="col">
@@ -38,6 +78,41 @@
                   Upload your data as an xlsx or xls file.
                   Each sheet is a separate experiment. Make the first column time and each subsequent column the abundance of a species.
                   There can be any number of sheets, rows and columns. The titles of your sheets and columns do not matter.
+              </div>
+          </div>
       </div>
     </div>
   </div>
+    <div class="col">
+    <div class="collapse multi-collapse" id="multiCollapseExample2">
+      <div class="card card-body">
+          Input the starting concentrations for the reagent in the order they appear in each column separated by a comma.
+          Separate each sheet by a semicolon.
+          Include units as you would like them to appear on the plots.
+      </div>
+    </div>
+  </div>
+</div>
+<!upload xlsx>
+<form>
+  <div class="form-group">
+    <label for="exampleFormControlFile1">Upload Data</label>
+    <input type="file" class="form-control-file" id="exampleFormControlFile1">
+  </div>
+</form>
+<!other input>
+<form>
+  <div class="form-group">
+    <label for="exampleFormControlInput1">Starting Concentrations</label>
+    <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="0.6, 1.2, 0.02; 0.4, 1.2, 0.02">
+  </div>
+
+  <div class="form-group">
+    <label for="exampleFormControlTextarea1">Example text area</label>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+  </div>
+</form>
+
+<!download new data>
+
+
