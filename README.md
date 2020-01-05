@@ -1,5 +1,5 @@
 # Catacycle
-A web-based interface to generate visualizations of the rates of various steps in a catalytic cycle, which can be customized by the user. Population of a web form using known data will generate a graphic for annotation by the user to represent their chemistry.  The running Catacycle app can be found at www.Catacycle.com
+A web-based interface to generate visualizations of the rates of various steps in a catalytic cycle, which can be customized by the user. Population of a web form using known data will generate a graphic for annotation by the user to represent their chemistry.  The running Catacycle app can be found at www.Catacycle.com.
 
 ## Run it Locally
 0. Create a python virtual environment with a python 3.7 interpreter. It may well work on earlier python versions but this is untested. 
