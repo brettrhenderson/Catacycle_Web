@@ -12,116 +12,200 @@
 
 {% block content %}
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="{{ url_for('index') }}">Home</a>
+  <a class="navbar-brand" href="{{ url_for('cycle') }}">  Catacycle </a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('cycle') }}">Catacyle</a>
-      </li>
-      <li class="nav-item active">
-        <a class="nav-link" href="{{ url_for('vtna') }}">VTNA<span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="{{ url_for('index') }}"> Other Tools </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('aboutus') }}">About Us</a>
+        <a class="nav-link" href="{{ url_for('aboutus') }}"> About Us</a>
       </li>
     </ul>
   </div>
 </nav>
 <br>
-<!dropdown how-to format data>
-<div class="accordion" id="accordionExample">
-  <div class="card">
-    <div class="card-header" id="headingOne">
-      <h2 class="mb-0">
-        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-          Formatting your data
-        </button>
-      </h2>
-    </div>
+<!dropdown how-tos>
+<div class="container">
+  <div class="row  justify-content-md-center">
+    <div class="accordion" id="accordionExample">
+      <button class="btn btn-secondary collapsed col-md-8" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+        How to format your data
+      </button>
+      <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+        <div class="media col-md-8">
+          <img class="mr-3" src="../static/images/examplexls.png" width="210" height="130">
+            <div class="media-body align-self-center">
+                Upload your data as an xlsx or xls file.
+                Each sheet is a separate experiment. Make the first column time and each subsequent column the abundance of a species.
+                There can be any number of sheets, rows and columns. The titles of your sheets and columns do not matter.
+            </div>
+        </div>
+      </div>
+      <button class="btn btn-light collapsed col-md-8" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+        How to format Concentrations
+      </button>
+      <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+        <div class="media col-md-8">
+          <div class="media-body align-self-center">
+            Input the starting concentrations for each reagent in the order that they appear in the columns separated by a comma.
+            Separate each experiment (sheet) by a semicolon.
+            Include units as you would like them to appear on the plots.
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-secondary collapsed col-md-8" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+        Choosing data normalization method
+      </button>
+      <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+        <div class="media col-md-8">
+          <div class="media-body align-self-center">
+            Total count normalization divides each data point by the sum of all reagents in that time step.
+            Max value normalization finds the maximum value in your data set and divides by that value.
+            Select none  or Max Value normalization if your data has already been normalized.
 
-    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
-      <div class="card-body">
-          <div class="media">
-            <img class="mr-3" src="../static/images/examplexls.png" width="210" height="130">
-              <div class="media-body align-self-center">
-                  Upload your data as an xlsx or xls file.
-                  Each sheet is a separate experiment. Make the first column time and each subsequent column the abundance of a species.
-                  There can be any number of sheets, rows and columns. The titles of your sheets and columns do not matter.
-              </div>
           </div>
+        </div>
       </div>
     </div>
   </div>
-  <div class="card">
-    <div class="card-header" id="headingTwo">
-      <h2 class="mb-0">
-        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-          Format Concentrations
-        </button>
-      </h2>
+<br>
+  <!upload xlsx>
+  <form>
+    <div class="form-row">
+      <div class="form-group col-md-3">
+        <label for="exampleFormControlFile1">Upload Data</label>
+        <input type="file" class="form-control-file" id="exampleFormControlFile1">
+      </div>
+    <!other input>
+      <div class="form-group col-md-4">
+        <label for="exampleFormControlInput1">Starting Concentrations:</label>
+        <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="0.6, 1.2, 0.02; 0.4...">
+      </div>
+      <div class="form-group col-md-2">
+        <label for="exampleFormControlInput1">Units:</label>
+        <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="uM/mM/M...">
+      </div>
     </div>
-    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-      <div class="card-body">
-          Input the starting concentrations for the reagent in the order they appear in each column separated by a comma.
-          Separate each sheet by a semicolon.
-          Include units as you would like them to appear on the plots.
+    <div class="form-row">
+      <div class="form-group col-md-3">
+        <div class="form-group form-check">
+          <input type="checkbox" class="form-check-input" id="exampleCheck1">
+          <label class="form-check-label" for="exampleCheck1">Don't Auto Fit</label>
+        </div>
+        <div class="form-group form-check">
+          <input type="checkbox" class="form-check-input" id="exampleCheck1">
+          <label class="form-check-label" for="exampleCheck1">Assess Poisoning</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-group form-check">
+          <form class="form-inline">
+            <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
+              <option selected>Normalization Type</option>
+              <option value="1">Max Value Normalization</option>
+              <option value="2">Total Count Normalization</option>
+              <option value="3">None</option>
+            </select>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <button type="submit" class="btn btn-secondary">Plot Data</button>
+    </div>
+  </form>
+</div>
+<br>
+<!-- Add icon library -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<div class="container">
+  <div class="row justify-content-md-center">
+    <div class="col-md-0.5">
+      <!tool bar which sucks now but maybe we can add some stuff>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+      <style>
+      body {margin:0}
+
+      .icon-bar {
+        width: 50px;
+        background-color: #555;
+      }
+
+      .icon-bar a {
+        display: block;
+        text-align: center;
+        padding: 16px;
+        transition: all 0.3s ease;
+        color: white;
+        font-size: 17px;
+      }
+
+      .icon-bar a:hover {
+        background-color: #000;
+      }
+
+      .active {
+        background-color: #939CF1;
+      }
+      </style>
+      <body>
+
+      <div class="icon-bar">
+        <a class="active" href="#">Ss</i></a>
+        <a href="#">xX</i></a>
+        <a href="#">hex</a>
+        <a href="#"><i class="fa fa-globe"></i></a>
+        <a href="#"><i class="fa fa-trash"></i></a>
+      </div>
+      </body>
+    </div>
+    <div class="col-md-8">
+      <div class="card bg-secondary mb-3" style="max-wdith: 18rem;">
+        <img id='graph' class="d-block w-100 img-fluid max-vh-75" src='{{ graph1 }}' alt="Cycle">
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-light">
+        <div class="card-body">
+          <p class="card-title">Reaction Order = </p>
+          <p class="card-text">Poisoning = </p>
+        </div>
       </div>
     </div>
   </div>
-<!option for instructions
-<p>
-  <a class="btn btn-primary btn" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">How to format your data</a>
-  <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">Format Concentrations</button>
-</p>
-<div class="row">
-  <div class="col">
-    <div class="collapse multi-collapse" id="multiCollapseExample1">
-      <div class="card card-body">
-          <div class="media">
-            <img class="mr-3" src="../static/images/examplexls.png" width="210" height="130">
-              <div class="media-body align-self-center">
-                  Upload your data as an xlsx or xls file.
-                  Each sheet is a separate experiment. Make the first column time and each subsequent column the abundance of a species.
-                  There can be any number of sheets, rows and columns. The titles of your sheets and columns do not matter.
-              </div>
-          </div>
-      </div>
-    </div>
-  </div>
-    <div class="col">
-    <div class="collapse multi-collapse" id="multiCollapseExample2">
-      <div class="card card-body">
-          Input the starting concentrations for the reagent in the order they appear in each column separated by a comma.
-          Separate each sheet by a semicolon.
-          Include units as you would like them to appear on the plots.
-      </div>
+  <br>
+  <p>
+    <a class="btn btn-secondary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+      Manual Fitting
+    </a>
+  </p>
+  <div class="collapse" id="collapseExample">
+    <div class="card card-body">
+      <form>
+        <div class="form-group">
+          <label for="formControlRange">align start time</label>
+          <input type="range" class="form-control-range" id="formControlRange">
+        </div>
+        <div class="form-group">
+          <label for="formControlRange">order of reaction</label>
+          <input type="range" class="form-control-range" id="formControlRange">
+        </div>
+        <div class="form-group">
+          <label for="formControlRange">Poisoning</label>
+          <input type="range" class="form-control-range" id="formControlRange">
+        </div>
+      </form>
     </div>
   </div>
 </div>
-<!upload xlsx>
-<form>
-  <div class="form-group">
-    <label for="exampleFormControlFile1">Upload Data</label>
-    <input type="file" class="form-control-file" id="exampleFormControlFile1">
-  </div>
-</form>
-<!other input>
-<form>
-  <div class="form-group">
-    <label for="exampleFormControlInput1">Starting Concentrations</label>
-    <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="0.6, 1.2, 0.02; 0.4, 1.2, 0.02">
-  </div>
+  <!download new data>
 
-  <div class="form-group">
-    <label for="exampleFormControlTextarea1">Example text area</label>
-    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
   </div>
-</form>
-
-<!download new data>
-
 </div>
 {% endblock %}
+
+<!--blah-->

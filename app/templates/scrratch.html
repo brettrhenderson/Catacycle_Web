@@ -1,0 +1,85 @@
+<!collapsible shit>
+  <p>
+    <a class="btn btn-secondary" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">How to format your data</a>
+    <a class="btn btn-secondary" data-toggle="collapse" href="#multiCollapseExample2" role="button" aria-expanded="false" aria-controls="multiCollapseExample2">format concentrations list</a>
+    <!button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">
+    <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#multiCollapseExample3" aria-expanded="false" aria-controls="multiCollapseExample3">choose normalization method</button>
+  </p>
+  <div class="row">
+    <div class="col">
+      <div class="collapse multi-collapse" id="multiCollapseExample1">
+        <div class="card card-body">
+          <div class="media">
+            <img class="mr-3" src="../static/images/examplexls.png" width="210" height="130">
+              <div class="media-body align-self-center">
+                    Upload your data as an xlsx or xls file.
+                    Each sheet is a separate experiment. Make the first column time and each subsequent column the abundance of a species.
+                    There can be any number of sheets, rows and columns. The titles of your sheets and columns do not matter.
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="collapse multi-collapse" id="multiCollapseExample2">
+        <div class="card card-body">
+          Input the starting concentrations for each reagent in the order that they appear in the columns separated by a comma.
+          Separate each experiment (sheet) by a semicolon.
+          Include units as you would like them to appear on the plots.
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="collapse multi-collapse" id="multiCollapseExample3">
+        <div class="card card-body">
+          Input the starting concentrations for each reagent in the order that they appear in the columns separated by a comma.
+          Separate each experiment (sheet) by a semicolon.
+          Include units as you would like them to appear on the plots.
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+<!dropdown how-tos>
+  <div class="accordion" id="accordionExample">
+    <div class="card">
+      <div class="card-header" id="headingOne">
+        <h2 class="mb-0">
+          <button class="btn btn-secondary collapsed btn" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+            How to format your data
+          </button>
+        </h2>
+      </div>
+      <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+        <div class="card-body">
+            <div class="media">
+              <img class="mr-3" src="../static/images/examplexls.png" width="210" height="130">
+                <div class="media-body align-self-center">
+                    Upload your data as an xlsx or xls file.
+                    Each sheet is a separate experiment. Make the first column time and each subsequent column the abundance of a species.
+                    There can be any number of sheets, rows and columns. The titles of your sheets and columns do not matter.
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" id="headingTwo">
+        <h2 class="mb-0">
+          <button class="btn btn-secondary collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+            How to format Concentrations
+          </button>
+        </h2>
+      </div>
+      <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+        <div class="card-body">
+            Input the starting concentrations for each reagent in the order that they appear in the columns separated by a comma.
+            Separate each experiment (sheet) by a semicolon.
+            Include units as you would like them to appear on the plots.
+        </div>
+      </div>
+    </div>
+  </div>

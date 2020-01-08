@@ -12,43 +12,41 @@
 
 {% block content %}
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="{{ url_for('index') }}">Home<span class="sr-only">(current)</span></a>
+  <a class="navbar-brand" href="{{ url_for('cycle') }}">  Catacycle </a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('cycle') }}">Catacyle</a>
+        <a class="nav-link" href="{{ url_for('index') }}"> Other Tools </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('vtna') }}">VTNA</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('aboutus') }}">About Us</a>
+        <a class="nav-link" href="{{ url_for('aboutus') }}"> About Us</a>
       </li>
     </ul>
   </div>
 </nav>
 <br>
-<div class="media">
-  <img class="mr-3" src="../static/images/indax.svg" width="200" height="200">
-  <div class="media-body align-self-center">
-    <a class="btn btn-outline-secondary btn" href="{{ url_for('cycle') }}">Generate Cycles</a>
-    <br>
-    Customize and download arrows to depict your chemistry.
+<div class="container">
+  <div class="media">
+    <img class="mr-3" src="../static/images/indax.svg" width="200" height="200">
+    <div class="media-body align-self-center">
+      <a class="btn btn-outline-secondary btn" href="{{ url_for('cycle') }}">Generate Cycles</a>
+      <br>
+      Customize and download arrows to depict your chemistry.
+    </div>
   </div>
-</div>
-<br>
-<br>
-<div class="media">
-  <img class="mr-3" src="../static/images/1orderrxn2.svg" width="200" height="150">
-  <div class="media-body align-self-center">
-    <a class="btn btn-outline-secondary btn" href="{{ url_for('vtna') }}">Kinetic Data Analysis</a>
-    <br>
-    Upload your kinetic data to correct for catalyst poisoning, do variable time normalization analysis and generate plots.
-    <br>
+  <br>
+  <br>
+  <div class="media">
+    <img class="mr-3" src="../static/images/1orderrxn2.svg" width="200" height="150">
+    <div class="media-body align-self-center">
+      <a class="btn btn-outline-secondary btn" href="{{ url_for('vtna') }}">Kinetic Data Analysis</a>
+      <br>
+      Upload your kinetic data to correct for catalyst poisoning, do variable time normalization analysis and generate plots.
+      <br>
+    </div>
   </div>
 </div>
 {% endblock %}
