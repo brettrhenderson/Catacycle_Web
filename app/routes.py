@@ -1,10 +1,9 @@
-from flask import render_template, request, jsonify, send_file, redirect, url_for, make_response, Response
+from flask import render_template, request, jsonify, make_response, Response
 from werkzeug.utils import secure_filename
 from werkzeug.wsgi import FileWrapper
 from app.form import RatesForm, DownloadForm
-from app.oboros import draw, draw_straight
+from app.modules.catacycle.oboros import draw, draw_straight
 from app import app
-import os
 import logging
 
 log = logging.getLogger(__name__)

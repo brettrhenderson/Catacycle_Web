@@ -4,14 +4,13 @@
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.patches as mpatches
-import matplotlib.path as mpath
-import matplotlib.pyplot as plt
+ import matplotlib.pyplot as plt
 import math
 import io
 import base64
 import numpy as np
 import logging
-import app.drawing_helpers as dh
+import app.modules.catacycle.drawing_helpers as dh
 
 log = logging.getLogger(__name__)
 #log.setLevel(logging.DEBUG)
