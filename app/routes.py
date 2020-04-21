@@ -6,6 +6,7 @@ from app.modules.catacycle.oboros import draw, draw_straight
 from app.modules.vtna.web_plot import plot_vtna
 from app import app
 import logging
+from app.modules.vtna import vtna_helper as vh
 
 log = logging.getLogger(__name__)
 #log.setLevel(logging.DEBUG)
@@ -64,4 +65,18 @@ def aboutus():
 
 @app.route('/vtna', methods=['GET', 'POST'])
 def vtna():
-    return render_template('vtna.html', graph1=plot_vtna())
+    concs = [0.0510,0.0578,0.0688,0.0750,0.104,0.125,0.127,0.142]
+    rxns = None  # [0, 1]
+    species = None  # [0,1]
+    trans_zero = [0]*len(concs)  # [-2.5, -12.5]
+    win = [1] * len(concs)
+    order = 0
+
+    filename = "app/modules/vtna/sampledata/Hydroamination-Kinetics-Catalyst-Order.xlsx"
+    raw_data, sheet_names = vh.load_raw(filename)
+    totals = vh.get_sheet_totals(None, raw_data)
+    norm_data = vh.normalize_columns(raw_data, totals)
+    gimme = vh.select_data(norm_data, rxns, species)
+    return render_template('vtna.html',
+                           graph1=plot_vtna(gimme, concs, order=order, trans_zero=trans_zero, windowsize=win,
+                                            marker_shape="^", linestyle=':', markersize=5, guide_lines=True))  # colors=None

@@ -3,3 +3,5 @@ numpy
 flask
 flask-bootstrap4
 flask-wtf
+pandas
+xlrd
