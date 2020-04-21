@@ -1,8 +1,9 @@
-from flask import render_template, request, jsonify, make_response, Response
+from flask import render_template, request, jsonify, make_response, Response, url_for
 from werkzeug.utils import secure_filename
 from werkzeug.wsgi import FileWrapper
 from app.form import RatesForm, DownloadForm
 from app.modules.catacycle.oboros import draw, draw_straight
+from app.modules.vtna.web_plot import plot_vtna
 from app import app
 import logging
 
@@ -63,4 +64,4 @@ def aboutus():
 
 @app.route('/vtna', methods=['GET', 'POST'])
 def vtna():
-    return render_template('vtna.html')
+    return render_template('vtna.html', graph1=plot_vtna())
