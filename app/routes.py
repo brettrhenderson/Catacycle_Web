@@ -65,18 +65,22 @@ def aboutus():
 
 @app.route('/vtna', methods=['GET', 'POST'])
 def vtna():
-    concs = [0.0510,0.0578,0.0688,0.0750,0.104,0.125,0.127,0.142]
+    concs = [1,2]#[0.0510, 0.0578, 0.0688, 0.0750, 0.104, 0.125, 0.127, 0.142]
     rxns = None  # [0, 1]
-    species = None  # [0,1]
-    trans_zero = [0]*len(concs)  # [-2.5, -12.5]
-    win = [1] * len(concs)
-    order = 0
+    species = [1,3] # [0,1]
+    trans_zero = [-11.5, -2.1] #[0] * len(concs)  # [-2.5, -12.5]
+    win = [25, 5] #[1] * len(concs)
+    order = 1
+    poison = 0.2
+    normalization_method = "TC"
 
-    filename = "app/modules/vtna/sampledata/Hydroamination-Kinetics-Catalyst-Order.xlsx"
+    filename = "app/modules/vtna/sampledata/vtna_multiple.xlsx"
     raw_data, sheet_names = vh.load_raw(filename)
-    totals = vh.get_sheet_totals(None, raw_data)
-    norm_data = vh.normalize_columns(raw_data, totals)
-    gimme = vh.select_data(norm_data, rxns, species)
+    selected = vh.select_data(raw_data, rxns, species)
+
+    totals = vh.get_sheet_totals(normalization_method, selected)
+    norm_data = vh.normalize_columns(selected, totals)
+
     return render_template('vtna.html',
-                           graph1=plot_vtna(gimme, concs, order=order, trans_zero=trans_zero, windowsize=win,
-                                            marker_shape="^", linestyle=':', markersize=5, guide_lines=True))  # colors=None
+                           graph1=plot_vtna(norm_data, concs, order=order, poison=poison, trans_zero=trans_zero, windowsize=win,
+                                            marker="^", linestyle=':', markersize=5, guide_lines=True))  # colors=None

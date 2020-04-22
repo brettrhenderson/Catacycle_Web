@@ -7,11 +7,9 @@ from flask import url_for
 from app.modules.vtna import vtna_helper as vh
 
 
-def plot_vtna(data,  concs, order=1, trans_zero=None,  windowsize=None, colors=None, marker_shape="o", markersize=15,
-              linestyle=':', guide_lines=True, f_format='png', return_image=False):
+def plot_vtna(data,  concs, order, poison=0, trans_zero=None,  windowsize=None, colors=None, guide_lines=True,
+              f_format='png', return_image=False, **kwargs):
     """Plot the Aligned Reaction Traces"""
-    if data is None:
-        return url_for('.static', filename='images/1orderrxn2.png')
     if trans_zero is None:
         trans_zero = [0]*len(data)
     if windowsize is None:
@@ -26,9 +24,9 @@ def plot_vtna(data,  concs, order=1, trans_zero=None,  windowsize=None, colors=N
     for i, rxn in enumerate(data):
         for j, col in enumerate(rxn.columns):
             if j > 0:
-                t_vtna = (rxn.iloc[:, 0] + trans_zero[i]) * float(concs[i]) ** order
+                t_vtna = (rxn.iloc[:, 0] + trans_zero[i]) * (float(concs[i])-poison) ** order
                 smoothed = rxn.loc[:, col].rolling(windowsize[i], center=True).mean()
-                ax.plot(t_vtna, smoothed, marker=marker_shape, linestyle=linestyle, markersize=markersize)
+                ax.plot(t_vtna, smoothed, **kwargs)
 
     if guide_lines:
         xmin, xmax = ax.get_xlim()
