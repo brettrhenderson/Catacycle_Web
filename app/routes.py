@@ -1,10 +1,11 @@
 from flask import render_template, request, jsonify, make_response, Response, url_for
+from app import app
 from werkzeug.utils import secure_filename
 from werkzeug.wsgi import FileWrapper
-from app.form import RatesForm, DownloadForm
+from app.cycleform import RatesForm, DownloadForm
+from app.vtnaform import VTNAForm
 from app.modules.catacycle.oboros import draw, draw_straight
 from app.modules.vtna.web_plot import plot_vtna
-from app import app
 import logging
 from app.modules.vtna import vtna_helper as vh
 
@@ -71,12 +72,19 @@ def vtna():
     trans_zero = [0]*len(concs)  # [-2.5, -12.5]
     win = [1] * len(concs)
     order = 0
-
-    filename = "app/modules/vtna/sampledata/Hydroamination-Kinetics-Catalyst-Order.xlsx"
+    filename = "app/static/sampledata/Hydroamination-Kinetics-Catalyst-Order.xlsx"
     raw_data, sheet_names = vh.load_raw(filename)
     totals = vh.get_sheet_totals(None, raw_data)
     norm_data = vh.normalize_columns(raw_data, totals)
     gimme = vh.select_data(norm_data, rxns, species)
+
+    form = VTNAForm()
+
+    if form.validate_on_submit():
+        print(form.xl.data.filename)
+        return '', 204
+
     return render_template('vtna.html',
+                           form=form,
                            graph1=plot_vtna(gimme, concs, order=order, trans_zero=trans_zero, windowsize=win,
-                                            marker_shape="^", linestyle=':', markersize=5, guide_lines=True))  # colors=None
+                                            marker_shape="^", linestyle=':', markersize=5, guide_lines=True))

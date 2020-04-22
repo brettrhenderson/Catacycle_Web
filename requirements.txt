@@ -1,7 +1,9 @@
-matplotlib
-numpy
-flask
+matplotlib~=3.0.2
+numpy~=1.16.1
+flask~=1.0.2
 flask-bootstrap4
 flask-wtf
-pandas
+pandas~=1.0.3
 xlrd
+Werkzeug~=0.14.1
+WTForms~=2.2.1
