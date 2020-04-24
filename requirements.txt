@@ -7,3 +7,4 @@ pandas~=1.0.3
 xlrd
 Werkzeug~=0.14.1
 WTForms~=2.2.1
+Flask_Session

@@ -8,7 +8,9 @@ from app.modules.catacycle.oboros import draw, draw_straight
 from app.modules.vtna.web_plot import plot_vtna, save_dfig
 import logging
 from app.modules.vtna import vtna_helper as vh
-import os
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -86,6 +88,7 @@ def vtna():
                                          windowsize=win, marker="^", linestyle=':', markersize=5, guide_lines=True,
                                          legend=True)
     session['fig'] = fig
+    plt.close()
 
     return render_template('vtna.html', upform=upload_form, dform=dform, graph1=new_plot)
 

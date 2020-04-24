@@ -5,10 +5,14 @@ import base64
 import io
 from flask import url_for
 from app.modules.vtna import vtna_helper as vh
-from copy import deepcopy
+import logging
+from mpld3 import fig_to_html
+
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 def plot_vtna(data,  concs=None, norm_time=False, order=1, trans_zero=None,  windowsize=None, colors=None, legend=True,
-              guide_lines=True, f_format='png', **kwargs):
+              guide_lines=True, f_format='svg', **kwargs):
     """Plot the Aligned Reaction Traces"""
     if data is None:
         return url_for('.static', filename='images/1orderrxn2.png')
@@ -20,7 +24,7 @@ def plot_vtna(data,  concs=None, norm_time=False, order=1, trans_zero=None,  win
     img = io.BytesIO()  # file-like object to hold image
 
     #put ipynb fn here to plot fitted graph once order etc. is known
-    fig = plt.figure(figsize=(6, 6))
+    fig = plt.figure(figsize=(8, 6))
     ax = fig.add_subplot(111, autoscale_on=True) #, xlim=(0, 20), ylim=(-0.1, 1.1))
     maxtime = max(vh.get_max_times(data))
     for i, rxn in enumerate(data):
@@ -51,6 +55,7 @@ def plot_vtna(data,  concs=None, norm_time=False, order=1, trans_zero=None,  win
 
     # if downloading image, return the bytes directly
     graph_url = base64.b64encode(img.getvalue()).decode()
+    #return 'data:{};base64,{}'.format(mimetype, graph_url), fig
     return 'data:{};base64,{}'.format(mimetype, graph_url), fig
 
 
