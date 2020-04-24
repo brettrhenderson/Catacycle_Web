@@ -56,14 +56,11 @@ class FlaskRegexp(object):
 
 
 class DataForm(FlaskForm):
-    # , regexp(r'^[a-zA-Z0-9\s_.\-\(\):]+\.xlsx$', flags=re.IGNORECASE)
-    xl = FileField('Upload Data', [FileRequired(), FlaskRegexp(r'^[a-zA-Z0-9\s_.\-\(\):]+\.xlsx$', flags=re.IGNORECASE,
+    xl = FileField('Select Data', [FileRequired(), FlaskRegexp(r'^[a-zA-Z0-9\s_.\-\(\):]+\.xlsx$', flags=re.IGNORECASE,
                                                                message="File must have .xslx extension.")],
                    description='Upload Reaction Data in Excel file format described in "How to Format Your Data"',
                    id='excelUpload', default='/static/sampledata/Hydroamination-Kinetics-Catalyst-Order.xlsx')
-    submitxl = SubmitField('Submit')
 
-class VTNAForm(FlaskForm):
     concs = StringField('Starting Concentrations:', [InputRequired(), validate_concs],
                         description='Input starting concentrations for each reaction as described in "How to Format '
                                     'Concentrations"',
@@ -79,4 +76,18 @@ class VTNAForm(FlaskForm):
                                                           ('TC', 'Total Count Normalization'), ('None', 'None')],
                            description='How to normalize the data.  See "Choosing data normalization method"',
                            id='normType', default='MV')
+
+    submit = SubmitField('Upload and Plot', id="upload-submit")
+
+
+class VTNAForm(FlaskForm):
+
     submitformat = SubmitField('submit')
+
+
+class DVTNAForm(FlaskForm):
+    # File Format Tab
+    f_format = SelectField('File Format', choices=[('svg', 'SVG'), ('png', 'PNG'), ('eps', 'EPS'), ('pdf', 'PDF')],
+                           description='File format for downloading graph',
+                           id='f_format', default='.svg')
+    submit = SubmitField('Submit Download', id='download-submit')

@@ -40,114 +40,111 @@
 <br>
 <!--dropdown how-tos-->
 <div class="container">
-  <div class="row justify-content-center">
-    <div id="accordionExample" class="col-md-8">
-      <button class="btn btn-secondary btn-block collapsed" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-        How to format your data
-      </button>
-      <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-        <div class="media">
-          <img class="mr-3" src="../static/images/examplexls.png" width="210" height="130">
-            <div class="media-body align-self-center">
-                Upload your data as an xlsx or xls file.
-                Each sheet is a separate experiment. Make the first column time and each subsequent column the abundance of a species.
-                There can be any number of sheets, rows and columns. The titles of your sheets and columns do not matter.
+  <!--upload xlsx-->
+  <div class="card bg-wight">
+    <div class="card-body">
+      <form enctype="multipart/form-data" id="xlform" action="{{ url_for('upload_data') }}" method="post">
+        {{ upform.hidden_tag() }}
+        <div class="form-row">
+          <div class="form-group col-md-6 my-auto">
+            <label for="excelText">Upload Data</label>
+            <div class="file-field input-field">
+              <div class="btn">
+               <span>Browse</span>
+               {{ upform.xl() }}
+              </div>
+              <div class="file-path-wrapper">
+                <input id="excelText" class="file-path validate" type="text" placeholder="Upload Excel Data" pattern="^[a-zA-Z0-9\s_.\-\(\):]+(.xlsx|.XLSX)$"/>
+                <span class="helper-text" data-error="File must be .xlsx" data-success=""></span>
+              </div>
+             </div>
+          </div>
+          <div id="accordionExample" class="col-md-6 my-auto">
+            <button class="btn btn-secondary btn-block collapsed" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+              How to format your data
+            </button>
+            <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+              <div class="media">
+                <img class="mr-3" src="../static/images/examplexls.png" width="210" height="130">
+                  <div class="media-body align-self-center">
+                      Upload your data as an xlsx or xls file.
+                      Each sheet is a separate experiment. Make the first column time and each subsequent column the abundance of a species.
+                      There can be any number of sheets, rows and columns. The titles of your sheets and columns do not matter.
+                  </div>
+              </div>
             </div>
-        </div>
-      </div>
-      <button class="btn btn-light btn-block collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-        How to format Concentrations
-      </button>
-      <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-        <div class="media">
-          <div class="media-body align-self-center">
-            Input the starting concentrations for each reagent in the order that they appear in the columns separated by a comma.
-            Separate each experiment (sheet) by a semicolon.
-            Include units as you would like them to appear on the plots.
+            <button class="btn btn-light btn-block collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              How to format Concentrations
+            </button>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+              <div class="media">
+                <div class="media-body align-self-center">
+                  Input the starting concentrations for each reagent in the order that they appear in the columns separated by a comma.
+                  Separate each experiment (sheet) by a semicolon.
+                  Include units as you would like them to appear on the plots.
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-block collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+              Choosing data normalization method
+            </button>
+            <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+              <div class="media">
+                <div class="media-body align-self-center">
+                  Total count normalization divides each data point by the sum of all reagents in that time step.
+                  Max value normalization finds the maximum value in your data set and divides by that value.
+                  Select none  or Max Value normalization if your data has already been normalized.
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      <button class="btn btn-secondary btn-block collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-        Choosing data normalization method
-      </button>
-      <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
-        <div class="media">
-          <div class="media-body align-self-center">
-            Total count normalization divides each data point by the sum of all reagents in that time step.
-            Max value normalization finds the maximum value in your data set and divides by that value.
-            Select none  or Max Value normalization if your data has already been normalized.
+        <div class="my-auto"><span id="response-xlform"></span></div>
+        <!--other input-->
+        <div class="form-row">
+          <div class="form-group input-field col-md-6">
+            {{ upform.concs(class_="form-control validate", placeholder="1;2;3;4;5") }}
+            {{ upform.concs.label }}
+            <span class="helper-text" data-error="Required. See 'HOW TO FORMAT CONCENTRATIONS'" data-success=""></span>
+          </div>
+          <div class="form-group input-field col-md-2">
+            {{ upform.units(class_="form-control validate", placeholder="uM") }}
+            {{ upform.units.label }}
+            <span class="helper-text" data-error="Units may be uM, mM, M" data-success=""></span>
+          </div>
+          <div class="form-group col-md-4">
+            {{ upform.normtype.label }}
+            {{ upform.normtype(class_="custom-select my-1 mr-sm-2") }}
           </div>
         </div>
-      </div>
+        <div class="form-row">
+          <div class="form-group col-md-3 my-auto">
+            <label>
+              <input checked="" class="filled-in" id="{{ upform.auto.id }}" type="checkbox"/>
+              <span>{{ upform.auto.label.text }}</span>
+            </label>
+          </div>
+          <div class="form-group col-md-3 my-auto">
+            <label>
+              <input checked="" class="filled-in" id="{{ upform.poison.id }}" type="checkbox"/>
+              <span>{{ upform.poison.label.text }}</span>
+            </label>
+          </div>
+          <div class="form-group col-md-6 my-auto">
+            <button id="{{ upform.submit.id }}" type="submit" class="btn btn-block btn-primary">{{ upform.submit.label.text }}</button>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
-  <br>
-  <!--upload xlsx-->
-  <form enctype="multipart/form-data" id="xlform" action="{{ url_for('upload_data') }}" method="post">
-    {{ fileform.hidden_tag() }}
-    <div class="form-row">
-      <div class="form-group col-md-6">
-        <label for="excelText">Upload Data</label>
-        <div class="file-field input-field">
-          <div class="btn">
-           <span>Browse</span>
-           {{ fileform.xl() }}
-          </div>
-          <div class="file-path-wrapper">
-            <input id="excelText" class="file-path validate" type="text" placeholder="Upload Excel Data" pattern="^[a-zA-Z0-9\s_.\-\(\):]+(.xlsx|.XLSX)$"/>
-            <span class="helper-text" data-error="File must be .xlsx" data-success=""></span>
-          </div>
-         </div>
-      </div>
-      <div class="col-md-6 my-auto text-center"><span id="response-xlform" class="text-align-center"></span></div>
-    </div>
-  </form>
-  <form enctype="multipart/form-data" id="vtna-form" action="{{ url_for('format_plot') }}" method="post" nonvalidate>
-      <!--other input-->
-    <div class="form-row">
-      <div class="form-group input-field col-md-6">
-        {{ form.concs(class_="form-control validate", placeholder="1;2;3;4;5") }}
-        {{ form.concs.label }}
-        <span class="helper-text" data-error="Required. See 'HOW TO FORMAT CONCENTRATIONS'" data-success=""></span>
-        {% for error in form.concs.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-      </div>
-      <div class="form-group input-field col-md-2">
-        {{ form.units(class_="form-control validate", placeholder="uM") }}
-        {{ form.units.label }}
-        <span class="helper-text" data-error="Units may be uM, mM, M" data-success=""></span>
-      </div>
-      <div class="form-group col-md-4">
-        {{ form.normtype.label }}
-        {{ form.normtype(class_="custom-select my-1 mr-sm-2") }}
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group col-md-4">
-        <label>
-          <input checked="" class="filled-in" id={{ form.auto.id }} type="checkbox"/>
-          <span>{{ form.auto.label.text }}</span>
-        </label>
-      </div>
-      <div class="form-group col-md-4">
-        <label>
-          <input checked="" class="filled-in" id={{ form.poison.id }} type="checkbox"/>
-          <span>{{ form.poison.label.text }}</span>
-        </label>
-      </div>
-    </div>
-    <div class="form-group">
-      <button type="submit" class="btn btn-primary">Plot Data</button>
-    </div>
-  </form>
 </div>
 <br>
+
 <!-- Add icon library -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <div class="container">
   <div class="row justify-content-md-center">
-    <div class="col-md-0.5">
+    <div class="col-md-1 pl-0 pt-2">
       <div class="icon-bar">
         <a class="active" href="#">Ss</i></a>
         <a href="#">xX</i></a>
@@ -156,44 +153,62 @@
         <a href="#"><i class="fa fa-trash"></i></a>
       </div>
     </div>
-    <div class="col-md-8.5">
-      <div class="card bg-white ml-3 mb-3" style="max-wdith: 18rem;">
+    <div class="col-md-8 pl-0">
+      <div class="card bg-white ml-3 mb-3">
         <img id='graph' class="d-block w-100 img-fluid max-vh-75" src='{{ graph1 }}' alt="Cycle">
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="card bg-light">
+    <div class="col-md-3 pr-0">
+      <div class="card bg-white">
         <div class="card-body">
-          <p class="card-title">Reaction Order = </p>
-          <p class="card-text">Poisoning = </p>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item font-weight-bold">Reaction Order = </li>
+            <li class="list-group-item font-weight-bold">Poisoning = </li>
+          </ul>
         </div>
       </div>
+      <div class="card bg-white">
+        <div class="card-body">
+          <a class="btn btn-block btn-secondary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+            Manual Fitting
+          </a>
+          <div class="collapse" id="collapseExample">
+            <div class="card card-body">
+              <form>
+                <div class="form-group">
+                  <label for="startTime">align start time</label>
+                  <input type="range" class="form-control-range" id="startTime">
+                </div>
+                <div class="form-group">
+                  <label for="rxnOrder">order of reaction</label>
+                  <input type="range" class="form-control-range" id="rxnOrder">
+                </div>
+                <div class="form-group">
+                  <label for="setPoison">Poisoning</label>
+                  <input type="range" class="form-control-range" id="setPoison">
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="pt-3">
+            <form class="form-inline justify-content-center" id="download-form"  action="{{ url_for('download_vtna') }}" method="post" nonvalidate>
+              {{ dform.hidden_tag() }}
+              <div class="form-group pr-2">
+                {{ dform.f_format(class_="form-control") }}
+              </div>
+              <div class="form-group pl-2">
+                  <button id="{{ dform.submit.id }}" type="submit" class="form-control btn btn-primary">
+                      <i class="fa fa-lg fa-download"></i>
+                  </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
   <br>
-  <p>
-    <a class="btn btn-secondary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-      Manual Fitting
-    </a>
-  </p>
-  <div class="collapse" id="collapseExample">
-    <div class="card card-body">
-      <form>
-        <div class="form-group">
-          <label for="formControlRange">align start time</label>
-          <input type="range" class="form-control-range" id="formControlRange">
-        </div>
-        <div class="form-group">
-          <label for="formControlRange">order of reaction</label>
-          <input type="range" class="form-control-range" id="formControlRange">
-        </div>
-        <div class="form-group">
-          <label for="formControlRange">Poisoning</label>
-          <input type="range" class="form-control-range" id="formControlRange">
-        </div>
-      </form>
-    </div>
-  </div>
 </div>
   <!--download new data-->
 

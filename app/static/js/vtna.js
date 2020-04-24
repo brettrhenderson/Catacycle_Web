@@ -1,5 +1,5 @@
 // make file upload submit form automatically
-$("#excelText").change(function() {
+$("#upload-submit").click(function() {
     // Prevent redirection with AJAX for contact form
     var form = $('#xlform');
     var form_id = 'xlform';
@@ -10,7 +10,6 @@ $("#excelText").change(function() {
     // submit form via AJAX
     send_form(form, form_id, url, type, modular_ajax, formData, '#response-xlform');
 });
-
 
 // Code modified from https://medium.com/javascript-in-plain-english/how-to-form-submissions-with-flask-and-ajax-dfde9891c620
 
@@ -89,7 +88,7 @@ function modular_ajax(url, type, formData, responseid) {
         },
         complete: function () {
             // hide the preloader (progress bar)
-            $(responseid).html(result);
+            $(responseid).html("");
         },
         success: function ( data ){
             if ( !$.trim( data.feedback )) { // response from Flask is empty
@@ -99,7 +98,7 @@ function modular_ajax(url, type, formData, responseid) {
             else { // response from Flask contains elements
                 toast_error_msg = data.feedback;
                 toast_category = data.category;
-                result = data.result;
+                $('#graph').attr("src", data.new_plot)
             }
         },
         error: function(xhr) {console.log("error. see details below.");

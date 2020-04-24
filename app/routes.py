@@ -3,9 +3,9 @@ from app import app
 from werkzeug.utils import secure_filename
 from werkzeug.wsgi import FileWrapper
 from app.cycleform import RatesForm, DownloadForm
-from app.vtnaform import VTNAForm, DataForm
+from app.vtnaform import VTNAForm, DataForm, DVTNAForm
 from app.modules.catacycle.oboros import draw, draw_straight
-from app.modules.vtna.web_plot import plot_vtna
+from app.modules.vtna.web_plot import plot_vtna, save_dfig
 import logging
 from app.modules.vtna import vtna_helper as vh
 import os
@@ -79,14 +79,16 @@ def vtna():
     norm_data = vh.normalize_columns(raw_data, totals)
     gimme = vh.select_data(norm_data, rxns, species)
 
-    file_form = DataForm()
-    format_form = VTNAForm()
+    upload_form = DataForm()
+    dform = DVTNAForm()
 
-    return render_template('vtna.html',
-                           form=format_form,
-                           fileform=file_form,
-                           graph1=plot_vtna(gimme, concs, order=order, trans_zero=trans_zero, windowsize=win,
-                                            marker_shape="^", linestyle=':', markersize=5, guide_lines=True))
+    new_plot, fig = plot_vtna(gimme, concs, norm_time=True, order=order, trans_zero=trans_zero,
+                                         windowsize=win, marker="^", linestyle=':', markersize=5, guide_lines=True,
+                                         legend=True)
+    session['fig'] = fig
+
+    return render_template('vtna.html', upform=upload_form, dform=dform, graph1=new_plot)
+
 
 @app.route('/upload', methods=['POST'])
 def upload_data():
@@ -98,18 +100,49 @@ def upload_data():
             raw_data, sheet_names = vh.load_raw(f)
             session['raw_data'] = raw_data
             session['sheet_names'] = sheet_names
-            fb = f"Successfully uploaded {f.filename}"
-            result = f"This file contains {len(raw_data)} reactions " \
-                    f"and {raw_data[0].shape[1]-1} monitored species."
+            fb = f"Successfully uploaded {f.filename}<br>Found {len(raw_data)} reactions and {raw_data[0].shape[1]-1} " \
+                 f"monitored species in this file."
             category = "success"
+            totals = vh.get_sheet_totals(xlform.normtype.data, raw_data)
+            norm_data = vh.normalize_columns(raw_data, totals)
+            new_plot, session['fig'] = plot_vtna(norm_data, norm_time=False, marker="^", linestyle=':', markersize=5,
+                                                 guide_lines=True, legend=True)
         else:
             fb = f"Upload failed: {xlform.xl.errors}"
             result = ""
             category = "danger"
-        return make_response(jsonify(feedback=fb, category=category, result=result), 200)
+            new_plot = "none"
+        return make_response(jsonify(feedback=fb, category=category, new_plot=new_plot), 200)
+
 
 @app.route('/format', methods=['POST'])
 def format_plot():
     format_form = VTNAForm()
     if request.method == 'POST' and format_form.validate():
         log.debug("Submitted formatting form")
+        return "", 204
+    else:
+        for field, errors in format_form.errors.items():
+            for error in errors:
+                log.debug(str(field) + ': ' + str(error))
+        return '', 204
+
+
+@app.route('/download-vtna', methods=['POST'])
+def download_vtna():
+    log.debug('Download Initiated!')
+    d_form = DVTNAForm()
+
+    if request.method == 'POST' and d_form.validate():
+        f_format = d_form.f_format.data
+        log.debug(f"Save figure as {f_format}.")
+        filename = secure_filename(f'vtna_plot.{f_format}')
+        img, mimetype = save_dfig(session['fig'], f_format)
+        img.seek(0)
+        img = FileWrapper(img)
+        response = make_response(Response(img, mimetype=mimetype, direct_passthrough=True))
+        response.headers.set('Content-Disposition', 'attachment', filename=filename)
+        return response
+    else:
+        log.debug("Not sending anything")
+        return '', 204
