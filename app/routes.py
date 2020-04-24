@@ -1,16 +1,17 @@
-from flask import render_template, request, jsonify, make_response, Response, url_for
+from flask import render_template, request, jsonify, make_response, Response, session
 from app import app
 from werkzeug.utils import secure_filename
 from werkzeug.wsgi import FileWrapper
 from app.cycleform import RatesForm, DownloadForm
-from app.vtnaform import VTNAForm
+from app.vtnaform import VTNAForm, DataForm
 from app.modules.catacycle.oboros import draw, draw_straight
 from app.modules.vtna.web_plot import plot_vtna
 import logging
 from app.modules.vtna import vtna_helper as vh
+import os
 
 log = logging.getLogger(__name__)
-#log.setLevel(logging.DEBUG)
+log.setLevel(logging.DEBUG)
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
@@ -78,13 +79,37 @@ def vtna():
     norm_data = vh.normalize_columns(raw_data, totals)
     gimme = vh.select_data(norm_data, rxns, species)
 
-    form = VTNAForm()
-
-    if form.validate_on_submit():
-        print(form.xl.data.filename)
-        return '', 204
+    file_form = DataForm()
+    format_form = VTNAForm()
 
     return render_template('vtna.html',
-                           form=form,
+                           form=format_form,
+                           fileform=file_form,
                            graph1=plot_vtna(gimme, concs, order=order, trans_zero=trans_zero, windowsize=win,
                                             marker_shape="^", linestyle=':', markersize=5, guide_lines=True))
+
+@app.route('/upload', methods=['POST'])
+def upload_data():
+    xlform = DataForm()
+    log.debug(f"Sent to the right endpoint! \n file_form: {xlform.xl.data.filename}\n")
+    if request.method == 'POST':
+        if xlform.validate():
+            f = xlform.xl.data
+            raw_data, sheet_names = vh.load_raw(f)
+            session['raw_data'] = raw_data
+            session['sheet_names'] = sheet_names
+            fb = f"Successfully uploaded {f.filename}"
+            result = f"This file contains {len(raw_data)} reactions " \
+                    f"and {raw_data[0].shape[1]-1} monitored species."
+            category = "success"
+        else:
+            fb = f"Upload failed: {xlform.xl.errors}"
+            result = ""
+            category = "danger"
+        return make_response(jsonify(feedback=fb, category=category, result=result), 200)
+
+@app.route('/format', methods=['POST'])
+def format_plot():
+    format_form = VTNAForm()
+    if request.method == 'POST' and format_form.validate():
+        log.debug("Submitted formatting form")

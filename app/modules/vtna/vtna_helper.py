@@ -64,7 +64,7 @@ def select_data(Rnorm, reactions=None, species=None):
     return [Rnorm[rxn].iloc[:, [0]+[spec+1 for spec in species]] for rxn in reactions]
 
 if __name__ == "__main__":
-    filename = "../../static/sampledata/VTNA329.xlsx"
+    filename = "../../static/sampledata/VTNA329.XLSX"
     raw_data, sheet_names = load_raw(filename)
     totals = get_sheet_totals('TC', raw_data)
     norm_data = normalize_columns(raw_data, totals)
