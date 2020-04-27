@@ -3,7 +3,7 @@ from app import app
 from werkzeug.utils import secure_filename
 from werkzeug.wsgi import FileWrapper
 from app.cycleform import RatesForm, DownloadForm
-from app.vtnaform import VTNAForm, DataForm, DVTNAForm
+from app.vtnaform import DataForm, SelectDataForm, DVTNAForm, ManualFitForm, AutoFitForm, FitParamForm
 from app.modules.catacycle.oboros import draw, draw_straight
 from app.modules.vtna.web_plot import plot_vtna, save_dfig
 import logging
@@ -76,13 +76,17 @@ def vtna():
     win = [1] * len(concs)
     order = 0
     filename = "app/static/sampledata/Hydroamination-Kinetics-Catalyst-Order.xlsx"
-    raw_data, sheet_names = vh.load_raw(filename)
+    raw_data, sheet_names, specs = vh.load_raw(filename)
     totals = vh.get_sheet_totals(None, raw_data)
     norm_data = vh.normalize_columns(raw_data, totals)
     gimme = vh.select_data(norm_data, rxns, species)
 
     upload_form = DataForm()
     dform = DVTNAForm()
+    sform = SelectDataForm()
+    mform = ManualFitForm()
+    aform = AutoFitForm()
+    pform = FitParamForm()
 
     new_plot, fig = plot_vtna(gimme, concs, norm_time=True, order=order, trans_zero=trans_zero,
                                          windowsize=win, marker="^", linestyle=':', markersize=5, guide_lines=True,
@@ -90,7 +94,8 @@ def vtna():
     session['fig'] = fig
     plt.close()
 
-    return render_template('vtna.html', upform=upload_form, dform=dform, graph1=new_plot)
+    return render_template('vtna.html', upform=upload_form, dform=dform, sform=sform, aform=aform, mform=mform,
+                           pform=pform, graph1=new_plot)
 
 
 @app.route('/upload', methods=['POST'])
@@ -98,37 +103,58 @@ def upload_data():
     xlform = DataForm()
     log.debug(f"Sent to the right endpoint! \n file_form: {xlform.xl.data.filename}\n")
     if request.method == 'POST':
+        result = ""
+        category = "danger"
+        new_plot = "none"
+        rxns = "none"
+        specs = "none"
         if xlform.validate():
             f = xlform.xl.data
-            raw_data, sheet_names = vh.load_raw(f)
-            session['raw_data'] = raw_data
-            session['sheet_names'] = sheet_names
-            fb = f"Successfully uploaded {f.filename}<br>Found {len(raw_data)} reactions and {raw_data[0].shape[1]-1} " \
-                 f"monitored species in this file."
-            category = "success"
-            totals = vh.get_sheet_totals(xlform.normtype.data, raw_data)
-            norm_data = vh.normalize_columns(raw_data, totals)
-            new_plot, session['fig'] = plot_vtna(norm_data, norm_time=False, marker="^", linestyle=':', markersize=5,
+            try:
+                raw_data, rxns, specs = vh.load_raw(f)
+                session['raw_data'] = raw_data
+                session['rxns'] = rxns
+                session['reactants'] = specs
+                fb = f"Successfully uploaded {f.filename}<br>Found {len(raw_data)} reactions and " \
+                         f"{raw_data[0].shape[1] - 1} monitored species in this file."
+                category = "success"
+                log.debug(f"Rxns: {rxns},  Species: {specs}")
+                totals = vh.get_sheet_totals(xlform.normtype.data, raw_data)
+                norm_data = vh.normalize_columns(raw_data, totals)
+                new_plot, session['fig'] = plot_vtna(norm_data, norm_time=False, marker="^", linestyle=':', markersize=5,
                                                  guide_lines=True, legend=True)
+            except ValueError as e:
+                fb = f"Upload failed: {e}"
         else:
             fb = f"Upload failed: {xlform.xl.errors}"
-            result = ""
-            category = "danger"
-            new_plot = "none"
-        return make_response(jsonify(feedback=fb, category=category, new_plot=new_plot), 200)
+        return make_response(jsonify(feedback=fb, rxns=rxns, specs=specs, category=category, new_plot=new_plot), 200)
+
+@app.route('/select', methods=['POST'])
+def select_data():
+    return '', 204
 
 
-@app.route('/format', methods=['POST'])
-def format_plot():
-    format_form = VTNAForm()
-    if request.method == 'POST' and format_form.validate():
-        log.debug("Submitted formatting form")
-        return "", 204
-    else:
-        for field, errors in format_form.errors.items():
-            for error in errors:
-                log.debug(str(field) + ': ' + str(error))
-        return '', 204
+@app.route('/fit', methods=['POST'])
+def fit_data():
+    return '', 204
+
+
+@app.route('/auto-fit', methods=['POST'])
+def autofit_data():
+    return '', 204
+
+
+# @app.route('/format', methods=['POST'])
+# def format_plot():
+#     format_form = VTNAForm()
+#     if request.method == 'POST' and format_form.validate():
+#         log.debug("Submitted formatting form")
+#         return '', 204
+#     else:
+#         for field, errors in format_form.errors.items():
+#             for error in errors:
+#                 log.debug(str(field) + ': ' + str(error))
+#         return '', 204
 
 
 @app.route('/download-vtna', methods=['POST'])

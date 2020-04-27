@@ -22,3 +22,6 @@ a.active {
     background-color: #939CF1;
 }
 
+input[type="range"]:disabled {
+    opacity: .35;
+}

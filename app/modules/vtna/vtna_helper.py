@@ -5,11 +5,23 @@ import numpy as np
 def load_raw(filename):
     xl = pd.ExcelFile(filename)
     raw_data = []
+    existing_reactants = None
+    match = True
     # import excel sheets of reaction 1 and 2
     for i in range(len(xl.sheet_names)):
         raw_data.append(pd.read_excel(filename, i))
-        #print(f"\ncolumns read from experiment {i+1}: \n{len(raw_data[i].columns)}")
-    return raw_data, xl.sheet_names
+        if existing_reactants is None:
+            existing_reactants = raw_data[-1].columns.tolist()
+        else:
+            cols = raw_data[-1].columns.tolist()
+            if cols != existing_reactants:
+                match = False
+                if len(cols) != len(existing_reactants):
+                    raise ValueError("Sheets contain different numbers of species monitored.")
+        # print(f"\ncolumns read from experiment {i+1}: \n{len(raw_data[i].columns)}")
+    if not match:
+        existing_reactants = [str(i) for i in range(1, len(raw_data[1].columns) + 1)]
+    return raw_data, xl.sheet_names, existing_reactants[1:]
 
 #produce a column summing all counts at each
 # timestep for total ion count normalization
@@ -65,13 +77,14 @@ def select_data(Rnorm, reactions=None, species=None):
 
 if __name__ == "__main__":
     filename = "../../static/sampledata/VTNA329.XLSX"
-    raw_data, sheet_names = load_raw(filename)
-    totals = get_sheet_totals('TC', raw_data)
-    norm_data = normalize_columns(raw_data, totals)
-    print(norm_data[0].head())
-    max = get_max_times(norm_data)
-    print(max)
-    print(sheet_names)
-    gimme = select_data(norm_data, [0,1], [0, 1])
-    print(gimme[1].head())
-    print(f'{len(gimme[0].columns)}')
+    raw_data, sheet_names, reac_names = load_raw(filename)
+    print(f'RXNS: {sheet_names}, REACTANTS: {reac_names}')
+    # totals = get_sheet_totals('TC', raw_data)
+    # norm_data = normalize_columns(raw_data, totals)
+    # print(norm_data[0].head())
+    # max = get_max_times(norm_data)
+    # print(max)
+    # print(sheet_names)
+    # gimme = select_data(norm_data, [0,1], [0, 1])
+    # print(gimme[1].head())
+    # print(f'{len(gimme[0].columns)}')

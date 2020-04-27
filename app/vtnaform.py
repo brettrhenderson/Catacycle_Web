@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, BooleanField, SubmitField
+from wtforms import StringField, SelectField, BooleanField, SubmitField, SelectMultipleField, FloatField
 from wtforms.validators import InputRequired, ValidationError
 from flask_wtf.file import FileRequired, FileField
 from flask import url_for
@@ -61,12 +61,12 @@ class DataForm(FlaskForm):
                    description='Upload Reaction Data in Excel file format described in "How to Format Your Data"',
                    id='excelUpload', default='/static/sampledata/Hydroamination-Kinetics-Catalyst-Order.xlsx')
 
-    concs = StringField('Starting Concentrations:', [InputRequired(), validate_concs],
+    concs = StringField('Starting Concentrations', [InputRequired(), validate_concs],
                         description='Input starting concentrations for each reaction as described in "How to Format '
                                     'Concentrations"',
                         id='startConcs')
 
-    units = StringField('Units:', validators=[], description='Concentration Units to Use', id='units')
+    units = StringField('Units', validators=[], description='Concentration Units to Use', id='units')
 
     auto = BooleanField('Auto Fit', description="Automatically fit the order of the reaction.", id='autoFit')
 
@@ -80,9 +80,29 @@ class DataForm(FlaskForm):
     submit = SubmitField('Upload and Plot', id="upload-submit")
 
 
-class VTNAForm(FlaskForm):
+class SelectDataForm(FlaskForm):
+    rxn = SelectMultipleField('Reaction', description='Choose which reactions to manipulate', id='rxn-select')
+    species = SelectMultipleField('Species', description='Choose which Species to manipulate', id='spec-select')
+    submit = SubmitField('Select', id='select-submit')
 
-    submitformat = SubmitField('submit')
+class FitParamForm(FlaskForm):
+    species = StringField('Species', id="spec-param")
+    excess = StringField('Excess', id='excess')
+    concs = StringField('Starting Concentrations:')
+    submit = SubmitField('Confirm')
+
+
+class ManualFitForm(FlaskForm):
+    start = FloatField('Align Start Time', id='start-time')
+    poison = FloatField('Poisoning', id='set-poison')
+    order = FloatField('Reactant Order', id='rxn-order')
+    submit = SubmitField('Fit', id='manual-submit')
+
+
+class AutoFitForm(FlaskForm):
+    start = BooleanField('Zero Data', description="Automatically fit starting time.", id='auto-zeros')
+    poison = BooleanField('Assess Poisoning', description="Automatically fit the Catalyst Poisoning.", id='auto-poison')
+    submit = SubmitField('Fit', id='auto-submit')
 
 
 class DVTNAForm(FlaskForm):

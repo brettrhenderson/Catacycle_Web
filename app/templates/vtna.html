@@ -18,11 +18,19 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <!-- Materialize CSS framework -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('select').formSelect();
+});
+</script>
 {% endblock %}
 
 {% block content %}
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="{{ url_for('cycle') }}">  Catacycle </a>
+  <a class="navbar-brand" href="{{ url_for('cycle') }}">
+    <img src="{{url_for('.static', filename='images/cycle_icon.png')}}" width="50" height="50" class="d-inline-block align-center" alt="">
+    Catacycle
+  </a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -112,9 +120,9 @@
             {{ upform.units.label }}
             <span class="helper-text" data-error="Units may be uM, mM, M" data-success=""></span>
           </div>
-          <div class="form-group col-md-4">
-            {{ upform.normtype.label }}
-            {{ upform.normtype(class_="custom-select my-1 mr-sm-2") }}
+          <div class="form-group input-field col-md-4">
+            {{ upform.normtype.label(class_="active") }}
+            {{ upform.normtype() }}
           </div>
         </div>
         <div class="form-row">
@@ -137,12 +145,7 @@
       </form>
     </div>
   </div>
-</div>
-<br>
-
-<!-- Add icon library -->
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<div class="container">
+  <br>
   <div class="row justify-content-md-center">
     <div class="col-md-9 pl-0">
       <div class="card bg-white">
@@ -150,44 +153,127 @@
       </div>
     </div>
     <div class="col-md-3 pr-0">
-      <div class="card bg-white">
+      <!--<div class="card bg-white">
         <div class="card-body">
           <ul class="list-group list-group-flush">
             <li class="list-group-item font-weight-bold">Reaction Order = </li>
             <li class="list-group-item font-weight-bold">Poisoning = </li>
           </ul>
         </div>
-      </div>
+      </div> -->
       <div class="card bg-white">
         <div class="card-body">
-          <a class="btn btn-block btn-secondary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+          <a class="btn btn-block btn-secondary" data-toggle="collapse" href="#data-select" role="button" aria-expanded="false" aria-controls="collapseExample">
+            Data Selection
+          </a>
+          <div class="collapse" id="data-select">
+            <div class="card card-body">
+              <form enctype="multipart/form-data" id="select-form" action="{{ url_for('select_data') }}" method="post">
+                {{ sform.hidden_tag() }}
+                <div class="form-group input-field">
+                  {{ sform.rxn.label(class_="active") }}
+                  <select id="rxn-select" multiple name="rxn">
+                  </select>
+                </div>
+                <div class="form-group input-field">
+                  {{ sform.species.label(class_="active") }}
+                  <select id="spec-select" multiple name="species">
+                  </select>
+                </div>
+                <div class="form-group mb-0">
+                  <button id="{{ sform.submit.id }}" type="button" class="btn btn-block btn-primary">{{ sform.submit.label.text }}</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <a class="btn btn-block btn-secondary" data-toggle="collapse" href="#param-fit" role="button" aria-expanded="false" aria-controls="collapseExample">
+            Fit Parameters
+          </a>
+          <div class="collapse" id="param-fit">
+            <div id="param-fit-card" class="card">
+              <div class="mt-3 mb-3 ml-3 mr-3">
+                <button data-toggle="collapse" href="#new-param" type="button" class="btn btn-block" id="addparam">
+                    Add New   <i class="fa fa-plus pl-3"></i>
+                </button>
+              </div>
+              <div class="collapse ml-3 mr-3" id="new-param">
+                <hr>
+                <form enctype="multipart/form-data" id="param-form" action="{{ url_for('fit_data') }}" method="post">
+                  {{ pform.hidden_tag() }}
+                  <div class="form-group my-auto">
+                    <label>
+                      <input checked="" class="filled-in" id="{{ pform.excess.id }}" type="checkbox"/>
+                      <span>{{ pform.excess.label.text }}</span>
+                    </label>
+                  </div>
+                  <div class="form-group input-field">
+                    {{ pform.species.label(class_="active") }}
+                    <select id="{{ pform.species.id }}" name="species" disabled>
+                    </select>
+                  </div>
+                  <div id="concs-label-0" class="form-group input-field pb-2"><h6>Concentrations</h6></div>
+                  <div class="form-group mb-0">
+                    <button id="{{ pform.submit.id }}" type="button" class="btn btn-block btn-primary pl-2 pr-2">{{ pform.submit.label.text }}</button>
+                  </div>
+                </form>
+                <hr>
+              </div>
+            </div>
+          </div>
+          <a class="btn btn-block btn-secondary" data-toggle="collapse" href="#manual-fit" role="button" aria-expanded="false" aria-controls="collapseExample">
             Manual Fitting
           </a>
-          <div class="collapse" id="collapseExample">
+          <div class="collapse" id="manual-fit">
             <div class="card card-body">
-              <form>
+              <form enctype="multipart/form-data" id="manual-form" action="{{ url_for('fit_data') }}" method="post">
+                {{ mform.hidden_tag() }}
+                <div class="form-group range-field">
+                  {{ mform.start.label }}
+                  {{ mform.start(type="range", class_="form-control-range", min="0", max="40", step="0.1", value="0") }}
+                </div>
+                <div class="form-group range-field">
+                  {{ mform.order.label }}
+                  {{ mform.order(type="range", class_="form-control-range", min="0", max="3", step="0.01", value="0", disabled=True) }}
+                </div>
+                <div class="form-group range-field">
+                  {{ mform.poison.label }}
+                  {{ mform.poison(type="range", class_="form-control-range", min="0", max="1", step="0.01", value="0", disabled=True) }}
+                </div>
+              </form>
+            </div>
+          </div>
+          <a class="btn btn-block btn-secondary" data-toggle="collapse" href="#auto-fit" role="button" aria-expanded="false" aria-controls="collapseExample">
+            Auto Fitting
+          </a>
+          <div class="collapse" id="auto-fit">
+            <div class="card card-body">
+              <form enctype="multipart/form-data" id="auto-form" action="{{ url_for('autofit_data') }}" method="post">
+                {{ aform.hidden_tag() }}
                 <div class="form-group">
-                  <label for="startTime">align start time</label>
-                  <input type="range" class="form-control-range" id="startTime">
+                  <label>
+                    <input class="filled-in" id="{{ aform.start.id }}" type="checkbox"/>
+                    <span>{{ aform.start.label.text }}</span>
+                  </label>
                 </div>
                 <div class="form-group">
-                  <label for="rxnOrder">order of reaction</label>
-                  <input type="range" class="form-control-range" id="rxnOrder">
+                  <label>
+                    <input class="filled-in" id="{{ aform.poison.id }}" type="checkbox"/>
+                    <span>{{ aform.poison.label.text }}</span>
+                  </label>
                 </div>
-                <div class="form-group">
-                  <label for="setPoison">Poisoning</label>
-                  <input type="range" class="form-control-range" id="setPoison">
+                <div class="form-group mb-0">
+                  <button id="{{ aform.submit.id }}" type="button" class="btn btn-block btn-primary" disabled>{{ aform.submit.label.text }}</button>
                 </div>
               </form>
             </div>
           </div>
           <div class="pt-3">
-            <form class="form-inline justify-content-center" id="download-form"  action="{{ url_for('download_vtna') }}" method="post" nonvalidate>
+            <form class="form-inline justify-content-center" id="download-form"  action="{{ url_for('download_vtna') }}" method="post">
               {{ dform.hidden_tag() }}
-              <div class="form-group pr-2">
-                {{ dform.f_format(class_="form-control") }}
+              <div class="input-field col-sm-6 pr-2">
+                {{ dform.f_format() }}
               </div>
-              <div class="form-group pl-2">
+              <div class="form-group col-sm-6 pl-2">
                   <button id="{{ dform.submit.id }}" type="submit" class="form-control btn btn-primary">
                       <i class="fa fa-lg fa-download"></i>
                   </button>
@@ -199,12 +285,5 @@
 
     </div>
   </div>
-  <br>
-</div>
-  <!--download new data-->
-
-  </div>
 </div>
 {% endblock %}
-
-<!--blah-->
