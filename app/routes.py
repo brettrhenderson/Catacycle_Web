@@ -3,7 +3,7 @@ from app import app
 from werkzeug.utils import secure_filename
 from werkzeug.wsgi import FileWrapper
 from app.cycleform import RatesForm, DownloadForm
-from app.vtnaform import DataForm, SelectDataForm, DVTNAForm, ManualFitForm, AutoFitForm, FitParamForm
+from app.vtnaform import DataForm, SelectDataForm, DVTNAForm, ManualFitForm, AutoFitForm, FitParamForm, StyleForm
 from app.modules.catacycle.oboros import draw, draw_straight
 from app.modules.vtna.web_plot import plot_vtna, save_dfig
 import logging
@@ -69,17 +69,11 @@ def aboutus():
 
 @app.route('/vtna', methods=['GET', 'POST'])
 def vtna():
-    concs = [0.0510,0.0578,0.0688,0.0750,0.104,0.125,0.127,0.142]
-    rxns = None  # [0, 1]
-    species = None  # [0,1]
-    trans_zero = [0]*len(concs)  # [-2.5, -12.5]
-    win = [1] * len(concs)
-    order = 0
+
     filename = "app/static/sampledata/Hydroamination-Kinetics-Catalyst-Order.xlsx"
     raw_data, sheet_names, specs = vh.load_raw(filename)
     totals = vh.get_sheet_totals(None, raw_data)
     norm_data = vh.normalize_columns(raw_data, totals)
-    gimme = vh.select_data(norm_data, rxns, species)
 
     upload_form = DataForm()
     dform = DVTNAForm()
@@ -87,15 +81,22 @@ def vtna():
     mform = ManualFitForm()
     aform = AutoFitForm()
     pform = FitParamForm()
+    stform = StyleForm()
 
-    new_plot, fig = plot_vtna(gimme, concs, norm_time=True, order=order, trans_zero=trans_zero,
-                                         windowsize=win, marker="^", linestyle=':', markersize=5, guide_lines=True,
-                                         legend=True)
+    try:
+        plt.close(session['fig'])
+        log.debug(f'Closed last figure before creating new one!  Current Figures: {plt.get_fignums()}')
+    except KeyError:
+        log.info("Couldn't close figure for session: no figure available.")
+    except Exception as e:
+        log.warning(f"Couldn't close figure for session: {e}.")
+
+    new_plot, fig = plot_vtna(norm_data, marker="^", linestyle=':', markersize=5, guide_lines=True,
+                              legend=True)
     session['fig'] = fig
-    plt.close()
 
     return render_template('vtna.html', upform=upload_form, dform=dform, sform=sform, aform=aform, mform=mform,
-                           pform=pform, graph1=new_plot)
+                           pform=pform, stform=stform, graph1=new_plot)
 
 
 @app.route('/upload', methods=['POST'])
@@ -121,8 +122,11 @@ def upload_data():
                 log.debug(f"Rxns: {rxns},  Species: {specs}")
                 totals = vh.get_sheet_totals(xlform.normtype.data, raw_data)
                 norm_data = vh.normalize_columns(raw_data, totals)
-                new_plot, session['fig'] = plot_vtna(norm_data, norm_time=False, marker="^", linestyle=':', markersize=5,
-                                                 guide_lines=True, legend=True)
+                plt.close(session['fig'])
+                log.debug(f'Closed last figure before creating new one!  Current Figures: {plt.get_fignums()}')
+                new_plot, fig = plot_vtna(norm_data, norm_time=False, marker="^", linestyle=':', markersize=5,
+                                          guide_lines=True, legend=True)
+                session['fig'] = fig
             except ValueError as e:
                 fb = f"Upload failed: {e}"
         else:
@@ -136,6 +140,10 @@ def select_data():
 
 @app.route('/fit', methods=['POST'])
 def fit_data():
+    return '', 204
+
+@app.route('/apply-style', methods=['POST'])
+def style_data():
     return '', 204
 
 
@@ -166,6 +174,7 @@ def download_vtna():
         f_format = d_form.f_format.data
         log.debug(f"Save figure as {f_format}.")
         filename = secure_filename(f'vtna_plot.{f_format}')
+
         img, mimetype = save_dfig(session['fig'], f_format)
         img.seek(0)
         img = FileWrapper(img)

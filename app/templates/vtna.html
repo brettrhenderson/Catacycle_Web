@@ -51,23 +51,40 @@ $(document).ready(function() {
   <!--upload xlsx-->
   <div class="card bg-wight">
     <div class="card-body">
-      <form enctype="multipart/form-data" id="xlform" action="{{ url_for('upload_data') }}" method="post">
-        {{ upform.hidden_tag() }}
-        <div class="form-row">
-          <div class="form-group col-md-6 my-auto">
-            <label for="excelText">Upload Data</label>
-            <div class="file-field input-field">
-              <div class="btn">
-               <span>Browse</span>
-               {{ upform.xl() }}
+      <div class="row align-items-center mb-0">
+        <div class="col-md-6">
+          <form enctype="multipart/form-data" id="xlform" action="{{ url_for('upload_data') }}" method="post">
+            {{ upform.hidden_tag() }}
+            <div class="form-row">
+              <div class="form-group my-auto">
+                <label for="excelText">Upload Data</label>
+                <div class="file-field input-field mb-0">
+                  <div class="btn">
+                   <span>Browse</span>
+                   {{ upform.xl() }}
+                  </div>
+                  <div class="file-path-wrapper">
+                    <input id="excelText" class="file-path validate" type="text" placeholder="Upload Excel Data" pattern="^[a-zA-Z0-9\s_.\-\(\):]+(.xlsx|.XLSX)$"/>
+                    <span class="helper-text" data-error="File must be .xlsx" data-success=""></span>
+                  </div>
+                </div>
               </div>
-              <div class="file-path-wrapper">
-                <input id="excelText" class="file-path validate" type="text" placeholder="Upload Excel Data" pattern="^[a-zA-Z0-9\s_.\-\(\):]+(.xlsx|.XLSX)$"/>
-                <span class="helper-text" data-error="File must be .xlsx" data-success=""></span>
+            </div>
+            <div class="my-auto"><span id="response-xlform"></span></div>
+            <!--other input-->
+            <div class="form-row">
+              <div class="form-group input-field col-md-8">
+                {{ upform.normtype.label(class_="active") }}
+                {{ upform.normtype() }}
               </div>
-             </div>
-          </div>
-          <div id="accordionExample" class="col-md-6 my-auto">
+              <div class="form-group col-md-4 my-auto">
+                <button id="{{ upform.submit.id }}" type="submit" class="btn btn-block btn-primary">{{ upform.submit.label.text }}</button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="col-md-6">
+          <div id="accordionExample" class="my-auto">
             <button class="btn btn-secondary btn-block collapsed" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
               How to format your data
             </button>
@@ -94,7 +111,7 @@ $(document).ready(function() {
               </div>
             </div>
             <button class="btn btn-secondary btn-block collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-              Choosing data normalization method
+              Choosing normalization method
             </button>
             <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
               <div class="media">
@@ -107,42 +124,7 @@ $(document).ready(function() {
             </div>
           </div>
         </div>
-        <div class="my-auto"><span id="response-xlform"></span></div>
-        <!--other input-->
-        <div class="form-row">
-          <div class="form-group input-field col-md-6">
-            {{ upform.concs(class_="form-control validate", placeholder="1;2;3;4;5") }}
-            {{ upform.concs.label }}
-            <span class="helper-text" data-error="Required. See 'HOW TO FORMAT CONCENTRATIONS'" data-success=""></span>
-          </div>
-          <div class="form-group input-field col-md-2">
-            {{ upform.units(class_="form-control validate", placeholder="uM") }}
-            {{ upform.units.label }}
-            <span class="helper-text" data-error="Units may be uM, mM, M" data-success=""></span>
-          </div>
-          <div class="form-group input-field col-md-4">
-            {{ upform.normtype.label(class_="active") }}
-            {{ upform.normtype() }}
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-3 my-auto">
-            <label>
-              <input checked="" class="filled-in" id="{{ upform.auto.id }}" type="checkbox"/>
-              <span>{{ upform.auto.label.text }}</span>
-            </label>
-          </div>
-          <div class="form-group col-md-3 my-auto">
-            <label>
-              <input checked="" class="filled-in" id="{{ upform.poison.id }}" type="checkbox"/>
-              <span>{{ upform.poison.label.text }}</span>
-            </label>
-          </div>
-          <div class="form-group col-md-6 my-auto">
-            <button id="{{ upform.submit.id }}" type="submit" class="btn btn-block btn-primary">{{ upform.submit.label.text }}</button>
-          </div>
-        </div>
-      </form>
+      </div>
     </div>
   </div>
   <br>
@@ -267,13 +249,37 @@ $(document).ready(function() {
               </form>
             </div>
           </div>
+          <a class="btn btn-block btn-secondary" data-toggle="collapse" href="#styling" role="button" aria-expanded="false" aria-controls="collapseExample">
+            Styling
+          </a>
+          <div class="collapse" id="styling">
+            <div class="card card-body">
+              <form enctype="multipart/form-data" id="style-form" action="{{ url_for('style_data') }}" method="post">
+                {{ stform.hidden_tag() }}
+                <div class="form-group">
+                  <label>
+                    <input class="filled-in" id="{{ stform.legend.id }}" type="checkbox"/>
+                    <span>{{ stform.legend.label.text }}</span>
+                  </label>
+                </div>
+                <div class="form-group input-field pt-2 mb-1">
+                  {{ stform.units(class_="form-control validate", placeholder="uM") }}
+                  {{ stform.units.label(class_="pt-2") }}
+                  <span class="helper-text" data-error="Units may be uM, mM, M" data-success=""></span>
+                </div>
+                <div class="form-group mb-0">
+                  <button id="{{ stform.submit.id }}" type="button" class="btn btn-block btn-primary" disabled>{{ stform.submit.label.text }}</button>
+                </div>
+              </form>
+            </div>
+          </div>
           <div class="pt-3">
             <form class="form-inline justify-content-center" id="download-form"  action="{{ url_for('download_vtna') }}" method="post">
               {{ dform.hidden_tag() }}
               <div class="input-field col-sm-6 pr-2">
                 {{ dform.f_format() }}
               </div>
-              <div class="form-group col-sm-6 pl-2">
+              <div class="form-group justify-content-center col-sm-6 pl-2">
                   <button id="{{ dform.submit.id }}" type="submit" class="form-control btn btn-primary">
                       <i class="fa fa-lg fa-download"></i>
                   </button>

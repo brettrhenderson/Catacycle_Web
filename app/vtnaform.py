@@ -60,30 +60,25 @@ class DataForm(FlaskForm):
                                                                message="File must have .xslx extension.")],
                    description='Upload Reaction Data in Excel file format described in "How to Format Your Data"',
                    id='excelUpload', default='/static/sampledata/Hydroamination-Kinetics-Catalyst-Order.xlsx')
-
-    concs = StringField('Starting Concentrations', [InputRequired(), validate_concs],
-                        description='Input starting concentrations for each reaction as described in "How to Format '
-                                    'Concentrations"',
-                        id='startConcs')
-
-    units = StringField('Units', validators=[], description='Concentration Units to Use', id='units')
-
-    auto = BooleanField('Auto Fit', description="Automatically fit the order of the reaction.", id='autoFit')
-
-    poison = BooleanField('Assess Poisoning', description="Automatically fit the Catalyst Poisoning.", id='poison')
-
     normtype = SelectField('Normalization Type', choices=[('MV', 'Max Value Normalization'),
                                                           ('TC', 'Total Count Normalization'), ('None', 'None')],
                            description='How to normalize the data.  See "Choosing data normalization method"',
                            id='normType', default='MV')
 
-    submit = SubmitField('Upload and Plot', id="upload-submit")
+    submit = SubmitField('Plot', id="upload-submit")
+
+
+class StyleForm(FlaskForm):
+    units = StringField('Units', validators=[], description='Concentration Units to use for axes/legend.', id='units')
+    legend = BooleanField('Legend', description="Add Legend to plot.", id='legend')
+    submit = SubmitField('Apply', id='style-submit')
 
 
 class SelectDataForm(FlaskForm):
     rxn = SelectMultipleField('Reaction', description='Choose which reactions to manipulate', id='rxn-select')
     species = SelectMultipleField('Species', description='Choose which Species to manipulate', id='spec-select')
     submit = SubmitField('Select', id='select-submit')
+
 
 class FitParamForm(FlaskForm):
     species = StringField('Species', id="spec-param")
