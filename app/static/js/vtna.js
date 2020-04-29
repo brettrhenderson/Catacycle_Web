@@ -3,22 +3,16 @@ $("#excess").click(function (){
     console.log('blah');
         $("#spec-param").removeAttr("disabled");
         $("#spec-param").parent(".select-wrapper").removeClass("disabled");
+        $("#spec-param").siblings(".select-dropdown").removeClass("disabled");
+        $("#spec-param").siblings(".select-dropdown").removeAttr("disabled");
         console.log($("#spec-param").parent(".select-wrapper"))
     } else {
         $("#spec-param").attr("disabled", true);
         $("#spec-param").parent(".select-wrapper").addClass("disabled");
+        $("#spec-param").siblings(".select-dropdown").addClass("disabled");
+        $("#spec-param").siblings(".select-dropdown").attr("disabled", true);
     }
 });
-
-
-function enable_cb() {
-  if (this.checked) {
-    $("input.group1").removeAttr("disabled");
-  } else {
-    $("input.group1").attr("disabled", true);
-  }
-}
-
 
 // make file upload submit form automatically
 $("#upload-submit").click(function() {

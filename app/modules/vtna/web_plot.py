@@ -6,7 +6,7 @@ import io
 from flask import url_for
 from app.modules.vtna import vtna_helper as vh
 import logging
-from mpld3 import fig_to_html
+#from mpld3 import fig_to_html
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
