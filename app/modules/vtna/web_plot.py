@@ -14,7 +14,7 @@ log.setLevel(logging.DEBUG)
 def plot_vtna(data, concs=None, norm_time=False, order=1, trans_zero=None,  windowsize=None, colors=None, legend=True,
               guide_lines=True, f_format='svg', **kwargs):
     """Plot the Aligned Reaction Traces"""
-    plt.close()
+    log.debug("Closed all figures!")
     if trans_zero is None:
         trans_zero = [0]*len(data)
     if windowsize is None:

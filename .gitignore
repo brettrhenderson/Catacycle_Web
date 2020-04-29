@@ -110,3 +110,6 @@ venv.bak/
 
 # session data
 flask_session
+
+# figures for download
+temp

@@ -8,7 +8,7 @@ from app.modules.catacycle.oboros import draw, draw_straight
 from app.modules.vtna.web_plot import plot_vtna, save_dfig
 import logging
 from app.modules.vtna import vtna_helper as vh
-import matplotlib
+import os, uuid, matplotlib, pickle
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
@@ -29,7 +29,8 @@ def cycle():
     if request.method == 'POST' and form.validate():
         data = form.draw_data()
         log.debug(data)
-        return jsonify(data=[draw(data, startrange=0.15, stoprange=0.65,), draw_straight(data, startrange=0.15, stoprange=0.65,)])
+        return jsonify(data=[draw(data, startrange=0.15, stoprange=0.65,), draw_straight(data, startrange=0.15,
+                                                                                         stoprange=0.65,)])
 
     log.debug(data)
     return render_template('cycle.html',
@@ -75,25 +76,17 @@ def vtna():
     totals = vh.get_sheet_totals(None, raw_data)
     norm_data = vh.normalize_columns(raw_data, totals)
 
-    upload_form = DataForm()
-    dform = DVTNAForm()
-    sform = SelectDataForm()
-    mform = ManualFitForm()
-    aform = AutoFitForm()
-    pform = FitParamForm()
-    stform = StyleForm()
-
-    try:
-        plt.close(session['fig'])
-        log.debug(f'Closed last figure before creating new one!  Current Figures: {plt.get_fignums()}')
-    except KeyError:
-        log.info("Couldn't close figure for session: no figure available.")
-    except Exception as e:
-        log.warning(f"Couldn't close figure for session: {e}.")
+    upload_form, dform, sform, mform, aform, pform, stform = (DataForm(), DVTNAForm(), SelectDataForm(), ManualFitForm(),
+                                                              AutoFitForm(), FitParamForm(), StyleForm())
 
     new_plot, fig = plot_vtna(norm_data, marker="^", linestyle=':', markersize=5, guide_lines=True,
                               legend=True)
-    session['fig'] = fig
+    path = os.path.join(app.config['DOWNLOADS'], str(uuid.uuid4()))
+    # save the filename and pickle the figure
+    pickle.dump(fig, open(path, 'wb'))
+    plt.close(fig)
+    session['fig'] = path
+    log.debug(f'Current Figures: {plt.get_fignums()}')
 
     return render_template('vtna.html', upform=upload_form, dform=dform, sform=sform, aform=aform, mform=mform,
                            pform=pform, stform=stform, graph1=new_plot)
@@ -122,11 +115,12 @@ def upload_data():
                 log.debug(f"Rxns: {rxns},  Species: {specs}")
                 totals = vh.get_sheet_totals(xlform.normtype.data, raw_data)
                 norm_data = vh.normalize_columns(raw_data, totals)
-                plt.close(session['fig'])
-                log.debug(f'Closed last figure before creating new one!  Current Figures: {plt.get_fignums()}')
                 new_plot, fig = plot_vtna(norm_data, norm_time=False, marker="^", linestyle=':', markersize=5,
                                           guide_lines=True, legend=True)
-                session['fig'] = fig
+                # save the filename and pickle the figure
+                pickle.dump(fig, open(session['fig'], 'wb'))
+                plt.close(fig)
+                log.debug(f'Current Figures: {plt.get_fignums()}')
             except ValueError as e:
                 fb = f"Upload failed: {e}"
         else:
@@ -175,7 +169,9 @@ def download_vtna():
         log.debug(f"Save figure as {f_format}.")
         filename = secure_filename(f'vtna_plot.{f_format}')
 
-        img, mimetype = save_dfig(session['fig'], f_format)
+        fig = pickle.load(open(session['fig'], 'rb'))
+        img, mimetype = save_dfig(fig, f_format)
+        plt.close(fig)
         img.seek(0)
         img = FileWrapper(img)
         response = make_response(Response(img, mimetype=mimetype, direct_passthrough=True))
