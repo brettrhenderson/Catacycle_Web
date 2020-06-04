@@ -3,6 +3,13 @@ import math
 import matplotlib.patches as patches
 import numpy as np
 import matplotlib.path as mpath
+import matplotlib.transforms as transforms
+from functools import reduce
+import logging
+
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
+
 
 def curved_arrow_single(theta1, theta2, radius, width, origin=(0,0), rel_head_width=1.5, rel_head_len=0.1,
                         abs_head_len=None, reverse=False):
@@ -375,3 +382,71 @@ def cart2pol(x, y):
     rho = np.sqrt(x**2 + y**2)
     phi = np.arctan2(y, x)
     return rho, phi
+
+def rotate_patches_about(ax, patches, theta, pt):
+    """
+    Rotate matplotlib patches about a point in data space
+    :param ax: Axes on which to perform transformation
+    :param patches: list of patches to rotate
+    :param theta: float. angle to rotate by (in radians)
+    :param pt: tuple. point to rotate about
+    :return: None
+    """
+    t = transforms.Affine2D().rotate_around(pt[0], pt[1], theta)
+
+    for patch in patches:
+        # patch.set_transform(t + ax.transData)
+        patch.set_transform(t + ax.transData)
+
+
+def reflect_patches_about(ax, patches, var, val):
+    """
+    Reflect matplotlib patches about a vertical or horizontal line
+    :param ax: Axes on which to perform transformation
+    :param patches: list of patches to rotate
+    :param var: int. the variable associated with val. 0 for x, 1 for y.
+    :param val: float.  The value of the coordinate to reflect about.
+            Example: if var == 0 and val = 2, reflect about the line x = 2.
+    :return: None
+    """
+    t1 = transforms.Affine2D().translate(-val * (var == 0), -val*(var == 1))  # translate to reference either x- or y-axis
+    t2 = transforms.Affine2D(np.array([[-1*(var == 0)*2+1, 0, 0],[0, -1*(var == 1)*2+1, 0], [0, 0, 1]]))  # reflect
+    t3 = transforms.Affine2D().translate(val * (var == 0), val * (var == 1))  # re-translate back to original location
+
+    for patch in patches:
+        patch.set_transform(t1 + t2 + t3 + ax.transData)
+
+def get_rotate_trans(theta, pt):
+    """
+    Get matplotlib.transform to rotate patches about a point in data space
+    :param theta: float. angle to rotate by (in radians)
+    :param pt: tuple. point to rotate about
+    :return: matplotlib.transform
+    """
+    return transforms.Affine2D().rotate_around(pt[0], pt[1], theta)
+
+def get_reflect_trans(var, val):
+    """
+    Get the matplotlib.transform that reflects about a vertical or horizontal line
+    :param var: int. the variable associated with val. 0 for x, 1 for y.
+        Example: if var == 0, the reflection will be about a vertical line
+    :param val: float.  The value of the coordinate to reflect about.
+            Example: if var == 0 and val = 2, reflect about the line x = 2.
+    :return: None
+    """
+    t1 = transforms.Affine2D().translate(-val * (var == 0), -val * (var == 1))  # translate to reference either x- or y-axis
+    t2 = transforms.Affine2D(np.array([[-1 * (var == 0) * 2 + 1, 0, 0], [0, -1 * (var == 1) * 2 + 1, 0], [0, 0, 1]]))  # reflect
+    t3 = transforms.Affine2D().translate(val * (var == 0), val * (var == 1))  # re-translate back to original location
+    return t1 + t2 + t3
+
+def apply_transforms(ax, patches, transforms):
+    """
+        Apply a list of transforms to a list of patches
+        :param ax: Axes on which to perform transformations
+        :param patches: list of patches to transform
+        :param transforms: list of matplotlib.transforms.Affine2D transforms to perform.
+        :return: None
+        """
+    for patch in patches:
+        # patch.set_transform(t1 + t2 + t3 + ax.transData)
+        patch.set_transform(reduce(lambda a,b : a + b, transforms + [ax.transData]))
