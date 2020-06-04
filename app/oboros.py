@@ -168,8 +168,10 @@ def draw_cycle(data, ax, startrange=0.15, stoprange=0.85, origin=(0,0), rotation
     dh.apply_transforms(ax, patches, transforms)
     for patch in patches:
         ax.add_patch(patch)
-
-    return [mpath.Path.transformed(patch.get_path(), reduce(lambda a, b: a + b, transforms)) for patch in patches]
+    if len(transforms):
+        return [mpath.Path.transformed(patch.get_path(), reduce(lambda a, b: a + b, transforms)) for patch in patches]
+    else:
+        return [patch.get_path() for patch in patches]
 
 
 def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8, 8), return_image=False):

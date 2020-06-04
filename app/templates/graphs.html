@@ -52,6 +52,19 @@
         <div class="row d-flex">
             <!--<div class="col-md-1 col-lg-1"></div>-->
             <div class="col-md-6 col-lg-6 d-flex flex-column align-items-center justify-content-center max-vw-50" style="overflow: auto;">
+                <div class="row" style="width: 90%">
+                    <div class="col-md-4 align-self-start btn-group btn-group-toggle pb-2 pl-0" data-toggle="buttons">
+                        <label class="btn btn-secondary active">
+                            <input type="radio" name="options" id="option1" autocomplete="off" checked> Cycle 1
+                        </label>
+                    </div>
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4 pb-2 pr-0" data-toggle="buttons">
+                      <button class="btn btn-secondary btn-block"> Add Cycle</button>
+                    </div>
+                </div>
+
+
                 <form id="cycle-form" style="width: 90%;" action="" method="post" nonvalidate>
                     {{ form.hidden_tag() }}
                     <div class="card">
