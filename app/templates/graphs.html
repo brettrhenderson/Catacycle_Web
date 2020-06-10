@@ -13,34 +13,12 @@
 <script src="{{url_for('.static', filename='js/graphs.js')}}"></script>
 <script src="{{url_for('.static', filename='js/bootstrap-colorpicker.js')}}"></script>
 <script type="text/javascript">
-    $(document).ready(setToken("{{ form.csrf_token._value() }}"));
-    $(document).ready(addrow({{ rows|tojson }}));
-    $(document).ready(clear());
-    $(document).ready(toggleGaps());
-    $(document).ready(submitHandler("{{ form.csrf_token._value() }}"));
-    $(document).ready(downloadHandler());
-</script>
-<script>
-    // link tabs to correct carousel images
-    link_click_to_carousel("#outsiderxnlink", '#imageCarousel', 1);
-    link_click_to_carousel("#rateslink", '#imageCarousel', 0);
-    link_click_to_carousel("#colorslink", '#imageCarousel', 0);
-    // link_click_to_carousel("#arrowslink", '#imageCarousel', 0);
-
-    // add colorpickers to the outside reactions tab
-    add_colorpicker('#straight_f_color-picker-component', true, '#straight_r_color-picker-component');
-    add_colorpicker('#straight_r_color-picker-component', false, 'None');
-
-    // add the colorpickers for the cycle steps
-    {% for prefix in ['r', 'f'] %}
-        {% for i in range(1, rows+1) %}
-            {% if prefix == 'f' %}
-                add_colorpicker('#{{ prefix }}_color-picker-component{{ i }}', true, '#r_color-picker-component{{ i }}');
-            {% else %}
-                add_colorpicker('#{{ prefix }}_color-picker-component{{ i }}', false, 'None');
-            {% endif %}
-        {% endfor %}
-    {% endfor %}
+    $(document).ready(function() {
+        setToken("{{ form.csrf_token._value() }}");
+        submitHandler("{{ form.csrf_token._value() }}");
+        downloadHandler("{{ dform.csrf_token._value() }}");
+        setup_card()
+    });
 </script>
 {% endblock %}
 
@@ -51,16 +29,16 @@
     <div class="container-fluid">
         <div class="row d-flex">
             <!--<div class="col-md-1 col-lg-1"></div>-->
-            <div class="col-md-6 col-lg-6 d-flex flex-column align-items-center justify-content-center max-vw-50" style="overflow: auto;">
+            <div class=" pt-1 pb-2 col-md-6 col-lg-6 d-flex flex-column align-items-center justify-content-center max-vw-50" style="overflow: auto;">
                 <div class="row" style="width: 90%">
-                    <div class="col-md-4 align-self-start btn-group btn-group-toggle pb-2 pl-0" data-toggle="buttons">
-                        <label class="btn btn-secondary active">
-                            <input type="radio" name="options" id="option1" autocomplete="off" checked> Cycle 1
+                    <div id="cycle-radio" class="col-md-4 align-self-start btn-group btn-group-xs btn-group-toggle pb-2 pl-0" data-toggle="buttons">
+                        <label id="cycle1-label" class="btn btn-secondary active highlight">
+                            <input type="radio" name="cycleradios" id="cycle1" autocomplete="off" checked> Cycle 1
                         </label>
                     </div>
-                    <div class="col-md-4"></div>
-                    <div class="col-md-4 pb-2 pr-0" data-toggle="buttons">
-                      <button class="btn btn-secondary btn-block"> Add Cycle</button>
+                    <div class="col-md-5"></div>
+                    <div class="col-md-3 pb-2 pr-0" data-toggle="buttons">
+                      <button id="add-cycle" class="btn btn-xs btn-secondary btn-block">Add Cycle</button>
                     </div>
                 </div>
 
@@ -84,14 +62,14 @@
                                 </li>
                             </ul>
                         </div>
-                        <div class="card-body">
-                            <div class="tab-content">
+                        <div class="card-body p-2">
+                            <div id="cycle-card" class="tab-content">
                                 <div class="tab-pane active show" id="ratestab">
-                                    <table class="rates-list table table-hover table-striped" style="width:100%">
+                                    <table class="mb-2 rates-list table table-hover table-striped" style="width:100%">
                                         <thead>
                                             <tr>
                                                 {% for header in ['Step', 'Forward Rate Constant', 'Reverse Rate Constant', 'Add Reagent', 'Generate Product'] %}
-                                                <th>
+                                                <th style="text-align:center">
                                                     {{ header }}
                                                 </th>
                                                 {% endfor %}
@@ -128,24 +106,24 @@
                                     </table>
                                     <div class="row">
                                         <div class="col-sm-4">
-                                            <button type="button" class="btn btn-outline-primary float-left" id="addrow">
+                                            <button type="button" class="btn btn-sm btn-outline-primary float-left" id="addrow">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
                                         <div class="col-sm-4 text-center">
-                                            <button type="button" class="btn btn-outline-primary" id="clearrates">
+                                            <button type="button" class="btn btn-sm btn-outline-primary" id="clearrates">
                                                 Clear All
                                             </button>
                                         </div>
                                         <div class="col-sm-4">
-                                            <button type="button" class="btn btn-outline-primary ibtnDel float-right" id="delrow">
+                                            <button type="button" class="btn btn-sm btn-outline-primary ibtnDel float-right" id="delrow">
                                                 <i class="fa fa-minus"></i>
                                             </button>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="tab-pane" id="colorstab">
-                                    <table class="color-list table table-hover table-striped" style="width:100%">
+                                    <table class="mb-2 color-list table table-hover table-striped" style="width:100%">
                                         <thead>
                                             <tr>
                                                 {% for header in ['Step', 'Forward Color', 'Reverse Color'] %}
@@ -181,17 +159,17 @@
                                     </table>
                                     <div class="row">
                                         <div class="col-sm-4">
-                                            <button type="button" class="btn btn-outline-primary float-left" id="addcolorrow">
+                                            <button type="button" class="btn btn-sm btn-outline-primary float-left" id="addcolorrow">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
                                         <div class="col-sm-4 text-center">
-                                            <button type="button" class="btn btn-outline-primary" id="clearcolors">
+                                            <button type="button" class="btn btn-sm btn-outline-primary" id="clearcolors">
                                                 Clear All
                                             </button>
                                         </div>
                                         <div class="col-sm-4">
-                                            <button type="button" class="btn btn-outline-primary ibtnDel float-right" id="delcolorrow">
+                                            <button type="button" class="btn btn-sm btn-outline-primary ibtnDel float-right" id="delcolorrow">
                                                 <i class="fa fa-minus"></i>
                                             </button>
                                         </div>
@@ -222,6 +200,42 @@
                                                                     <input class="form-check-input" type="checkbox" id="flip" name="flip">
                                                                     Counterclockwise Cycle
                                                                 </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-row">
+                                                        <div class="form-group col-sm-6">
+                                                            <label for="rotation">Rotation:</label>
+                                                            <div class="form-row">
+                                                                <span class="col-sm-4 d-flex justify-content-end">
+                                                                    <img src="{{url_for('.static', filename='images/Gap_small.png')}}" alt="no rotation"
+                                                                 srcset="{{url_for('.static', filename='images/Gap_small.svg')}}" width="50" height="30">
+                                                                </span>
+                                                                <div class="col-sm-4">
+                                                                    <input id="rotation" name="rotation" class="form-control" type="number" min="-360"
+                                                                           max="360" step="1" value="0">
+                                                                </div>
+                                                                <span class="col-sm-4">
+                                                                    <img src="{{url_for('.static', filename='images/Gap_big.png')}}" alt="rotated"
+                                                                     srcset="{{url_for('.static', filename='images/Gap_big.svg')}}" width="50" height="30">
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-sm-6">
+                                                            <label for="translation">Translation:</label>
+                                                            <div class="form-row">
+                                                                <span class="col-sm-4 d-flex justify-content-end">
+                                                                    <img src="{{url_for('.static', filename='images/Thickness_small.png')}}" alt="centered"
+                                                                     srcset="{{url_for('.static', filename='images/Thickness_small.svg')}}" width="50" height="30">
+                                                                </span>
+                                                                <div class="col-sm-4">
+                                                                    <input id="translation" name="translation" class="form-control" type="number" min="-1"
+                                                                           max="1" step="0.01" value="0" disabled>
+                                                                </div>
+                                                                <span class="col-sm-4">
+                                                                    <img src="{{url_for('.static', filename='images/Thickness_big.png')}}" alt="translated"
+                                                                     srcset="{{url_for('.static', filename='images/Thickness_big.svg')}}" width="50" height="30">
+                                                                </span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -489,7 +503,8 @@
                     </div>
                 </form>
             </div>
-            <div class="col-md-6 col-lg-6 d-flex flex-column align-items-center justify-content-start max-vw-50">
+            <div class="pt-1 pb-2 col-md-6 col-lg-6 d-flex flex-column align-items-center justify-content-start max-vw-50">
+                <div id="cycle-select" class="row"></div>
                 <div id="imageCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
                      <ol class="carousel-indicators">
                           <li data-target="#imageCarousel" data-slide-to="0" class="active"></li>
@@ -524,7 +539,7 @@
                             </select>
                         </div>
                         <div class="col-sm-2">
-                            <button id="fake-submit" type="button" class="form-control btn btn-primary">
+                            <button id="fake-submit" type="submit" class="form-control btn btn-primary">
                                 <i class="fa fa-lg fa-download"></i>
                             </button>
                         </div>

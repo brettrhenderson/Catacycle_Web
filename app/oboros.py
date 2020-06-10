@@ -31,7 +31,7 @@ radius = 3.0
 ######################################
 # 1. For Drawing Cycle (Curved Arrows)
 ######################################
-def draw_cycle(data, ax, startrange=0.15, stoprange=0.85, origin=(0,0), rotation=0):
+def draw_cycle(data, ax, startrange=0.15, stoprange=0.85, origin=(0,0)):
     """
     Draws the arrows for a catalytic cycle.
     :param data: a dictionary specifying the data needed to draw the cycle.
@@ -71,6 +71,9 @@ def draw_cycle(data, ax, startrange=0.15, stoprange=0.85, origin=(0,0), rotation
     # edgecolor_swoops = ['none' for _ in range(len(fcolours))]
     edgecolor_swoops = fcolours
     flip = try_fallback(data, 'flip', False)
+    rotation = try_fallback(data, 'rotation', 0.0)
+    if not flip:
+        rotation = -rotation
 
     # Call Sofia's Scaler function, convert rates to arrow size
     forward_rates, rev_rates, _ = scaler(forward_rates, rev_rates, startrange=startrange,
@@ -138,7 +141,8 @@ def draw_cycle(data, ax, startrange=0.15, stoprange=0.85, origin=(0,0), rotation
         swoop_end_angle = math.degrees(central_angle) + 270 - (180 - swoop_sweep_angle) / 2 + (
                     swoop_sweep_angle / 2) * swoop_start_angle_shift_multiplier
         dist_to_swoop_center = radius + shift + swoop_radius + move_center_dist
-        swoop_origin = (dist_to_swoop_center * math.cos(central_angle), dist_to_swoop_center * math.sin(central_angle))
+        swoop_origin = (origin[0] + dist_to_swoop_center * math.cos(central_angle),
+                        origin[1] + dist_to_swoop_center * math.sin(central_angle))
 
         if is_incoming[i] and is_outgoing[i]:
             swoop_path = dh.curved_arrow_single(swoop_start_angle, swoop_end_angle, swoop_radius, swoop_width,
@@ -161,7 +165,6 @@ def draw_cycle(data, ax, startrange=0.15, stoprange=0.85, origin=(0,0), rotation
             patches.append(swoop_patch)
 
     if flip:
-        log.warning('Flip set to True')
         transforms.append(dh.get_reflect_trans(0, origin[0]))
     if rotation:
         transforms.append(dh.get_rotate_trans(rotation, origin))
@@ -183,10 +186,25 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
     ax = fig.add_subplot(111, autoscale_on=False) #, xlim=(-6.5, 6.5), ylim=(-6.5, 6.5))
     plt.axis('off')
 
-    paths1 = draw_cycle(data, ax, startrange, stoprange, origin=(0, 0), rotation=0)
-    # paths2 = draw_cycle(data, ax, startrange, stoprange, origin=(2*radius, 0), rotation=0)
-    dh.set_ax_lims(ax, paths1)
-    print(paths1[1])
+    if data['plot1']:
+        if data['is_vert']:
+            paths1 = draw_cycle(data['data1'], ax, startrange, stoprange, origin=(0, 2 * radius * -data['trans1']))
+        else:
+            paths1 = draw_cycle(data['data1'], ax, startrange, stoprange, origin=(2 * radius * data['trans1'], 0))
+    else:
+        paths1 = []
+    if data['plot2']:
+        if data['is_vert']:
+            paths2 = draw_cycle(data['data2'], ax, startrange, stoprange,
+                                origin=(0, 2 * radius * -data['trans2'] + -2 * radius))
+        else:
+            paths2 = draw_cycle(data['data2'], ax, startrange, stoprange,
+                                origin=(2 * radius*data['trans2'] + 2 * radius, 0))
+    else:
+        paths2 = []
+    paths = paths1 + paths2
+    if len(paths):
+        dh.set_ax_lims(ax, paths1 + paths2)
     # ax.invert_xaxis()
     plt.draw()
 
@@ -219,6 +237,11 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
 ###################################################
 
 def draw_straight(data, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8, 8), return_image=False):
+
+    if data['p1_active']:
+        data = data['data1']
+    else:
+        data = data['data2']
 
     # keep track of all paths to set the bounds of the canvas
     paths = []

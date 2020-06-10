@@ -1,11 +1,152 @@
 // initialize csrf token
-var token = ''
+let token = ''
 
 // count number of steps in tables
-var counter = 4;
+let counters = {1: 5, 2: 5};
 
 // initialize a list of default colors
-var colorDefaults = ['#026FDD', '#FB7602', '#672CA2', '#BA2B2B', '#BC30AF', '#33962E', '#C03F17', '#000000', '#026FDD', '#FB7602', '#672CA2', '#BA2B2B', '#BC30AF', '#33962E', '#C03F17'];
+let colorDefaults = ['#026FDD', '#FB7602', '#672CA2', '#BA2B2B', '#BC30AF', '#33962E', '#C03F17', '#000000', '#026FDD', '#FB7602', '#672CA2', '#BA2B2B', '#BC30AF', '#33962E', '#C03F17'];
+
+let basicContent = $('#cycle-card').children().clone();
+
+// get the content of a basic cycle table
+let content1 = $('#cycle-card').children();
+
+// keep track of the content of both cycles
+let content2 = $('#cycle-card').children().clone();
+
+// keep track of which cycle is active
+let activeCycle = 1;
+
+$('#add-cycle').on("click", function (event) {
+    if (this.innerHTML == "Add Cycle") {
+        this.innerHTML = 'Delete Cycle';
+        var newcycle = `<label class="btn btn-secondary highlight">
+                        <input type="radio" name="cycleradios" id="cycle2" autocomplete="off"> Cycle 2
+                    </label>`
+        $('#cycle-radio').append(newcycle);
+        $('#cycle2').on("change", function (event) {
+            if (activeCycle == 1) {
+                // save current state of cycle 2
+                //content1 = $('#cycle-card')[0].innerHTML;
+                // change card content back to cycle 2
+                $('#cycle-card').empty()
+                $('#cycle-card').append(content2);
+                activeCycle = 2;
+                setup_card();
+                $('#translation').prop("disabled", false);
+                console.log("Switched to Cycle 2")
+            }
+        });
+
+        var cycleselect = `<div id="cycle-check" class="btn-group btn-group-xs btn-group-toggle" data-toggle="buttons">
+                    <label id="check1-label" class="btn btn-secondary active highlight">
+                        <input class="submitter" type="checkbox" name="cycle1-check" id="cycle1-check" autocomplete="off" checked> Cycle 1
+                    </label>
+                    <label id="check2-label" class="btn btn-secondary active highlight">
+                        <input class="submitter" type="checkbox" name="cycle2-check" id="cycle2-check" autocomplete="off" checked> Cycle 2
+                    </label>
+                </div>
+                <div id="vert-check-div" class="btn-group btn-group-xs btn-group-toggle pl-3" data-toggle="buttons">
+                    <label id="vert-check-label" class="btn btn-secondary highlight">
+                        <input class="submitter" type="checkbox" name="is_vert" id="vert-check" autocomplete="off"> Vertical
+                    </label>
+                </div>`
+        $('#cycle-select').append(cycleselect);
+
+        // auto-submit form when these new buttons are toggled
+        $('.submitter').on("change", extraSubmit)
+
+        // auto-submit when new cycle is added
+        extraSubmit()
+
+        // enable translation in styling
+        $('#translation').prop("disabled", false);
+
+    }
+    else {
+        if (confirm("Are you sure you want to Remove Cycle 2? \nAll input data for it will be lost!")) {
+            this.innerHTML = 'Add Cycle';
+            $('#cycle-radio').children().last().remove();
+            if (!$("#cycle1-label").hasClass("active")){
+                $("#cycle1-label").addClass("active");
+                activeCycle = 1;
+                // change card content back to cycle 1
+                $('#cycle-card').empty()
+                $('#cycle-card').append(content1);
+                setup_card();
+                content2 = basicContent;
+                console.log("Switched to Cycle 1")
+            }
+            $('#cycle-select').children().remove();
+            // disable translation again
+            $('#translation').prop("disabled", false);
+
+            // auto-submit when new cycle is removed
+            extraSubmit();
+        }
+    }
+
+});
+
+$('#cycle1').on("change", function (event) {
+    if (activeCycle == 2) {
+        // save current state of cycle 2
+        // content2 = $('#cycle-card')[0].innerHTML;
+        // change card content back to cycle 1
+        $('#cycle-card').empty()
+        $('#cycle-card').append(content1);
+        activeCycle = 1;
+        setup_card();
+        console.log("Switched to Cycle 1")
+    }
+});
+
+function setup_card() {
+    addrow(counters[activeCycle]);
+    clear();
+    toggleGaps();
+    // link tabs to correct carousel images
+    link_click_to_carousel("#outsiderxnlink", '#imageCarousel', 1);
+    link_click_to_carousel("#rateslink", '#imageCarousel', 0);
+    link_click_to_carousel("#colorslink", '#imageCarousel', 0);
+    // link_click_to_carousel("#arrowslink", '#imageCarousel', 0);
+
+    // add colorpickers to the outside reactions tab
+    add_colorpicker('#straight_f_color-picker-component', true, '#straight_r_color-picker-component');
+    add_colorpicker('#straight_r_color-picker-component', false, 'None');
+
+    // add the colorpickers for the cycle steps
+    var prefixes = ['f', 'r']
+    for (prefix in prefixes) {
+        for (i = 1; i < counters[activeCycle]; i++) {
+            if (prefixes[prefix] == 'f') {
+                add_colorpicker(`#f_color-picker-component${i}`, true, `#r_color-picker-component${i}`);
+            }
+            else {
+                add_colorpicker(`#r_color-picker-component${i}`, false, 'None');
+            }
+        }
+    }
+
+    // make sure nav link matches active tab pane
+    var activeLink = $(".nav-link.active")[0];
+    var pane;
+    for (pane of $('#cycle-card').children()) {
+        if (!(pane.id == activeLink.href.split("#")[1])) {
+            if ($(pane).hasClass("active")) {
+                $(pane).removeClass("active show");
+                console.log('Removed active from ' + pane.id);
+            }
+        }
+        else {
+            if (!$(pane).hasClass("active")) {
+                $(pane).addClass("active show");
+                console.log('Added active to ' + pane.id);
+            }
+        }
+    }
+}
 
 function setToken(token_val) {
     token = token_val;
@@ -59,7 +200,7 @@ function clear() {
 
     $("#clearcolors").on("click", function (event) {
         // $('.color').val('#000000')
-        for (i = 1; i < counter; i++) {
+        for (i = 1; i < counters[activeCycle]; i++) {
             $('#f_color-picker-component' + i).colorpicker('setValue', '#000000')
             $('#r_color-picker-component' + i).colorpicker('setValue', '#404040')
         }
@@ -130,24 +271,24 @@ function add_colorpicker(id, auto_lighten, other_id) {
     }
 }
 
-// javascript for addrow found at https://bootsnipp.com/snippets/402bQ
+// javascript for addrow adapted from https://bootsnipp.com/snippets/402bQ
 function addrow(rows) {
-    counter = rows+1;
+    // counters[activeCycle] = rows+1;
 
     $("#delrow, #delcolorrow").on("click", function (event) {
-        if (counter > 2) {
+        if (counters[activeCycle] > 2) {
             $("#rate-body")[0].deleteRow(-1);
             $("#color-body")[0].deleteRow(-1);
-            counter -= 1
+            counters[activeCycle] -= 1
             // rescale gaps
             $('.indygap').each(function() {
                 var $eachGap = $(this)[0]
-                $eachGap.value = 32 - counter - Math.floor(counter/2)
+                $eachGap.value = 32 - counters[activeCycle] - Math.floor(counters[activeCycle]/2)
             });
-            $('#gap')[0].value = 32 - counter - Math.floor(counter/2)
+            $('#gap')[0].value = 32 - counters[activeCycle] - Math.floor(counters[activeCycle]/2)
 
             // remove indygap inputs
-            if(counter % 4 != 1) {
+            if(counters[activeCycle] % 4 != 1) {
                 $('#gaps-block').children().last().children().last().remove();
             }
             else {
@@ -157,14 +298,14 @@ function addrow(rows) {
     });
 
     $("#addcolorrow, #addrow").on("click", function () {
-        if (counter < 16) {
+        if (counters[activeCycle] < 16) {
             // add new gap adjusters as new steps are added
-            if (counter % 4 != 1) {
+            if (counters[activeCycle] % 4 != 1) {
                 // new input to add
                 var newGap = `<div class="form-group col-sm-3">
-                                  <label for="gap_${counter}">Gap ${counter}:</label>
-                                      <input id="gap_${counter}" name="gap_${counter}" class="form-control indygap" type="number" min="0"
-                                          max="50" step="1" value="${31 - counter - Math.floor(counter/2)}" disabled>
+                                  <label for="gap_${counters[activeCycle]}">Gap ${counters[activeCycle]}:</label>
+                                      <input id="gap_${counters[activeCycle]}" name="gap_${counters[activeCycle]}" class="form-control indygap" type="number" min="0"
+                                          max="50" step="1" value="${31 - counters[activeCycle] - Math.floor(counters[activeCycle]/2)}" disabled>
                               </div>`;
                 // add to the last existing row
                 $('#gaps-block').children().last().append(newGap);
@@ -172,27 +313,27 @@ function addrow(rows) {
             else {
                 var newGap = `<div class="form-row">
                                   <div class="form-group col-sm-3">
-                                      <label for="gap_${counter}">Gap ${counter}:</label>
-                                          <input id="gap_${counter}" name="gap_${counter}" class="form-control indygap" type="number" min="0"
-                                              max="50" step="1" value="${31 - counter - Math.floor(counter/2)}" disabled>
+                                      <label for="gap_${counters[activeCycle]}">Gap ${counters[activeCycle]}:</label>
+                                          <input id="gap_${counters[activeCycle]}" name="gap_${counters[activeCycle]}" class="form-control indygap" type="number" min="0"
+                                              max="50" step="1" value="${31 - counters[activeCycle] - Math.floor(counters[activeCycle]/2)}" disabled>
                                   </div>
                               </div>`;
                 // add new row to the gaps-block
                 $('#gaps-block').append(newGap);
             }
 
-            var newcolorRow = $('<tr id="crow' + counter + '">');
+            var newcolorRow = $('<tr id="crow' + counters[activeCycle] + '">');
             var ccols = "";
-            ccols += '<td>' + counter + '</td>';
+            ccols += '<td>' + counters[activeCycle] + '</td>';
             var prefixes = ['f', 'r']
             for (prefix in prefixes) {
-                var cval = colorDefaults[counter - 1];
+                var cval = colorDefaults[counters[activeCycle] - 1];
                 if (prefixes[prefix] == 'r') {
                     cval = "#404040"
                 }
                 ccols += `<td>
-                             <div id="${prefixes[prefix]}_color-picker-component${counter}" class="input-group colorpicker-component">
-                                 <input id="${prefixes[prefix]}_color${counter}" name="${prefixes[prefix]}_color${counter}" type="text" value=${cval} class="form-control color"/>
+                             <div id="${prefixes[prefix]}_color-picker-component${counters[activeCycle]}" class="input-group colorpicker-component">
+                                 <input id="${prefixes[prefix]}_color${counters[activeCycle]}" name="${prefixes[prefix]}_color${counters[activeCycle]}" type="text" value=${cval} class="form-control color"/>
                                  <span class="input-group-append">
                                      <span class="input-group-text colorpicker-input-addon"><i></i></span>
                                  </span>
@@ -202,44 +343,104 @@ function addrow(rows) {
 
             newcolorRow.append(ccols);
             $("table.color-list").append(newcolorRow);
-            add_colorpicker('#f_color-picker-component' + counter, true, '#r_color-picker-component' + counter);
-            add_colorpicker('#r_color-picker-component' + counter, false, 'none');
+            add_colorpicker('#f_color-picker-component' + counters[activeCycle], true, '#r_color-picker-component' + counters[activeCycle]);
+            add_colorpicker('#r_color-picker-component' + counters[activeCycle], false, 'none');
 
-            var newRow = $('<tr id="row' + counter + '">');
+            var newRow = $('<tr id="row' + counters[activeCycle] + '">');
             var cols = "";
-            cols += '<td width="6%">' + counter + '</td>';
-            cols += '<td><select id="f_rate' + counter + '" class="form-control frate" name="f_rate' + counter + '">';
+            cols += '<td width="6%">' + counters[activeCycle] + '</td>';
+            cols += '<td><select id="f_rate' + counters[activeCycle] + '" class="form-control frate" name="f_rate' + counters[activeCycle] + '">';
             cols += '<option value="1">Very Low</option><option value="2">Low</option><option value="3" selected>Moderate</option>';
             cols += '<option value="4">High</option><option value="5">Very High</option></select>';
             cols += '</td>';
-            cols += '<td><select id="r_rate' + counter + '" class="form-control rrate" name="r_rate' + counter + '">';
+            cols += '<td><select id="r_rate' + counters[activeCycle] + '" class="form-control rrate" name="r_rate' + counters[activeCycle] + '">';
             cols += '<option value="0" selected>None</option><option value="1">Very Low</option><option value="2">Low</option><option value="3">Moderate</option>';
             cols += '<option value="4">High</option><option value="5">Very High</option></select>';
             cols += '</td>';
-            cols += '<td width="12%"><input id="is_incoming' + counter + '" name="is_incoming' + counter + '" class="form-control" type="checkbox"</td>'
-            cols += '<td width="12%"><input id="is_outgoing' + counter + '" name="is_outgoing' + counter + '" class="form-control" type="checkbox"</td>'
+            cols += '<td width="12%"><input id="is_incoming' + counters[activeCycle] + '" name="is_incoming' + counters[activeCycle] + '" class="form-control" type="checkbox"</td>'
+            cols += '<td width="12%"><input id="is_outgoing' + counters[activeCycle] + '" name="is_outgoing' + counters[activeCycle] + '" class="form-control" type="checkbox"</td>'
 
             newRow.append(cols);
             $("table.rates-list").append(newRow);
 
-            counter++;
+            counters[activeCycle]++;
 
             // enable or disable all gaps depending on whether the indygap box is checked
             var dis = !($('#ind-gap')[0].checked);
             $('.indygap').each(function() {
                 var $eachGap = $(this)[0]
                 $eachGap.disabled = dis;
-                $eachGap.value = 32 - counter - Math.floor(counter/2)
+                $eachGap.value = 32 - counters[activeCycle] - Math.floor(counters[activeCycle]/2)
             });
 
             // adjust the gap to accommodate more/less steps
-            $('#gap')[0].value = 32 - counter - Math.floor(counter/2)
+            $('#gap')[0].value = 32 - counters[activeCycle] - Math.floor(counters[activeCycle]/2)
         }
     })
 };
 
-function submitForm(csrf_token, form_url, response_handler) {
-    var postData = $('#cycle-form').serialize();
+function submitForm(csrf_token, form_url, responseHandler, addArgsHandler) {
+    var postData = 'csrf_token=' + $('#csrf_token')[0].value;
+
+    // check which cycles are checked
+    if ($('#cycle1-check').length) {    // there are two cycles
+        // check if vertical alignment is selected
+        postData += '&is_vert=' + $('#vert-check')[0].checked;
+        if ($('#cycle1-check')[0].checked) {    // plot cycle 1
+            if ($('#cycle1')[0].checked) {    // cycle 1 is currently active form
+                postData += '&' + $('#cycle-card').find(':input').serialize()
+                console.log($('#cycle-card').find(':input').serialize())
+            }
+            else {
+                postData += '&' + content1.find(':input').serialize()
+            }
+            postData += '&plot_1=true'
+        }
+        else {
+            postData += '&plot_1=false'
+        }
+        if ($('#cycle2-check')[0].checked) {    // plot cycle 2
+            var data2;
+            if ($('#cycle2')[0].checked) {    // cycle 2 is currently active form
+                data2 = $('#cycle-card').find(':input').serialize()
+            }
+            else {
+                data2 = content2.find(':input').serialize()
+            }
+            // edit field names for cycle 2
+            var fields = data2.split('&');
+            var newfields = [];
+            for (field of fields) {
+                newfields.push('c2_' + field)
+            }
+            postData += '&' + newfields.join('&');
+            postData += '&plot_2=true'
+        }
+        else {
+            postData += '&plot_2=false'
+        }
+    }
+    else {
+        postData = $('#cycle-form').serialize();
+        postData += '&plot_1=true'
+        postData += '&plot_2=false'
+        postData += '&is_vert=false'
+    }
+
+    // check which cycle form is active
+    if ($('#cycle1')[0].checked) {
+        postData += '&p1_active=true'
+    }
+    else {
+        postData += '&p1_active=false'
+    }
+
+    // handle additional arguments
+    if (addArgsHandler !== undefined) {
+        postData = addArgsHandler(postData);
+        console.log("New Post Data: " + postData)
+    }
+    console.log(postData);
     // console.log(postData);
     var formURL = form_url;
 
@@ -252,7 +453,7 @@ function submitForm(csrf_token, form_url, response_handler) {
         success:function(response, textStatus, jqXHR)
         {
             // response: return data from server
-            response_handler(response);
+            responseHandler(response);
             //document.getElementById('graph').src = response.data;
             // console.log(response.data);
         },
@@ -272,6 +473,12 @@ function submitForm(csrf_token, form_url, response_handler) {
     })
 }
 
+function extraSubmit() {
+    submitForm($('#csrf_token')[0].value, '/graphs', function (response) {
+        document.getElementById('graph').src = response.data[0];
+        document.getElementById('straight-graph').src = response.data[1];
+    });
+}
 
 function submitHandler(csrf_token) {
     $('#cycle-form').submit(function(e)
@@ -285,53 +492,76 @@ function submitHandler(csrf_token) {
     });
 }
 
-function downloadHandler() {
-    var permanent = ['csrf_token', 'scale_type', 'gap', 'thickness', 'f_rate_straight', 'r_rate_straight', 'f_color_straight', 'r_color_straight'];
-    var cycleForm = $('#cycle-form').serializeArray();
-    for(let i = 0; i < cycleForm.length; i++){
-        if (permanent.includes(cycleForm[i].name)){
-            $('<input />').attr('type', 'hidden')
-            .attr('name', cycleForm[i].name)
-            .attr('value', cycleForm[i].value)
-            .appendTo('#download-form');
-        }
-    }
-    $('<input />').attr('type', 'hidden')
-        .attr('name', "image_index")
-        .attr('value', $('#imageCarousel .active').index())
-        .appendTo('#download-form');
-
-    $('#fake-submit').on("click", function(e)
+function downloadHandler(csrf_token) {
+    $('#download-form').submit(function(e)
     {
-        var cycleForm = $('#cycle-form').serializeArray();
+        e.preventDefault(); //STOP default action
 
-        // create the changing fields
-        for(let i = 0; i < cycleForm.length; i++){
-            if (!permanent.includes(cycleForm[i].name)) {
-                $('<input />').attr('type', 'hidden')
-                .attr('name', cycleForm[i].name)
-                .attr('value', cycleForm[i].value)
-                .appendTo('#download-form');
-            }
+        function responseHandler (response) {
+            console.log('Successfully Downloaded Cycle!')
         }
 
-        for(let i = 0; i < cycleForm.length; i++){
-            console.log(1, cycleForm[i].name, cycleForm[i].value, $("#download-form input[name=" + cycleForm[i].name + "]").val());
-            $("#download-form input[name=" + cycleForm[i].name + "]").val(cycleForm[i].value);
-            console.log(2, cycleForm[i].name, cycleForm[i].value, $("#download-form input[name=" + cycleForm[i].name + "]").val());
+        function addArgsHandler (postData) {
+            // add the image index for whether to download cycle or straight arrow
+            postData += '&image_index=' + $('#imageCarousel .active').index();
+            // add the file type
+            postData += '&f_format=' + $('#dloadFormat')[0].value
+            return postData
         }
-        console.log($("#download-form input[name=image_index]").val());
-        $("#download-form input[name=image_index]").val($('#imageCarousel .active').index());
-        console.log($("#download-form input[name=image_index]").val());
-        console.log($('#download-form')[0]);
-        $("#download-form")[0].submit();
 
-        // remove the changing fields
-        for(let i = 0; i < cycleForm.length; i++){
-            if (!permanent.includes(cycleForm[i].name)) {
-                $("#download-form input[name=" + cycleForm[i].name + "]").remove();
-            }
-        }
+        submitForm(csrf_token, '/download', responseHandler, addArgsHandler);
 
     });
 }
+
+
+// function downloadHandler() {
+//     var permanent = ['csrf_token', 'scale_type', 'gap', 'thickness', 'f_rate_straight', 'r_rate_straight', 'f_color_straight', 'r_color_straight'];
+//     var cycleForm = $('#cycle-form').serializeArray();
+//     for(let i = 0; i < cycleForm.length; i++){
+//         if (permanent.includes(cycleForm[i].name)){
+//             $('<input />').attr('type', 'hidden')
+//             .attr('name', cycleForm[i].name)
+//             .attr('value', cycleForm[i].value)
+//             .appendTo('#download-form');
+//         }
+//     }
+//     $('<input />').attr('type', 'hidden')
+//         .attr('name', "image_index")
+//         .attr('value', $('#imageCarousel .active').index())
+//         .appendTo('#download-form');
+//
+//     $('#fake-submit').on("click", function(e)
+//     {
+//         var cycleForm = $('#cycle-form').serializeArray();
+//
+//         // create the changing fields
+//         for(let i = 0; i < cycleForm.length; i++){
+//             if (!permanent.includes(cycleForm[i].name)) {
+//                 $('<input />').attr('type', 'hidden')
+//                 .attr('name', cycleForm[i].name)
+//                 .attr('value', cycleForm[i].value)
+//                 .appendTo('#download-form');
+//             }
+//         }
+//
+//         for(let i = 0; i < cycleForm.length; i++){
+//             console.log(1, cycleForm[i].name, cycleForm[i].value, $("#download-form input[name=" + cycleForm[i].name + "]").val());
+//             $("#download-form input[name=" + cycleForm[i].name + "]").val(cycleForm[i].value);
+//             console.log(2, cycleForm[i].name, cycleForm[i].value, $("#download-form input[name=" + cycleForm[i].name + "]").val());
+//         }
+//         console.log($("#download-form input[name=image_index]").val());
+//         $("#download-form input[name=image_index]").val($('#imageCarousel .active').index());
+//         console.log($("#download-form input[name=image_index]").val());
+//         console.log($('#download-form')[0]);
+//         $("#download-form")[0].submit();
+//
+//         // remove the changing fields
+//         for(let i = 0; i < cycleForm.length; i++){
+//             if (!permanent.includes(cycleForm[i].name)) {
+//                 $("#download-form input[name=" + cycleForm[i].name + "]").remove();
+//             }
+//         }
+//
+//     });
+// }
