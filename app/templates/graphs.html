@@ -16,7 +16,7 @@
     $(document).ready(function() {
         setToken("{{ form.csrf_token._value() }}");
         submitHandler("{{ form.csrf_token._value() }}");
-        downloadHandler("{{ dform.csrf_token._value() }}");
+        downloadHandler();
         setup_card()
     });
 </script>

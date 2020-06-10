@@ -492,25 +492,91 @@ function submitHandler(csrf_token) {
     });
 }
 
-function downloadHandler(csrf_token) {
+function downloadHandler() {
     $('#download-form').submit(function(e)
     {
         e.preventDefault(); //STOP default action
 
-        function responseHandler (response) {
-            console.log('Successfully Downloaded Cycle!')
+        $('<input />').attr('type', 'hidden').attr('name', "image_index")
+            .attr('value', $('#imageCarousel .active').index()).appendTo('#download-form');
+
+        // make sure to account for which cycle is selected
+        if ($('#cycle1-check').length) {    // there are two cycles
+            // check if vertical alignment is selected
+            $('<input />').attr('type', 'hidden').attr('name', "is_vert")
+                .attr('value', $('#vert-check')[0].checked).appendTo('#download-form');
+            if ($('#cycle1-check')[0].checked) {    // plot cycle 1
+                if ($('#cycle1')[0].checked) {    // cycle 1 is currently active form
+                    // Add all cycle data as hidden members of download form
+                    var cycle_data = $('#cycle-form').find(':input').clone();
+                    cycle_data.attr('hidden', true);
+                    $('#download-form').append(cycle_data)
+                }
+                else {
+                    var data1 = content1.find(':input').clone();
+                    data1.attr('hidden', true);
+                    $('#download-form').append(data1)
+                }
+                $('<input />').attr('type', 'hidden').attr('name', "plot_1")
+                    .attr('value', true).appendTo('#download-form');
+            }
+            else {
+                $('<input />').attr('type', 'hidden').attr('name', "plot_1")
+                    .attr('value', false).appendTo('#download-form');
+                // add token for some reason
+                $('<input />').attr('type', 'hidden').attr('name', "csrf_token")
+                    .attr('value', $('#csrf_token')[0].value).appendTo('#download-form');
+            }
+            if ($('#cycle2-check')[0].checked) {    // plot cycle 2
+                var data2;
+                if ($('#cycle2')[0].checked) {    // cycle 2 is currently active form
+                    data2 = $('#cycle-card').find(':input').clone();
+                    // add token for some reason
+                    $('<input />').attr('type', 'hidden').attr('name', "csrf_token")
+                        .attr('value', $('#csrf_token')[0].value).appendTo('#download-form');
+                }
+                else {
+                    data2 = content2.find(':input').clone()
+                }
+                // edit field names for cycle 2
+                data2.each(function( index ) {
+                    $(this).attr('name', 'c2_' + $(this).attr('name'));
+                });
+                $('#download-form').append(data2)
+                $('<input />').attr('type', 'hidden').attr('name', "plot_2")
+                    .attr('value', true).appendTo('#download-form');
+            }
+            else {
+                $('<input />').attr('type', 'hidden').attr('name', "plot_2")
+                    .attr('value', false).appendTo('#download-form');
+            }
+        }
+        else {
+            var cycle_data = $('#cycle-form').find(':input').clone();
+            cycle_data.attr('hidden', true);
+            $('#download-form').append(cycle_data);
+            $('<input />').attr('type', 'hidden').attr('name', "plot_1")
+                .attr('value', true).appendTo('#download-form');
+            $('<input />').attr('type', 'hidden').attr('name', "plot_2")
+                .attr('value', false).appendTo('#download-form');
+            $('<input />').attr('type', 'hidden').attr('name', "is_vert")
+                .attr('value', false).appendTo('#download-form');
         }
 
-        function addArgsHandler (postData) {
-            // add the image index for whether to download cycle or straight arrow
-            postData += '&image_index=' + $('#imageCarousel .active').index();
-            // add the file type
-            postData += '&f_format=' + $('#dloadFormat')[0].value
-            return postData
+        // check which cycle form is active
+        if ($('#cycle1')[0].checked) {
+            $('<input />').attr('type', 'hidden').attr('name', "p1_active")
+                .attr('value', true).appendTo('#download-form');
         }
-
-        submitForm(csrf_token, '/download', responseHandler, addArgsHandler);
-
+        else {
+            $('<input />').attr('type', 'hidden').attr('name', "p1_active")
+                .attr('value', false).appendTo('#download-form');
+        }
+        // now submit the form for real
+        console.log($('#download-form').serialize())
+        $("#download-form")[0].submit();
+        // clean-up
+        $('#download-form').children().remove(':input')
     });
 }
 
