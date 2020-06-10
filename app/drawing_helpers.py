@@ -8,7 +8,7 @@ from functools import reduce
 import logging
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+# log.setLevel(logging.DEBUG)
 
 
 def curved_arrow_single(theta1, theta2, radius, width, origin=(0,0), rel_head_width=1.5, rel_head_len=0.1,
