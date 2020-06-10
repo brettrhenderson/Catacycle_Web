@@ -18,6 +18,9 @@ let content2 = $('#cycle-card').children().clone();
 // keep track of which cycle is active
 let activeCycle = 1;
 
+// Check if new cycle has already been added
+let newCycle = 0;
+
 $('#add-cycle').on("click", function (event) {
     if (this.innerHTML == "Add Cycle") {
         this.innerHTML = 'Delete Cycle';
@@ -35,7 +38,7 @@ $('#add-cycle').on("click", function (event) {
                 activeCycle = 2;
                 setup_card();
                 $('#translation').prop("disabled", false);
-                console.log("Switched to Cycle 2")
+                // console.log("Switched to Cycle 2")
             }
         });
 
@@ -63,6 +66,27 @@ $('#add-cycle').on("click", function (event) {
         // enable translation in styling
         $('#translation').prop("disabled", false);
 
+        if (!newCycle) {
+            // Get the snackbar DIV
+            var x = $("#snackbar");
+
+            // Add the "show" class to DIV
+            x.addClass("show");
+
+            // After 3 seconds, remove the show class from DIV
+            setTimeout(function(){ x.removeClass("show"); }, 6800);
+
+            // highlight the styling tab
+            var y = $(".noticer");
+
+            // Add the "show" class to DIV
+            y.addClass("notice");
+
+            // After 3 seconds, remove the show class from DIV
+            setTimeout(function(){ y.removeClass("notice"); }, 6800);
+            newCycle = 1;
+        }
+
     }
     else {
         if (confirm("Are you sure you want to Remove Cycle 2? \nAll input data for it will be lost!")) {
@@ -76,7 +100,7 @@ $('#add-cycle').on("click", function (event) {
                 $('#cycle-card').append(content1);
                 setup_card();
                 content2 = basicContent;
-                console.log("Switched to Cycle 1")
+                // console.log("Switched to Cycle 1")
             }
             $('#cycle-select').children().remove();
             // disable translation again
@@ -98,7 +122,7 @@ $('#cycle1').on("change", function (event) {
         $('#cycle-card').append(content1);
         activeCycle = 1;
         setup_card();
-        console.log("Switched to Cycle 1")
+        // console.log("Switched to Cycle 1")
     }
 });
 
@@ -110,6 +134,7 @@ function setup_card() {
     link_click_to_carousel("#outsiderxnlink", '#imageCarousel', 1);
     link_click_to_carousel("#rateslink", '#imageCarousel', 0);
     link_click_to_carousel("#colorslink", '#imageCarousel', 0);
+    link_click_to_carousel("#add-cycle", '#imageCarousel', 0);
     // link_click_to_carousel("#arrowslink", '#imageCarousel', 0);
 
     // add colorpickers to the outside reactions tab
@@ -136,13 +161,13 @@ function setup_card() {
         if (!(pane.id == activeLink.href.split("#")[1])) {
             if ($(pane).hasClass("active")) {
                 $(pane).removeClass("active show");
-                console.log('Removed active from ' + pane.id);
+                // console.log('Removed active from ' + pane.id);
             }
         }
         else {
             if (!$(pane).hasClass("active")) {
                 $(pane).addClass("active show");
-                console.log('Added active to ' + pane.id);
+                // console.log('Added active to ' + pane.id);
             }
         }
     }
@@ -389,7 +414,7 @@ function submitForm(csrf_token, form_url, responseHandler, addArgsHandler) {
         if ($('#cycle1-check')[0].checked) {    // plot cycle 1
             if ($('#cycle1')[0].checked) {    // cycle 1 is currently active form
                 postData += '&' + $('#cycle-card').find(':input').serialize()
-                console.log($('#cycle-card').find(':input').serialize())
+                // console.log($('#cycle-card').find(':input').serialize())
             }
             else {
                 postData += '&' + content1.find(':input').serialize()
@@ -438,9 +463,9 @@ function submitForm(csrf_token, form_url, responseHandler, addArgsHandler) {
     // handle additional arguments
     if (addArgsHandler !== undefined) {
         postData = addArgsHandler(postData);
-        console.log("New Post Data: " + postData)
+        // console.log("New Post Data: " + postData)
     }
-    console.log(postData);
+    // console.log(postData);
     // console.log(postData);
     var formURL = form_url;
 
@@ -508,12 +533,14 @@ function downloadHandler() {
             if ($('#cycle1-check')[0].checked) {    // plot cycle 1
                 if ($('#cycle1')[0].checked) {    // cycle 1 is currently active form
                     // Add all cycle data as hidden members of download form
-                    var cycle_data = $('#cycle-form').find(':input').clone();
+                    var cycle_data = cloneWithSelects($('#cycle-form')).find(':input')
+                    // var cycle_data = $('#cycle-form').find(':input').clone();
                     cycle_data.attr('hidden', true);
                     $('#download-form').append(cycle_data)
                 }
                 else {
-                    var data1 = content1.find(':input').clone();
+                    var data1 = cloneWithSelects(content1).find(':input')
+                    // var data1 = content1.find(':input').clone();
                     data1.attr('hidden', true);
                     $('#download-form').append(data1)
                 }
@@ -530,17 +557,20 @@ function downloadHandler() {
             if ($('#cycle2-check')[0].checked) {    // plot cycle 2
                 var data2;
                 if ($('#cycle2')[0].checked) {    // cycle 2 is currently active form
-                    data2 = $('#cycle-card').find(':input').clone();
+                    data2 = cloneWithSelects($('#cycle-form')).find(':input')
+                    // data2 = $('#cycle-card').find(':input').clone();
                     // add token for some reason
                     $('<input />').attr('type', 'hidden').attr('name', "csrf_token")
                         .attr('value', $('#csrf_token')[0].value).appendTo('#download-form');
                 }
                 else {
-                    data2 = content2.find(':input').clone()
+                    data2 = cloneWithSelects(content2).find(':input')
+                    // data2 = content2.find(':input').clone()
                 }
-                // edit field names for cycle 2
+                // edit field names and ids for cycle 2
                 data2.each(function( index ) {
                     $(this).attr('name', 'c2_' + $(this).attr('name'));
+                    $(this).attr('id', 'c2_' + $(this).attr('id'))
                 });
                 $('#download-form').append(data2)
                 $('<input />').attr('type', 'hidden').attr('name', "plot_2")
@@ -552,7 +582,8 @@ function downloadHandler() {
             }
         }
         else {
-            var cycle_data = $('#cycle-form').find(':input').clone();
+            var cycle_data = cloneWithSelects($('#cycle-form')).find(':input')
+            // var cycle_data = $('#cycle-form').find(':input').clone();
             cycle_data.attr('hidden', true);
             $('#download-form').append(cycle_data);
             $('<input />').attr('type', 'hidden').attr('name', "plot_1")
@@ -573,7 +604,7 @@ function downloadHandler() {
                 .attr('value', false).appendTo('#download-form');
         }
         // now submit the form for real
-        console.log($('#download-form').serialize())
+        // console.log($('#download-form').serialize())
         $("#download-form")[0].submit();
         // clean-up
         $('#download-form').children().remove(':input')
@@ -581,53 +612,13 @@ function downloadHandler() {
 }
 
 
-// function downloadHandler() {
-//     var permanent = ['csrf_token', 'scale_type', 'gap', 'thickness', 'f_rate_straight', 'r_rate_straight', 'f_color_straight', 'r_color_straight'];
-//     var cycleForm = $('#cycle-form').serializeArray();
-//     for(let i = 0; i < cycleForm.length; i++){
-//         if (permanent.includes(cycleForm[i].name)){
-//             $('<input />').attr('type', 'hidden')
-//             .attr('name', cycleForm[i].name)
-//             .attr('value', cycleForm[i].value)
-//             .appendTo('#download-form');
-//         }
-//     }
-//     $('<input />').attr('type', 'hidden')
-//         .attr('name', "image_index")
-//         .attr('value', $('#imageCarousel .active').index())
-//         .appendTo('#download-form');
-//
-//     $('#fake-submit').on("click", function(e)
-//     {
-//         var cycleForm = $('#cycle-form').serializeArray();
-//
-//         // create the changing fields
-//         for(let i = 0; i < cycleForm.length; i++){
-//             if (!permanent.includes(cycleForm[i].name)) {
-//                 $('<input />').attr('type', 'hidden')
-//                 .attr('name', cycleForm[i].name)
-//                 .attr('value', cycleForm[i].value)
-//                 .appendTo('#download-form');
-//             }
-//         }
-//
-//         for(let i = 0; i < cycleForm.length; i++){
-//             console.log(1, cycleForm[i].name, cycleForm[i].value, $("#download-form input[name=" + cycleForm[i].name + "]").val());
-//             $("#download-form input[name=" + cycleForm[i].name + "]").val(cycleForm[i].value);
-//             console.log(2, cycleForm[i].name, cycleForm[i].value, $("#download-form input[name=" + cycleForm[i].name + "]").val());
-//         }
-//         console.log($("#download-form input[name=image_index]").val());
-//         $("#download-form input[name=image_index]").val($('#imageCarousel .active').index());
-//         console.log($("#download-form input[name=image_index]").val());
-//         console.log($('#download-form')[0]);
-//         $("#download-form")[0].submit();
-//
-//         // remove the changing fields
-//         for(let i = 0; i < cycleForm.length; i++){
-//             if (!permanent.includes(cycleForm[i].name)) {
-//                 $("#download-form input[name=" + cycleForm[i].name + "]").remove();
-//             }
-//         }
-//
-//     });
-// }
+function cloneWithSelects(original) {
+    var cloned = original.clone()
+    // https://techbrij.com/clone-html-form-selected-options-jquery-firefox
+    var originalSelects = original.find('select');
+    cloned.find('select').each(function(index, item) {
+        //set new select to value of old select
+        $(item).val( originalSelects.eq(index).val() );
+    });
+    return cloned;
+}

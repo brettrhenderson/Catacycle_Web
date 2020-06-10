@@ -191,9 +191,9 @@ class RatesForm(FlaskForm):
 
     # Step Rates tab
     c2_f_rate1 = FloatField('c2_f_rate1', validators=[DataRequired()], default=3.0)
-    c2_f_rate2 = FloatField('c2_f_rate2', default=3.0)
-    c2_f_rate3 = FloatField('c2_f_rate3', default=3.0)
-    c2_f_rate4 = FloatField('c2_f_rate4', default=3.0)
+    c2_f_rate2 = FloatField('c2_f_rate2', default=0.0)
+    c2_f_rate3 = FloatField('c2_f_rate3', default=0.0)
+    c2_f_rate4 = FloatField('c2_f_rate4', default=0.0)
     c2_f_rate5 = FloatField('c2_f_rate5', default=0.0)
     c2_f_rate6 = FloatField('c2_f_rate6', default=0.0)
     c2_f_rate7 = FloatField('c2_f_rate7', default=0.0)
