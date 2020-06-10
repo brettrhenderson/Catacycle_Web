@@ -27,8 +27,8 @@ $("#upload-submit").click(function() {
     send_form(form, form_id, url, type, modular_ajax, formData, '#response-xlform', plotSuccess);
 });
 
-// Code modified from https://medium.com/javascript-in-plain-english/how-to-form-submissions-with-flask-and-ajax-dfde9891c620
 
+// Code modified from https://medium.com/javascript-in-plain-english/how-to-form-submissions-with-flask-and-ajax-dfde9891c620
 function getXlFormData(form) {
     // creates a FormData object and adds chips text
     var formData = new FormData(document.getElementById(form));
