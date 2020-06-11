@@ -53,6 +53,7 @@ def draw_cycle(data, ax, startrange=0.15, stoprange=0.85, origin=(0,0)):
     is_incoming = data['is_incoming'][:data['num_steps']]
     is_outgoing = data['is_outgoing'][:data['num_steps']]
     gaps = data['gaps'][:data['num_steps']]
+    stretchers = try_fallback(data, 'stretchers', [1.0] * data['num_steps'])[:data['num_steps']]
     gap = float(data['gap'])
     indgap = data['indgap']
     thickness = data['multiplier']
@@ -64,6 +65,8 @@ def draw_cycle(data, ax, startrange=0.15, stoprange=0.85, origin=(0,0)):
     swoop_sweep_scale = try_fallback(data, 'swoop_sweep_scale', 1.0)
     rel_head_width = try_fallback(data, 'rel_head_width', 2.0)
     rel_head_length_scaler = try_fallback(data, 'rel_head_length_scaler', 1.0)
+    head_len_relative = try_fallback(data, 'head_len_rel', False)
+    swoop_head_len_relative = try_fallback(data, 'swoop_head_len_rel', False)
     swoop_head_length_scaler = try_fallback(data, 'swoop_head_length_scaler', 1.0)
     swoop_start_angle_shift_multiplier = try_fallback(data, 'swoop_start_angle_shift_multiplier', 0.0)
     edgecolor_f = fcolours  # 'k' 'none'
@@ -81,7 +84,9 @@ def draw_cycle(data, ax, startrange=0.15, stoprange=0.85, origin=(0,0)):
 
     # Splitting circle by number of forward reactions
     num_segments = len(forward_rates)
-    delta = 360.0 / num_segments
+    stretchers = np.array(stretchers) / np.mean(stretchers)
+    ave_delta = 360.0 / num_segments
+    deltas = ave_delta * stretchers
 
     # transforming rates to line widths
     widths_f = [float(forward_rates[i]) * scale for i in range(num_segments)]
@@ -89,26 +94,32 @@ def draw_cycle(data, ax, startrange=0.15, stoprange=0.85, origin=(0,0)):
 
     # Drawing outside and inside curves
     for i in range(0, num_segments):
+        print(f'DELTATS {i}: {deltas[i]}')
         if not indgap:
-            gap = dh.ensure_valid_gap(delta, gap)
+            gap = dh.ensure_valid_gap(deltas[i], gap)
             # starting and ending angle for each arrow (moving counterclockwise)
             # gap/2 is added to center the gap at the top
             # make sure the gap isnt so large that the arrow length becomes 0 or negative
-            theta1 = 90 - delta * (i + 1) + (gap / 2.0)
-            theta2 = 90 - (gap / 2.0) - delta * i
+            theta1 = 90 - sum(deltas[:i + 1]) + (gap / 2.0)
+            theta2 = 90 - (gap / 2.0) - sum(deltas[:i])
         else:
-            g_1, g_0 = dh.ensure_valid_gaps(delta, gaps[(i + 1) % len(gaps)], gaps[i])
+            g_1, g_0 = dh.ensure_valid_gaps(deltas[i], gaps[(i + 1) % len(gaps)], gaps[i])
             gap = (g_1 + g_0) / 2  # keep an average gap for sizing the swoops
-            theta1 = 90 - delta * (i + 1) + (g_1 / 2.0)
-            theta2 = 90 - (g_0 / 2.0) - delta * i
-
+            theta1 = 90 - sum(deltas[:i + 1]) + (g_1 / 2.0)
+            theta2 = 90 - (g_0 / 2.0) - sum(deltas[:i])
         rel_head_length = (0.06 + 0.015 * num_segments) * rel_head_length_scaler
-
+        if head_len_relative:    # arrow head length is relative to length of individual arrow
+            head_length = math.radians((theta2 - theta1) * rel_head_length)
+        else:
+            if indgap:
+                head_length = math.radians((ave_delta - sum(gaps) / len(gaps)) * rel_head_length)
+            else:
+                head_length = math.radians((ave_delta - gap) * rel_head_length)
         if rev_rates[i] == 0:  # draw an irreversible arrow
             f_colour = fcolours[i]
             arrow_path = dh.curved_arrow_single(theta1, theta2, radius, widths_f[i], origin=origin,
                                                 rel_head_width=rel_head_width, rel_head_len=rel_head_length,
-                                                abs_head_len=None, reverse=False)
+                                                abs_head_len=head_length, reverse=False)
             arrow_patch = mpatches.PathPatch(arrow_path, facecolor=f_colour, edgecolor=edgecolor_f[i])
             patches.append(arrow_patch)
         else:  # draw a reversible arrow
@@ -116,7 +127,7 @@ def draw_cycle(data, ax, startrange=0.15, stoprange=0.85, origin=(0,0)):
             r_colour = rcolours[i]
             f_path, r_path = dh.curved_arrow_double(theta1, theta2, radius, widths_f[i], widths_r[i], origin=origin,
                                                     rel_head_width=rel_head_width, rel_head_len=rel_head_length,
-                                                    f_abs_head_len=None, r_abs_head_len=None, reverse=False)
+                                                    f_abs_head_len=head_length, r_abs_head_len=head_length, reverse=False)
             r_patch = mpatches.PathPatch(r_path, facecolor=r_colour, edgecolor=edgecolor_r[i])
             f_patch = mpatches.PathPatch(f_path, facecolor=f_colour, edgecolor=edgecolor_f[i])
             patches.append(r_patch)
@@ -130,11 +141,17 @@ def draw_cycle(data, ax, startrange=0.15, stoprange=0.85, origin=(0,0)):
         swoop_width = widths_f[i] * swoop_width_scale  # may need to scale
         min_inner_rad = 0.1
         swoop_radius = max(
+            [(radius - (360 / deltas[i] * 0.25) - (gap * 0.015) - (thickness * 0.1) - 0.5) * 1.5 * swoop_radius_scale,
+             (swoop_width / 2 + min_inner_rad), (swoop_width / 2 + min_inner_rad) * 1.5 * swoop_radius_scale])
+        ave_swoop_radius = max(
             [(radius - (num_segments * 0.25) - (gap * 0.015) - (thickness * 0.1) - 0.5) * 1.5 * swoop_radius_scale,
              (swoop_width / 2 + min_inner_rad), (swoop_width / 2 + min_inner_rad) * 1.5 * swoop_radius_scale])
         log.debug("Cycle Swoop Radius: {}".format(swoop_radius))
         swoop_sweep_angle = 180 * swoop_sweep_scale
-        swoop_head_len = 0.3 / swoop_sweep_scale * swoop_head_length_scaler
+        if swoop_head_len_relative:
+            swoop_head_len = 0.3 / swoop_sweep_scale * swoop_head_length_scaler
+        else:
+            swoop_head_len = 0.3 / swoop_sweep_scale * swoop_head_length_scaler * ave_swoop_radius / swoop_radius
         shift = widths_f[i] / 2 - swoop_width / 2  # aligns swoop inner arc with cycle outer arc
         swoop_start_angle = math.degrees(central_angle) + 90 + (180 - swoop_sweep_angle) / 2 + (
                     swoop_sweep_angle / 2) * swoop_start_angle_shift_multiplier

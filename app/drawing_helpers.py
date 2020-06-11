@@ -56,9 +56,16 @@ def curved_arrow_single(theta1, theta2, radius, width, origin=(0,0), rel_head_wi
         #                            abs_head_len, reverse)
 
     if not reverse:
+        # print(f'THETATAIL: {theta_tail}, START: {start}, END: {end} THETATIP: {theta_tip}')
+        while theta_tail <= end or theta_tail <= start or theta_tail - theta_tip <= math.degrees(f_angle_offset) + 0.5:
+            theta_tail += 0.1
+
         outer_arc = scale_arc(Path.arc(start, theta_tail), tail_out_radius)
         inner_arc = scale_arc(path_arc_cw(theta_tail, end), tail_in_radius)
     else:
+        # print(f'THETATAIL: {theta_tail}, START: {start}, END: {end} THETATIP: {theta_tip}')
+        # while theta_tail >= end or theta_tail >= start or theta_tail - theta_tip >= math.degrees(f_angle_offset) + 0.5:
+        #     theta_tail += 0.1
         outer_arc = scale_arc(path_arc_cw(start, theta_tail), tail_out_radius)
         inner_arc = scale_arc(Path.arc(theta_tail, end), tail_in_radius)
     arrowhead = join_points([head_in_point, arrowhead_point, head_out_point])
@@ -383,6 +390,8 @@ def get_intersect_segment_circle(p1, p2, r, p_cent=np.array([0,0])):
 def cart2pol(x, y):
     rho = np.sqrt(x**2 + y**2)
     phi = np.arctan2(y, x)
+    if phi > np.pi / 2:
+        phi -= 2 * np.pi
     return rho, phi
 
 def rotate_patches_about(ax, patches, theta, pt):

@@ -315,9 +315,11 @@ function addrow(rows) {
             // remove indygap inputs
             if(counters[activeCycle] % 4 != 1) {
                 $('#gaps-block').children().last().children().last().remove();
+                $('#arrows-block').children().last().children().last().remove();
             }
             else {
                 $('#gaps-block').children().last().remove();
+                $('#arrows-block').children().last().remove();
             }
         }
     });
@@ -332,8 +334,14 @@ function addrow(rows) {
                                       <input id="gap_${counters[activeCycle]}" name="gap_${counters[activeCycle]}" class="form-control indygap" type="number" min="0"
                                           max="50" step="1" value="${31 - counters[activeCycle] - Math.floor(counters[activeCycle]/2)}" disabled>
                               </div>`;
+                var newArr = `<div class="form-group col-sm-3">
+                                  <label for="arr_${counters[activeCycle]}">Arrow ${counters[activeCycle]}:</label>
+                                      <input id="arr_${counters[activeCycle]}" name="arr_${counters[activeCycle]}" class="form-control indyarr" type="number" min="0.1"
+                                          max="5" step="0.1" value="1">
+                              </div>`;
                 // add to the last existing row
                 $('#gaps-block').children().last().append(newGap);
+                $('#arrows-block').children().last().append(newArr);
             }
             else {
                 var newGap = `<div class="form-row">
@@ -343,8 +351,16 @@ function addrow(rows) {
                                               max="50" step="1" value="${31 - counters[activeCycle] - Math.floor(counters[activeCycle]/2)}" disabled>
                                   </div>
                               </div>`;
+                var newArr = `<div class="form-row">
+                                  <div class="form-group col-sm-3">
+                                      <label for="arr_${counters[activeCycle]}">Arrow ${counters[activeCycle]}:</label>
+                                          <input id="arr_${counters[activeCycle]}" name="arr_${counters[activeCycle]}" class="form-control indyarr" type="number" min="0.1"
+                                              max="5" step="0.1" value="1">
+                                  </div>
+                              </div>`;
                 // add new row to the gaps-block
                 $('#gaps-block').append(newGap);
+                $('#arrows-block').append(newArr);
             }
 
             var newcolorRow = $('<tr id="crow' + counters[activeCycle] + '">');
@@ -465,8 +481,7 @@ function submitForm(csrf_token, form_url, responseHandler, addArgsHandler) {
         postData = addArgsHandler(postData);
         // console.log("New Post Data: " + postData)
     }
-    // console.log(postData);
-    // console.log(postData);
+    console.log(postData);
     var formURL = form_url;
 
     $.ajax(
