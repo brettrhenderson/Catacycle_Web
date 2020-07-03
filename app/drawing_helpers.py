@@ -57,8 +57,10 @@ def curved_arrow_single(theta1, theta2, radius, width, origin=(0,0), rel_head_wi
 
     if not reverse:
         # print(f'THETATAIL: {theta_tail}, START: {start}, END: {end} THETATIP: {theta_tip}')
-        while theta_tail <= end or theta_tail <= start or theta_tail - theta_tip <= math.degrees(f_angle_offset) + 0.5:
+        counter = 0
+        while theta_tail <= end or theta_tail <= start or theta_tail - theta_tip <= math.degrees(f_angle_offset) + 0.5 and counter < 3600:
             theta_tail += 0.1
+            counter += 1
 
         outer_arc = scale_arc(Path.arc(start, theta_tail), tail_out_radius)
         inner_arc = scale_arc(path_arc_cw(theta_tail, end), tail_in_radius)
