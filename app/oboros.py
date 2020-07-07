@@ -384,8 +384,6 @@ def draw_straight(data, startrange=0.15, stoprange=0.85, f_format='svg', figsize
                         (swoop_width / 2 + min_inner_rad), (swoop_width / 2 + min_inner_rad) * 1.5 * swoop_radius_scale])
 
 
-    sr = (0.75 * gradius - (1 * (radius != gradius)) - (num_segments * 0.25 * (radius == gradius)) - (gap * 0.015) -
-          (thickness * 0.1) - 0.5) * 1.5 * swoop_radius_scale
     log.debug("Straight Swoop Radius: {}".format(swoop_radius))
     swoop_sweep_angle = 180 * swoop_sweep_scale
     swoop_head_len = 0.3 / swoop_sweep_scale * swoop_head_length_scaler
