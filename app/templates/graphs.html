@@ -194,12 +194,36 @@
                                             <div class="tab-content">
                                                 <div class="tab-pane active show" id="gensettings">
                                                     <div class="form-row">
+                                                        <div class="form-group col-sm-6">
+                                                            <div class="form-group">
+                                                                <div class="form-check">
+                                                                    <label class="form-check-label" for="flip">
+                                                                        <input class="form-check-input" type="checkbox" id="flip" name="flip">
+                                                                        Counterclockwise Cycle
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group col-sm-6">
+                                                            <div class="form-group">
+                                                                <div class="form-check">
+                                                                    <label class="form-check-label" for="head_len_relative">
+                                                                        <input class="form-check-input" type="checkbox" id="head_len_relative" name="head_len_relative">
+                                                                        Arrowhead Relative
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-row">
                                                         <div class="form-group">
-                                                            <div class="form-check">
-                                                                <label class="form-check-label" for="flip">
-                                                                    <input class="form-check-input" type="checkbox" id="flip" name="flip">
-                                                                    Counterclockwise Cycle
-                                                                </label>
+                                                            <div class="form-group">
+                                                                <div class="form-check">
+                                                                    <label class="form-check-label" for="scale_cycle">
+                                                                        <input class="form-check-input" type="checkbox" id="scale_cycle" name="scale_cycle" checked>
+                                                                        Scale Cycle by Step Number
+                                                                    </label>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -249,7 +273,7 @@
                                                                 </span>
                                                                 <div class="col-sm-4">
                                                                     <input id="gap" name="gap" class="form-control" type="number" min="0"
-                                                                           max="50" step="1" value="{{ form_values['gap'] }}">
+                                                                           max="100" step="0.1" value="{{ form_values['gap'] }}">
                                                                 </div>
                                                                 <span class="col-sm-4">
                                                                     <img src="{{url_for('.static', filename='images/Gap_big.png')}}" alt="big gap"
@@ -313,6 +337,18 @@
                                                     </div>
                                                 </div>
                                                 <div class="tab-pane" id="swoopsettings">
+                                                    <div class="form-row">
+                                                        <div class="form-group col-sm-6">
+                                                            <div class="form-group">
+                                                                <div class="form-check">
+                                                                    <label class="form-check-label" for="swoop_head_len_relative">
+                                                                        <input class="form-check-input" type="checkbox" id="swoop_head_len_relative" name="swoop_head_len_relative">
+                                                                        Arrowhead Relative
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     <div class="form-row">
                                                         <div class="form-group col-sm-6">
                                                             <label for="swoopwidth">Thickness:</label>
@@ -422,6 +458,22 @@
                                                                 <label for="gap_{{ i + 1 }}">Gap {{ i + 1 }}:</label>
                                                                 <input id="gap_{{ i + 1 }}" name="gap_{{ i + 1 }}" class="form-control indygap" type="number" min="0"
                                                                        max="50" step="1" value="{{ form_values['gap'] }}" disabled>
+                                                            </div>
+                                                            {% endfor %}
+                                                        </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                    <div class="form-row">
+                                                        Tune Arrow Lengths:
+                                                    </div>
+                                                    <div id="arrows-block">
+                                                        {% for row in range(rows)|batch(4) %}
+                                                        <div class="form-row">
+                                                            {% for i in row %}
+                                                            <div class="form-group col-sm-3">
+                                                                <label for="arr_{{ i + 1 }}">Arrow {{ i + 1 }}:</label>
+                                                                <input id="arr_{{ i + 1 }}" name="arr_{{ i + 1 }}" class="form-control indyarr" type="number" min="0.1"
+                                                                       max="5" step="0.01" value="1">
                                                             </div>
                                                             {% endfor %}
                                                         </div>

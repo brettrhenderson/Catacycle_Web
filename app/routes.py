@@ -14,7 +14,6 @@ log = logging.getLogger(__name__)
 @app.route('/index', methods=['GET', 'POST'])
 @app.route('/graphs', methods=['GET', 'POST'])
 def graphs():
-    dform = DownloadForm()
     form = RatesForm(request.form)  # initialize the backend of the web form
     data = form.default_data()  # initialize the form with some default data on the front end
 
@@ -24,6 +23,7 @@ def graphs():
     if request.method == 'POST' and form.validate():
         data = form.draw_data()
         log.debug(f"\nNEW DATA: {data}\n")
+        log.debug(f'relative: {form.head_len_relative.data}')
         return jsonify(data=[draw(data, startrange=0.15, stoprange=0.65,), draw_straight(data, startrange=0.15, stoprange=0.65,)])
 
     log.debug(f"\nDEFAULT DATA: {data}\n")
@@ -32,7 +32,6 @@ def graphs():
                            graph2=draw_straight(data, startrange=0.15, stoprange=0.65,),
                            rows=data['data1']['num_steps'],
                            form=form,
-                           dform=dform,
                            form_values=data['data1'])
 
 

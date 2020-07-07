@@ -10,15 +10,17 @@ class RatesForm(FlaskForm):
 
     # cycle selector
     plot_1 = BooleanField('plot_1', default=True)
-    plot_2 = BooleanField('plot_1', default=False)
+    plot_2 = BooleanField('plot_2', default=False)
     is_vert = BooleanField('is_vert', default=False)
     p1_active = BooleanField('p1_active', default=True)
+    double = BooleanField('double', default=False)  # track whether there are 2 cycles even if only one is plotted
 
     # Styling tab
     flip = BooleanField('flip', default=False)
+    scale_cycle = BooleanField('scale_cycle', default=False)
     rotation = IntegerField('rotation', default=0)
     translation = FloatField('translation', default=0.0)
-    gap = IntegerField('gap', default=25)
+    gap = FloatField('gap', default=25)
     thickness = IntegerField('thickness', default=25)
     scale_type = StringField('scale_type', default="Preserve Multiples")
     swoop_width_scale = FloatField('swoop_width_scale', default=1.0)
@@ -26,25 +28,44 @@ class RatesForm(FlaskForm):
     swoop_sweep_scale = FloatField('swoop_sweep_scale', default=1.0)
     rel_head_width = FloatField('rel_head_width', default=2.0)
     rel_head_length_scaler = FloatField('rel_head_length_scaler', default=1.0)
+    head_len_relative = BooleanField('head_len_relative', default=False)
+    swoop_head_len_relative = BooleanField('swoop_head_len_relative', default=False)
     swoop_head_length_scaler = FloatField('swoop_head_length_scaler', default=1.0)
     swoop_start_angle_shift_multiplier = FloatField('swoop_start_angle_shift_multiplier', default=0.0)
 
     indgap = BooleanField('indgap', default=False)
-    gap_1 = IntegerField('gap_1', default=25)
-    gap_2 = IntegerField('gap_2', default=25)
-    gap_3 = IntegerField('gap_3', default=25)
-    gap_4 = IntegerField('gap_4', default=25)
-    gap_5 = IntegerField('gap_5', default=25)
-    gap_6 = IntegerField('gap_6', default=25)
-    gap_7 = IntegerField('gap_7', default=25)
-    gap_8 = IntegerField('gap_8', default=25)
-    gap_9 = IntegerField('gap_9', default=25)
-    gap_10 = IntegerField('gap_10', default=25)
-    gap_11 = IntegerField('gap_11', default=25)
-    gap_12 = IntegerField('gap_12', default=25)
-    gap_13 = IntegerField('gap_13', default=25)
-    gap_14 = IntegerField('gap_14', default=25)
-    gap_15 = IntegerField('gap_15', default=25)
+    gap_1 = FloatField('gap_1', default=25)
+    gap_2 = FloatField('gap_2', default=25)
+    gap_3 = FloatField('gap_3', default=25)
+    gap_4 = FloatField('gap_4', default=25)
+    gap_5 = FloatField('gap_5', default=25)
+    gap_6 = FloatField('gap_6', default=25)
+    gap_7 = FloatField('gap_7', default=25)
+    gap_8 = FloatField('gap_8', default=25)
+    gap_9 = FloatField('gap_9', default=25)
+    gap_10 = FloatField('gap_10', default=25)
+    gap_11 = FloatField('gap_11', default=25)
+    gap_12 = FloatField('gap_12', default=25)
+    gap_13 = FloatField('gap_13', default=25)
+    gap_14 = FloatField('gap_14', default=25)
+    gap_15 = FloatField('gap_15', default=25)
+
+    # arrow stretchers
+    arr_1 = FloatField('arr_1', validators=[DataRequired()], default=1.0)
+    arr_2 = FloatField('arr_2', default=1.0)
+    arr_3 = FloatField('arr_3', default=1.0)
+    arr_4 = FloatField('arr_4', default=1.0)
+    arr_5 = FloatField('arr_5', default=1.0)
+    arr_6 = FloatField('arr_6', default=1.0)
+    arr_7 = FloatField('arr_7', default=1.0)
+    arr_8 = FloatField('arr_8', default=1.0)
+    arr_9 = FloatField('arr_9', default=1.0)
+    arr_10 = FloatField('arr_10', default=1.0)
+    arr_11 = FloatField('arr_11', default=1.0)
+    arr_12 = FloatField('arr_12', default=1.0)
+    arr_13 = FloatField('arr_13', default=1.0)
+    arr_14 = FloatField('arr_14', default=1.0)
+    arr_15 = FloatField('arr_15', default=1.0)
 
     # Step Rates tab
     f_rate1 = FloatField('f_rate1', validators=[DataRequired()], default=3.0)
@@ -161,7 +182,7 @@ class RatesForm(FlaskForm):
     c2_flip = BooleanField('c2_flip', default=False)
     c2_rotation = IntegerField('c2_rotation', default=0)
     c2_translation = FloatField('c2_translation', default=0.0)
-    c2_gap = IntegerField('c2_gap', default=25)
+    c2_gap = FloatField('c2_gap', default=25)
     c2_thickness = IntegerField('c2_thickness', default=25)
     c2_scale_type = StringField('c2_scale_type', default="Preserve Multiples")
     c2_swoop_width_scale = FloatField('c2_swoop_width_scale', default=1.0)
@@ -169,25 +190,44 @@ class RatesForm(FlaskForm):
     c2_swoop_sweep_scale = FloatField('c2_swoop_sweep_scale', default=1.0)
     c2_rel_head_width = FloatField('c2_rel_head_width', default=2.0)
     c2_rel_head_length_scaler = FloatField('c2_rel_head_length_scaler', default=1.0)
+    c2_head_len_relative = BooleanField('c2_head_len_relative', default=False)
+    c2_swoop_head_len_relative = BooleanField('c2_swoop_head_len_relative', default=False)
     c2_swoop_head_length_scaler = FloatField('c2_swoop_head_length_scaler', default=1.0)
     c2_swoop_start_angle_shift_multiplier = FloatField('c2_swoop_start_angle_shift_multiplier', default=0.0)
 
     c2_indgap = BooleanField('c2_indgap', default=False)
-    c2_gap_1 = IntegerField('c2_gap_1', default=25)
-    c2_gap_2 = IntegerField('c2_gap_2', default=25)
-    c2_gap_3 = IntegerField('c2_gap_3', default=25)
-    c2_gap_4 = IntegerField('c2_gap_4', default=25)
-    c2_gap_5 = IntegerField('c2_gap_5', default=25)
-    c2_gap_6 = IntegerField('c2_gap_6', default=25)
-    c2_gap_7 = IntegerField('c2_gap_7', default=25)
-    c2_gap_8 = IntegerField('c2_gap_8', default=25)
-    c2_gap_9 = IntegerField('c2_gap_9', default=25)
-    c2_gap_10 = IntegerField('c2_gap_10', default=25)
-    c2_gap_11 = IntegerField('c2_gap_11', default=25)
-    c2_gap_12 = IntegerField('c2_gap_12', default=25)
-    c2_gap_13 = IntegerField('c2_gap_13', default=25)
-    c2_gap_14 = IntegerField('c2_gap_14', default=25)
-    c2_gap_15 = IntegerField('c2_gap_15', default=25)
+    c2_gap_1 = FloatField('c2_gap_1', default=25)
+    c2_gap_2 = FloatField('c2_gap_2', default=25)
+    c2_gap_3 = FloatField('c2_gap_3', default=25)
+    c2_gap_4 = FloatField('c2_gap_4', default=25)
+    c2_gap_5 = FloatField('c2_gap_5', default=25)
+    c2_gap_6 = FloatField('c2_gap_6', default=25)
+    c2_gap_7 = FloatField('c2_gap_7', default=25)
+    c2_gap_8 = FloatField('c2_gap_8', default=25)
+    c2_gap_9 = FloatField('c2_gap_9', default=25)
+    c2_gap_10 = FloatField('c2_gap_10', default=25)
+    c2_gap_11 = FloatField('c2_gap_11', default=25)
+    c2_gap_12 = FloatField('c2_gap_12', default=25)
+    c2_gap_13 = FloatField('c2_gap_13', default=25)
+    c2_gap_14 = FloatField('c2_gap_14', default=25)
+    c2_gap_15 = FloatField('c2_gap_15', default=25)
+
+    # arrow stretchers
+    c2_arr_1 = FloatField('c2_arr_1', default=1.0)
+    c2_arr_2 = FloatField('c2_arr_2', default=1.0)
+    c2_arr_3 = FloatField('c2_arr_3', default=1.0)
+    c2_arr_4 = FloatField('c2_arr_4', default=1.0)
+    c2_arr_5 = FloatField('c2_arr_5', default=1.0)
+    c2_arr_6 = FloatField('c2_arr_6', default=1.0)
+    c2_arr_7 = FloatField('c2_arr_7', default=1.0)
+    c2_arr_8 = FloatField('c2_arr_8', default=1.0)
+    c2_arr_9 = FloatField('c2_arr_9', default=1.0)
+    c2_arr_10 = FloatField('c2_arr_10', default=1.0)
+    c2_arr_11 = FloatField('c2_arr_11', default=1.0)
+    c2_arr_12 = FloatField('c2_arr_12', default=1.0)
+    c2_arr_13 = FloatField('c2_arr_13', default=1.0)
+    c2_arr_14 = FloatField('c2_arr_14', default=1.0)
+    c2_arr_15 = FloatField('c2_arr_15', default=1.0)
 
     # Step Rates tab
     c2_f_rate1 = FloatField('c2_f_rate1', validators=[DataRequired()], default=3.0)
@@ -331,6 +371,7 @@ class RatesForm(FlaskForm):
                  'fcolours': [],
                  'rcolours': [],
                  'gaps': [],
+                 'stretchers': [],
                  'f_rate_straight': self.f_rate_straight.data,
                  'r_rate_straight': self.r_rate_straight.data,
                  'incoming_straight': self.incoming_straight.data,
@@ -349,6 +390,8 @@ class RatesForm(FlaskForm):
                  'swoop_sweep_scale': self.swoop_sweep_scale.data,
                  'rel_head_width': self.rel_head_width.data,
                  'rel_head_length_scaler': self.rel_head_length_scaler.data,
+                 'head_len_rel': self.head_len_relative.data,
+                 'swoop_head_len_rel': self.swoop_head_len_relative.data,
                  'swoop_head_length_scaler': self.swoop_head_length_scaler.data,
                  'swoop_start_angle_shift_multiplier': self.swoop_start_angle_shift_multiplier.data
                 }
@@ -362,6 +405,7 @@ class RatesForm(FlaskForm):
                  'fcolours': [],
                  'rcolours': [],
                  'gaps': [],
+                 'stretchers': [],
                  'f_rate_straight': self.c2_f_rate_straight.data,
                  'r_rate_straight': self.c2_r_rate_straight.data,
                  'incoming_straight': self.c2_incoming_straight.data,
@@ -380,6 +424,8 @@ class RatesForm(FlaskForm):
                  'swoop_sweep_scale': self.c2_swoop_sweep_scale.data,
                  'rel_head_width': self.c2_rel_head_width.data,
                  'rel_head_length_scaler': self.c2_rel_head_length_scaler.data,
+                 'head_len_rel': self.c2_head_len_relative.data,
+                 'swoop_head_len_rel': self.c2_swoop_head_len_relative.data,
                  'swoop_head_length_scaler': self.c2_swoop_head_length_scaler.data,
                  'swoop_start_angle_shift_multiplier': self.c2_swoop_start_angle_shift_multiplier.data
         }
@@ -391,6 +437,7 @@ class RatesForm(FlaskForm):
             data1['fcolours'].append(getattr(self, 'f_color{}'.format(i)).data)
             data1['rcolours'].append(getattr(self, 'r_color{}'.format(i)).data)
             data1['gaps'].append(getattr(self, 'gap_{}'.format(i)).data)
+            data1['stretchers'].append(getattr(self, 'arr_{}'.format(i)).data)
             data2['forward_rates'].append(getattr(self, 'c2_f_rate{}'.format(i)).data)
             data2['rev_rates'].append(getattr(self, 'c2_r_rate{}'.format(i)).data)
             data2['is_incoming'].append(getattr(self, 'c2_is_incoming{}'.format(i)).data)
@@ -398,13 +445,14 @@ class RatesForm(FlaskForm):
             data2['fcolours'].append(getattr(self, 'c2_f_color{}'.format(i)).data)
             data2['rcolours'].append(getattr(self, 'c2_r_color{}'.format(i)).data)
             data2['gaps'].append(getattr(self, 'c2_gap_{}'.format(i)).data)
+            data2['stretchers'].append(getattr(self, 'c2_arr_{}'.format(i)).data)
 
         data1['num_steps'] = self.num_rows()
         data2['num_steps'] = self.num_rows_c2()
 
         return {'plot1': self.plot_1.data, 'plot2': self.plot_2.data, 'is_vert': self.is_vert.data,
-                'p1_active': self.p1_active.data, 'data1': data1, 'data2': data2,  'trans1': self.translation.data,
-                'trans2': self.c2_translation.data}
+                'p1_active': self.p1_active.data, 'scale_cycle': self.scale_cycle.data, 'data1': data1, 'data2': data2,
+                'trans1': self.translation.data, 'trans2': self.c2_translation.data, 'double': self.double.data}
 
     def default_data(self):
         data = {'forward_rates': [],
@@ -414,6 +462,7 @@ class RatesForm(FlaskForm):
                 'fcolours': [],
                 'rcolours': [],
                 'gaps': [],
+                'stretchers': [],
                 'f_rate_straight': self.f_rate_straight.default,
                 'r_rate_straight': self.r_rate_straight.default,
                 'incoming_straight': self.incoming_straight.default,
@@ -432,6 +481,8 @@ class RatesForm(FlaskForm):
                 'rel_head_width': self.rel_head_width.default,
                 'rel_head_length_scaler': self.rel_head_length_scaler.default,
                 'swoop_head_length_scaler': self.swoop_head_length_scaler.default,
+                'head_len_rel': self.head_len_relative.default,
+                'swoop_head_len_rel': self.swoop_head_len_relative.default,
                 'swoop_start_angle_shift_multiplier': self.swoop_start_angle_shift_multiplier.default,
                 'num_steps': 4}
 
@@ -443,13 +494,14 @@ class RatesForm(FlaskForm):
             data['fcolours'].append(getattr(self, 'f_color{}'.format(i)).default)
             data['rcolours'].append(getattr(self, 'r_color{}'.format(i)).default)
             data['gaps'].append(getattr(self, 'gap_{}'.format(i)).default)
+            data['stretchers'].append(getattr(self, 'arr_{}'.format(i)).default)
 
         # have four arrows displayed by default
         for i in range(0, 4):
             data['forward_rates'][i] = 3.0
 
-        return {'plot1': True, 'plot2': False, 'is_vert': False, 'p1_active': True, 'data1': data,
-                'trans1': 0, 'trans2': 0}
+        return {'plot1': True, 'plot2': False, 'is_vert': False, 'p1_active': True, 'scale_cycle': False,
+                'data1': data, 'double': False, 'trans1': 0, 'trans2': 0}
 
 
 class DownloadForm(RatesForm):
