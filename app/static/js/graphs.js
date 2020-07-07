@@ -28,6 +28,15 @@ $('#add-cycle').on("click", function (event) {
                         <input type="radio" name="cycleradios" id="cycle2" autocomplete="off"> Cycle 2
                     </label>`
         $('#cycle-radio').append(newcycle);
+
+        // make second cycle opposite direction of first
+        if (content1.find('#flip')[0].checked) {
+            content2.find('#flip')[0].checked = false;
+        }
+        else {
+            content2.find('#flip')[0].checked = true;
+        }
+
         $('#cycle2').on("change", function (event) {
             if (activeCycle == 1) {
                 // save current state of cycle 2
