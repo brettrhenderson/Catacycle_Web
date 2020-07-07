@@ -31,7 +31,7 @@ radius = 3.0
 ######################################
 # 1. For Drawing Cycle (Curved Arrows)
 ######################################
-def draw_cycle(data, ax, startrange=0.15, stoprange=0.85, origin=(0,0), ext_rotation=0):
+def draw_cycle(data, ax, startrange=0.15, stoprange=0.85, origin=(0,0), ext_rotation=0, pin_right=False, pin_left=False):
     """
     Draws the arrows for a catalytic cycle.
     :param data: a dictionary specifying the data needed to draw the cycle.
@@ -44,6 +44,7 @@ def draw_cycle(data, ax, startrange=0.15, stoprange=0.85, origin=(0,0), ext_rota
     """
     patches = []
     transforms = []
+    arrow_centers = []  # keep track of the angle of all arrow centers. Needed for aligning cycles
 
     # unpack data dictionary
     forward_rates = data['forward_rates'][:data['num_steps']]
@@ -114,6 +115,7 @@ def draw_cycle(data, ax, startrange=0.15, stoprange=0.85, origin=(0,0), ext_rota
                 head_length = math.radians((ave_delta - sum(gaps) / len(gaps)) * rel_head_length)
             else:
                 head_length = math.radians((ave_delta - gap) * rel_head_length)
+
         if rev_rates[i] == 0:  # draw an irreversible arrow
             f_colour = fcolours[i]
             arrow_path = dh.curved_arrow_single(theta1, theta2, radius, widths_f[i], origin=origin,
@@ -137,6 +139,7 @@ def draw_cycle(data, ax, startrange=0.15, stoprange=0.85, origin=(0,0), ext_rota
             move_center_dist = widths_f[i] / 2
         arrowhead_angle = math.radians(theta2 - theta1) * rel_head_length
         central_angle = math.radians(theta1 + theta2) / 2 + arrowhead_angle / 2  # shifted to be in center of tail
+        arrow_centers.append(central_angle)
         swoop_width = widths_f[i] * swoop_width_scale  # may need to scale
         min_inner_rad = 0.1
         swoop_radius = max(
@@ -182,6 +185,11 @@ def draw_cycle(data, ax, startrange=0.15, stoprange=0.85, origin=(0,0), ext_rota
 
     if flip:
         transforms.append(dh.get_reflect_trans(0, origin[0]))
+        arrow_centers = [np.pi - angle for angle in arrow_centers]  # transfom arrow centers, too
+    if pin_right:
+        transforms.append(dh.get_rotate_trans(0 - arrow_centers[0], origin))  # pin first arrow center at theta = 0
+    elif pin_left:
+        transforms.append(dh.get_rotate_trans(np.pi - arrow_centers[0], origin))  # pin first arrow center at theta = pi
     if rotation:
         transforms.append(dh.get_rotate_trans(rotation, origin))
     if ext_rotation:
@@ -209,18 +217,20 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
     if data['plot1']:
         if data['is_vert']:
             paths1 = draw_cycle(data['data1'], ax, startrange, stoprange, origin=(2 * radius * data['trans1'], 0),
-                                ext_rotation=-np.pi/2)
+                                ext_rotation=-np.pi/2, pin_right=data['double'])
         else:
-            paths1 = draw_cycle(data['data1'], ax, startrange, stoprange, origin=(2 * radius * data['trans1'], 0))
+            paths1 = draw_cycle(data['data1'], ax, startrange, stoprange, origin=(2 * radius * data['trans1'], 0),
+                                pin_right=data['double'])
     else:
         paths1 = []
     if data['plot2']:
         if data['is_vert']:
             paths2 = draw_cycle(data['data2'], ax, startrange, stoprange,
-                                origin=(2 * radius*data['trans2'] + 2 * radius, 0), ext_rotation=-np.pi/2)
+                                origin=(2 * radius*data['trans2'] + 2 * radius, 0), ext_rotation=-np.pi/2,
+                                pin_left=data['double'])
         else:
             paths2 = draw_cycle(data['data2'], ax, startrange, stoprange,
-                                origin=(2 * radius*data['trans2'] + 2 * radius, 0))
+                                origin=(2 * radius*data['trans2'] + 2 * radius, 0), pin_left=data['double'])
     else:
         paths2 = []
     paths = paths1 + paths2

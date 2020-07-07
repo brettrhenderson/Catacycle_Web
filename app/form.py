@@ -10,9 +10,10 @@ class RatesForm(FlaskForm):
 
     # cycle selector
     plot_1 = BooleanField('plot_1', default=True)
-    plot_2 = BooleanField('plot_1', default=False)
+    plot_2 = BooleanField('plot_2', default=False)
     is_vert = BooleanField('is_vert', default=False)
     p1_active = BooleanField('p1_active', default=True)
+    double = BooleanField('double', default=False)  # track whether there are 2 cycles even if only one is plotted
 
     # Styling tab
     flip = BooleanField('flip', default=False)
@@ -450,7 +451,7 @@ class RatesForm(FlaskForm):
 
         return {'plot1': self.plot_1.data, 'plot2': self.plot_2.data, 'is_vert': self.is_vert.data,
                 'p1_active': self.p1_active.data, 'data1': data1, 'data2': data2,  'trans1': self.translation.data,
-                'trans2': self.c2_translation.data}
+                'trans2': self.c2_translation.data, 'double': self.double.data}
 
     def default_data(self):
         data = {'forward_rates': [],
@@ -498,7 +499,7 @@ class RatesForm(FlaskForm):
         for i in range(0, 4):
             data['forward_rates'][i] = 3.0
 
-        return {'plot1': True, 'plot2': False, 'is_vert': False, 'p1_active': True, 'data1': data,
+        return {'plot1': True, 'plot2': False, 'is_vert': False, 'p1_active': True, 'data1': data, 'double': False,
                 'trans1': 0, 'trans2': 0}
 
 

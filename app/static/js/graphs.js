@@ -37,6 +37,8 @@ $('#add-cycle').on("click", function (event) {
             content2.find('#flip')[0].checked = true;
         }
 
+        $('#rotation').val(0)    // reset the rotation of the first cycle to 0 when the second is added or deleted
+
         $('#cycle2').on("change", function (event) {
             if (activeCycle == 1) {
                 // save current state of cycle 2
@@ -114,7 +116,7 @@ $('#add-cycle').on("click", function (event) {
             $('#cycle-select').children().remove();
             // disable translation again
             $('#translation').prop("disabled", false);
-
+            $('#rotation').val(0)    // reset the rotation of the first cycle to 0 when the second is deleted
             // auto-submit when new cycle is removed
             extraSubmit();
         }
@@ -434,6 +436,7 @@ function submitForm(csrf_token, form_url, responseHandler, addArgsHandler) {
 
     // check which cycles are checked
     if ($('#cycle1-check').length) {    // there are two cycles
+        postData += '&double=true'
         // check if vertical alignment is selected
         postData += '&is_vert=' + $('#vert-check')[0].checked;
         if ($('#cycle1-check')[0].checked) {    // plot cycle 1
@@ -475,6 +478,7 @@ function submitForm(csrf_token, form_url, responseHandler, addArgsHandler) {
         postData += '&plot_1=true'
         postData += '&plot_2=false'
         postData += '&is_vert=false'
+        postData += '&double=false'
     }
 
     // check which cycle form is active
