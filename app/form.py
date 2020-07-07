@@ -17,9 +17,10 @@ class RatesForm(FlaskForm):
 
     # Styling tab
     flip = BooleanField('flip', default=False)
+    scale_cycle = BooleanField('scale_cycle', default=False)
     rotation = IntegerField('rotation', default=0)
     translation = FloatField('translation', default=0.0)
-    gap = IntegerField('gap', default=25)
+    gap = FloatField('gap', default=25)
     thickness = IntegerField('thickness', default=25)
     scale_type = StringField('scale_type', default="Preserve Multiples")
     swoop_width_scale = FloatField('swoop_width_scale', default=1.0)
@@ -33,21 +34,21 @@ class RatesForm(FlaskForm):
     swoop_start_angle_shift_multiplier = FloatField('swoop_start_angle_shift_multiplier', default=0.0)
 
     indgap = BooleanField('indgap', default=False)
-    gap_1 = IntegerField('gap_1', default=25)
-    gap_2 = IntegerField('gap_2', default=25)
-    gap_3 = IntegerField('gap_3', default=25)
-    gap_4 = IntegerField('gap_4', default=25)
-    gap_5 = IntegerField('gap_5', default=25)
-    gap_6 = IntegerField('gap_6', default=25)
-    gap_7 = IntegerField('gap_7', default=25)
-    gap_8 = IntegerField('gap_8', default=25)
-    gap_9 = IntegerField('gap_9', default=25)
-    gap_10 = IntegerField('gap_10', default=25)
-    gap_11 = IntegerField('gap_11', default=25)
-    gap_12 = IntegerField('gap_12', default=25)
-    gap_13 = IntegerField('gap_13', default=25)
-    gap_14 = IntegerField('gap_14', default=25)
-    gap_15 = IntegerField('gap_15', default=25)
+    gap_1 = FloatField('gap_1', default=25)
+    gap_2 = FloatField('gap_2', default=25)
+    gap_3 = FloatField('gap_3', default=25)
+    gap_4 = FloatField('gap_4', default=25)
+    gap_5 = FloatField('gap_5', default=25)
+    gap_6 = FloatField('gap_6', default=25)
+    gap_7 = FloatField('gap_7', default=25)
+    gap_8 = FloatField('gap_8', default=25)
+    gap_9 = FloatField('gap_9', default=25)
+    gap_10 = FloatField('gap_10', default=25)
+    gap_11 = FloatField('gap_11', default=25)
+    gap_12 = FloatField('gap_12', default=25)
+    gap_13 = FloatField('gap_13', default=25)
+    gap_14 = FloatField('gap_14', default=25)
+    gap_15 = FloatField('gap_15', default=25)
 
     # arrow stretchers
     arr_1 = FloatField('arr_1', validators=[DataRequired()], default=1.0)
@@ -181,7 +182,7 @@ class RatesForm(FlaskForm):
     c2_flip = BooleanField('c2_flip', default=False)
     c2_rotation = IntegerField('c2_rotation', default=0)
     c2_translation = FloatField('c2_translation', default=0.0)
-    c2_gap = IntegerField('c2_gap', default=25)
+    c2_gap = FloatField('c2_gap', default=25)
     c2_thickness = IntegerField('c2_thickness', default=25)
     c2_scale_type = StringField('c2_scale_type', default="Preserve Multiples")
     c2_swoop_width_scale = FloatField('c2_swoop_width_scale', default=1.0)
@@ -195,21 +196,21 @@ class RatesForm(FlaskForm):
     c2_swoop_start_angle_shift_multiplier = FloatField('c2_swoop_start_angle_shift_multiplier', default=0.0)
 
     c2_indgap = BooleanField('c2_indgap', default=False)
-    c2_gap_1 = IntegerField('c2_gap_1', default=25)
-    c2_gap_2 = IntegerField('c2_gap_2', default=25)
-    c2_gap_3 = IntegerField('c2_gap_3', default=25)
-    c2_gap_4 = IntegerField('c2_gap_4', default=25)
-    c2_gap_5 = IntegerField('c2_gap_5', default=25)
-    c2_gap_6 = IntegerField('c2_gap_6', default=25)
-    c2_gap_7 = IntegerField('c2_gap_7', default=25)
-    c2_gap_8 = IntegerField('c2_gap_8', default=25)
-    c2_gap_9 = IntegerField('c2_gap_9', default=25)
-    c2_gap_10 = IntegerField('c2_gap_10', default=25)
-    c2_gap_11 = IntegerField('c2_gap_11', default=25)
-    c2_gap_12 = IntegerField('c2_gap_12', default=25)
-    c2_gap_13 = IntegerField('c2_gap_13', default=25)
-    c2_gap_14 = IntegerField('c2_gap_14', default=25)
-    c2_gap_15 = IntegerField('c2_gap_15', default=25)
+    c2_gap_1 = FloatField('c2_gap_1', default=25)
+    c2_gap_2 = FloatField('c2_gap_2', default=25)
+    c2_gap_3 = FloatField('c2_gap_3', default=25)
+    c2_gap_4 = FloatField('c2_gap_4', default=25)
+    c2_gap_5 = FloatField('c2_gap_5', default=25)
+    c2_gap_6 = FloatField('c2_gap_6', default=25)
+    c2_gap_7 = FloatField('c2_gap_7', default=25)
+    c2_gap_8 = FloatField('c2_gap_8', default=25)
+    c2_gap_9 = FloatField('c2_gap_9', default=25)
+    c2_gap_10 = FloatField('c2_gap_10', default=25)
+    c2_gap_11 = FloatField('c2_gap_11', default=25)
+    c2_gap_12 = FloatField('c2_gap_12', default=25)
+    c2_gap_13 = FloatField('c2_gap_13', default=25)
+    c2_gap_14 = FloatField('c2_gap_14', default=25)
+    c2_gap_15 = FloatField('c2_gap_15', default=25)
 
     # arrow stretchers
     c2_arr_1 = FloatField('c2_arr_1', default=1.0)
@@ -450,8 +451,8 @@ class RatesForm(FlaskForm):
         data2['num_steps'] = self.num_rows_c2()
 
         return {'plot1': self.plot_1.data, 'plot2': self.plot_2.data, 'is_vert': self.is_vert.data,
-                'p1_active': self.p1_active.data, 'data1': data1, 'data2': data2,  'trans1': self.translation.data,
-                'trans2': self.c2_translation.data, 'double': self.double.data}
+                'p1_active': self.p1_active.data, 'scale_cycle': self.scale_cycle.data, 'data1': data1, 'data2': data2,
+                'trans1': self.translation.data, 'trans2': self.c2_translation.data, 'double': self.double.data}
 
     def default_data(self):
         data = {'forward_rates': [],
@@ -499,8 +500,8 @@ class RatesForm(FlaskForm):
         for i in range(0, 4):
             data['forward_rates'][i] = 3.0
 
-        return {'plot1': True, 'plot2': False, 'is_vert': False, 'p1_active': True, 'data1': data, 'double': False,
-                'trans1': 0, 'trans2': 0}
+        return {'plot1': True, 'plot2': False, 'is_vert': False, 'p1_active': True, 'scale_cycle': False,
+                'data1': data, 'double': False, 'trans1': 0, 'trans2': 0}
 
 
 class DownloadForm(RatesForm):

@@ -49,7 +49,6 @@ $('#add-cycle').on("click", function (event) {
                 activeCycle = 2;
                 setup_card();
                 $('#translation').prop("disabled", false);
-                // console.log("Switched to Cycle 2")
             }
         });
 
@@ -111,7 +110,6 @@ $('#add-cycle').on("click", function (event) {
                 $('#cycle-card').append(content1);
                 setup_card();
                 content2 = basicContent;
-                // console.log("Switched to Cycle 1")
             }
             $('#cycle-select').children().remove();
             // disable translation again
@@ -133,7 +131,6 @@ $('#cycle1').on("change", function (event) {
         $('#cycle-card').append(content1);
         activeCycle = 1;
         setup_card();
-        // console.log("Switched to Cycle 1")
     }
 });
 
@@ -141,6 +138,7 @@ function setup_card() {
     addrow(counters[activeCycle]);
     clear();
     toggleGaps();
+    scaleCycles();
     // link tabs to correct carousel images
     link_click_to_carousel("#outsiderxnlink", '#imageCarousel', 1);
     link_click_to_carousel("#rateslink", '#imageCarousel', 0);
@@ -172,13 +170,11 @@ function setup_card() {
         if (!(pane.id == activeLink.href.split("#")[1])) {
             if ($(pane).hasClass("active")) {
                 $(pane).removeClass("active show");
-                // console.log('Removed active from ' + pane.id);
             }
         }
         else {
             if (!$(pane).hasClass("active")) {
                 $(pane).addClass("active show");
-                // console.log('Added active to ' + pane.id);
             }
         }
     }
@@ -195,6 +191,17 @@ function toggleGaps() {
             var $eachGap = $(this)[0]
             $eachGap.disabled = dis;
         });
+    });
+}
+
+function scaleCycles() {
+    $('#scale_cycle').change(function() {
+        if (activeCycle == 1) {
+            content2.find('#scale_cycle')[0].checked = this.checked
+        }
+        else {
+            content1.find('#scale_cycle')[0].checked = this.checked
+        }
     });
 }
 
@@ -319,9 +326,9 @@ function addrow(rows) {
             // rescale gaps
             $('.indygap').each(function() {
                 var $eachGap = $(this)[0]
-                $eachGap.value = 32 - counters[activeCycle] - Math.floor(counters[activeCycle]/2)
+                $eachGap.value = Math.round(10 * (100 / (counters[activeCycle] - 1))) / 10
             });
-            $('#gap')[0].value = 32 - counters[activeCycle] - Math.floor(counters[activeCycle]/2)
+            $('#gap')[0].value = Math.round(10 * (100 / (counters[activeCycle] - 1))) / 10
 
             // remove indygap inputs
             if(counters[activeCycle] % 4 != 1) {
@@ -343,12 +350,12 @@ function addrow(rows) {
                 var newGap = `<div class="form-group col-sm-3">
                                   <label for="gap_${counters[activeCycle]}">Gap ${counters[activeCycle]}:</label>
                                       <input id="gap_${counters[activeCycle]}" name="gap_${counters[activeCycle]}" class="form-control indygap" type="number" min="0"
-                                          max="50" step="1" value="${31 - counters[activeCycle] - Math.floor(counters[activeCycle]/2)}" disabled>
+                                          max="100" step="0.1" value="${Math.round(10 * (100 / (counters[activeCycle] - 1))) / 10}" disabled>
                               </div>`;
                 var newArr = `<div class="form-group col-sm-3">
                                   <label for="arr_${counters[activeCycle]}">Arrow ${counters[activeCycle]}:</label>
                                       <input id="arr_${counters[activeCycle]}" name="arr_${counters[activeCycle]}" class="form-control indyarr" type="number" min="0.1"
-                                          max="5" step="0.1" value="1">
+                                          max="5" step="0.01" value="1">
                               </div>`;
                 // add to the last existing row
                 $('#gaps-block').children().last().append(newGap);
@@ -359,7 +366,7 @@ function addrow(rows) {
                                   <div class="form-group col-sm-3">
                                       <label for="gap_${counters[activeCycle]}">Gap ${counters[activeCycle]}:</label>
                                           <input id="gap_${counters[activeCycle]}" name="gap_${counters[activeCycle]}" class="form-control indygap" type="number" min="0"
-                                              max="50" step="1" value="${31 - counters[activeCycle] - Math.floor(counters[activeCycle]/2)}" disabled>
+                                              max="100" step="0.1" value="${Math.round(10 * (100 / (counters[activeCycle] - 1))) / 10}" disabled>
                                   </div>
                               </div>`;
                 var newArr = `<div class="form-row">
@@ -422,11 +429,11 @@ function addrow(rows) {
             $('.indygap').each(function() {
                 var $eachGap = $(this)[0]
                 $eachGap.disabled = dis;
-                $eachGap.value = 32 - counters[activeCycle] - Math.floor(counters[activeCycle]/2)
+                $eachGap.value = Math.round(10 * (100 / (counters[activeCycle] - 1))) / 10
             });
 
             // adjust the gap to accommodate more/less steps
-            $('#gap')[0].value = 32 - counters[activeCycle] - Math.floor(counters[activeCycle]/2)
+            $('#gap')[0].value = Math.round(10 * (100 / (counters[activeCycle] - 1))) / 10
         }
     })
 };
@@ -442,7 +449,6 @@ function submitForm(csrf_token, form_url, responseHandler, addArgsHandler) {
         if ($('#cycle1-check')[0].checked) {    // plot cycle 1
             if ($('#cycle1')[0].checked) {    // cycle 1 is currently active form
                 postData += '&' + $('#cycle-card').find(':input').serialize()
-                // console.log($('#cycle-card').find(':input').serialize())
             }
             else {
                 postData += '&' + content1.find(':input').serialize()
@@ -492,9 +498,7 @@ function submitForm(csrf_token, form_url, responseHandler, addArgsHandler) {
     // handle additional arguments
     if (addArgsHandler !== undefined) {
         postData = addArgsHandler(postData);
-        // console.log("New Post Data: " + postData)
     }
-    console.log(postData);
     var formURL = form_url;
 
     $.ajax(
@@ -508,7 +512,6 @@ function submitForm(csrf_token, form_url, responseHandler, addArgsHandler) {
             // response: return data from server
             responseHandler(response);
             //document.getElementById('graph').src = response.data;
-            // console.log(response.data);
         },
         error: function(jqXHR, textStatus, errorThrown)
         {
@@ -555,6 +558,8 @@ function downloadHandler() {
 
         // make sure to account for which cycle is selected
         if ($('#cycle1-check').length) {    // there are two cycles
+            $('<input />').attr('type', 'hidden').attr('name', "double")
+                .attr('value', true).appendTo('#download-form');
             // check if vertical alignment is selected
             $('<input />').attr('type', 'hidden').attr('name', "is_vert")
                 .attr('value', $('#vert-check')[0].checked).appendTo('#download-form');
@@ -620,6 +625,8 @@ function downloadHandler() {
                 .attr('value', false).appendTo('#download-form');
             $('<input />').attr('type', 'hidden').attr('name', "is_vert")
                 .attr('value', false).appendTo('#download-form');
+            $('<input />').attr('type', 'hidden').attr('name', "double")
+                .attr('value', false).appendTo('#download-form');
         }
 
         // check which cycle form is active
@@ -632,13 +639,11 @@ function downloadHandler() {
                 .attr('value', false).appendTo('#download-form');
         }
         // now submit the form for real
-        // console.log($('#download-form').serialize())
         $("#download-form")[0].submit();
         // clean-up
         $('#download-form').children().remove(':input')
     });
 }
-
 
 function cloneWithSelects(original) {
     var cloned = original.clone()
