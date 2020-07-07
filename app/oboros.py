@@ -31,7 +31,7 @@ radius = 3.0
 ######################################
 # 1. For Drawing Cycle (Curved Arrows)
 ######################################
-def draw_cycle(data, ax, startrange=0.15, stoprange=0.85, origin=(0,0)):
+def draw_cycle(data, ax, startrange=0.15, stoprange=0.85, origin=(0,0), ext_rotation=0):
     """
     Draws the arrows for a catalytic cycle.
     :param data: a dictionary specifying the data needed to draw the cycle.
@@ -39,7 +39,7 @@ def draw_cycle(data, ax, startrange=0.15, stoprange=0.85, origin=(0,0)):
     :param startrange: float. minimum arrow thickness. Default 0.15
     :param stoprange: float. maximum arrow thickness. Default 0.85
     :param origin: tuple. 2D coordinate of center of the cycle. Default (0,0)
-    :param rotation: Number of degrees to rotate the cycle CCW after drawing all arrows.
+    :param ext_rotation: Number of degrees to rotate the cycle CCW about (0,0) after drawing all arrows.
     :return: List of svg vector paths for all arrows in cycle
     """
     patches = []
@@ -94,7 +94,6 @@ def draw_cycle(data, ax, startrange=0.15, stoprange=0.85, origin=(0,0)):
 
     # Drawing outside and inside curves
     for i in range(0, num_segments):
-        print(f'DELTATS {i}: {deltas[i]}')
         if not indgap:
             gap = dh.ensure_valid_gap(deltas[i], gap)
             # starting and ending angle for each arrow (moving counterclockwise)
@@ -185,6 +184,10 @@ def draw_cycle(data, ax, startrange=0.15, stoprange=0.85, origin=(0,0)):
         transforms.append(dh.get_reflect_trans(0, origin[0]))
     if rotation:
         transforms.append(dh.get_rotate_trans(rotation, origin))
+    if ext_rotation:
+        # rotate about (0,0), not the cycle origin
+        transforms.append(dh.get_rotate_trans(ext_rotation, (0, 0)))
+
     dh.apply_transforms(ax, patches, transforms)
     for patch in patches:
         ax.add_patch(patch)
@@ -205,7 +208,8 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
 
     if data['plot1']:
         if data['is_vert']:
-            paths1 = draw_cycle(data['data1'], ax, startrange, stoprange, origin=(0, 2 * radius * -data['trans1']))
+            paths1 = draw_cycle(data['data1'], ax, startrange, stoprange, origin=(2 * radius * data['trans1'], 0),
+                                ext_rotation=-np.pi/2)
         else:
             paths1 = draw_cycle(data['data1'], ax, startrange, stoprange, origin=(2 * radius * data['trans1'], 0))
     else:
@@ -213,7 +217,7 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
     if data['plot2']:
         if data['is_vert']:
             paths2 = draw_cycle(data['data2'], ax, startrange, stoprange,
-                                origin=(0, 2 * radius * -data['trans2'] + -2 * radius))
+                                origin=(2 * radius*data['trans2'] + 2 * radius, 0), ext_rotation=-np.pi/2)
         else:
             paths2 = draw_cycle(data['data2'], ax, startrange, stoprange,
                                 origin=(2 * radius*data['trans2'] + 2 * radius, 0))
