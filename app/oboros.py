@@ -11,7 +11,10 @@ import io
 import base64
 import numpy as np
 import logging
-import app.drawing_helpers as dh
+try:
+    import app.drawing_helpers as dh
+except ModuleNotFoundError:
+    import drawing_helpers as dh
 from functools import reduce
 
 log = logging.getLogger(__name__)
@@ -48,20 +51,21 @@ def draw_cycle(data, ax, startrange=0.15, stoprange=0.85, origin=(0,0), ext_rota
     arrow_centers = []  # keep track of the angle of all arrow centers. Needed for aligning cycles
 
     # unpack data dictionary
-    forward_rates = data['forward_rates'][:data['num_steps']]
-    rev_rates = data['rev_rates'][:data['num_steps']]
-    fcolours = data['fcolours'][:data['num_steps']]
-    rcolours = data['rcolours'][:data['num_steps']]
-    is_incoming = data['is_incoming'][:data['num_steps']]
-    is_outgoing = data['is_outgoing'][:data['num_steps']]
-    gaps = data['gaps'][:data['num_steps']]
+    data['num_steps'] = try_fallback(data, 'num_steps', 4)
+    forward_rates = try_fallback(data, 'forward_rates', [3.0] * data['num_steps'])[:data['num_steps']]
+    rev_rates = try_fallback(data, 'rev_rates', [3.0] * data['num_steps'])[:data['num_steps']]
+    fcolours = try_fallback(data, 'fcolours', ['#000000'] * data['num_steps'])[:data['num_steps']]
+    rcolours = try_fallback(data, 'rcolours', ['#333333'] * data['num_steps'])[:data['num_steps']]
+    is_incoming = try_fallback(data, 'is_incoming', [False] * data['num_steps'])[:data['num_steps']]
+    is_outgoing = try_fallback(data, 'is_outgoing', [False] * data['num_steps'])[:data['num_steps']]
+    gaps = try_fallback(data, 'gaps', [25.0] * data['num_steps'])[:data['num_steps']]
     stretchers = try_fallback(data, 'stretchers', [1.0] * data['num_steps'])[:data['num_steps']]
-    gap = float(data['gap'])
-    indgap = data['indgap']
-    thickness = data['multiplier']
+    gap = try_fallback(data, 'gap', 25.0)
+    indgap = try_fallback(data, 'indgap', False)
+    thickness = try_fallback(data, 'multiplier', 1.0)
     startrange *= thickness
     stoprange *= thickness
-    scale_type = data['scale_type']
+    scale_type = try_fallback(data, 'scale_type', 'Linear')
     swoop_width_scale = try_fallback(data, 'swoop_width_scale', 1.0)
     swoop_radius_scale = try_fallback(data, 'swoop_radius_scale', 1.0)
     swoop_sweep_scale = try_fallback(data, 'swoop_sweep_scale', 1.0)
