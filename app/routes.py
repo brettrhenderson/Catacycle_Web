@@ -24,12 +24,12 @@ def graphs():
         data = form.draw_data()
         log.debug(f"\nNEW DATA: {data}\n")
         log.debug(f'relative: {form.head_len_relative.data}')
-        return jsonify(data=[draw(data, startrange=0.15, stoprange=0.65,), draw_straight(data, startrange=0.15, stoprange=0.65,)])
+        return jsonify(data=[draw(data, startrange=0.15, stoprange=0.8,), draw_straight(data, startrange=0.15, stoprange=0.8,)])
 
     log.debug(f"\nDEFAULT DATA: {data}\n")
     return render_template('graphs.html',
-                           graph1=draw(data, startrange=0.15, stoprange=0.65,),
-                           graph2=draw_straight(data, startrange=0.15, stoprange=0.65,),
+                           graph1=draw(data, startrange=0.15, stoprange=0.8,),
+                           graph2=draw_straight(data, startrange=0.15, stoprange=0.8,),
                            rows=data['data1']['num_steps'],
                            form=form,
                            form_values=data['data1'])
