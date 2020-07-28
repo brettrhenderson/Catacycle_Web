@@ -273,7 +273,7 @@
                                                                 </span>
                                                                 <div class="col-sm-4">
                                                                     <input id="gap" name="gap" class="form-control" type="number" min="0"
-                                                                           max="100" step="0.1" value="{{ form_values['gap'] }}">
+                                                                           max="180" step="0.1" value="{{ form_values['gap'] }}">
                                                                 </div>
                                                                 <span class="col-sm-4">
                                                                     <img src="{{url_for('.static', filename='images/Gap_big.png')}}" alt="big gap"
@@ -457,7 +457,7 @@
                                                             <div class="form-group col-sm-3">
                                                                 <label for="gap_{{ i + 1 }}">Gap {{ i + 1 }}:</label>
                                                                 <input id="gap_{{ i + 1 }}" name="gap_{{ i + 1 }}" class="form-control indygap" type="number" min="0"
-                                                                       max="50" step="1" value="{{ form_values['gap'] }}" disabled>
+                                                                       max="180" step=".1" value="{{ form_values['gap'] }}" disabled>
                                                             </div>
                                                             {% endfor %}
                                                         </div>

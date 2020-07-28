@@ -350,7 +350,7 @@ function addrow(rows) {
                 var newGap = `<div class="form-group col-sm-3">
                                   <label for="gap_${counters[activeCycle]}">Gap ${counters[activeCycle]}:</label>
                                       <input id="gap_${counters[activeCycle]}" name="gap_${counters[activeCycle]}" class="form-control indygap" type="number" min="0"
-                                          max="100" step="0.1" value="${Math.round(10 * (100 / (counters[activeCycle] - 1))) / 10}" disabled>
+                                          max="180" step="0.1" value="${Math.round(10 * (100 / (counters[activeCycle] - 1))) / 10}" disabled>
                               </div>`;
                 var newArr = `<div class="form-group col-sm-3">
                                   <label for="arr_${counters[activeCycle]}">Arrow ${counters[activeCycle]}:</label>
@@ -366,7 +366,7 @@ function addrow(rows) {
                                   <div class="form-group col-sm-3">
                                       <label for="gap_${counters[activeCycle]}">Gap ${counters[activeCycle]}:</label>
                                           <input id="gap_${counters[activeCycle]}" name="gap_${counters[activeCycle]}" class="form-control indygap" type="number" min="0"
-                                              max="100" step="0.1" value="${Math.round(10 * (100 / (counters[activeCycle] - 1))) / 10}" disabled>
+                                              max="180" step="0.1" value="${Math.round(10 * (100 / (counters[activeCycle] - 1))) / 10}" disabled>
                                   </div>
                               </div>`;
                 var newArr = `<div class="form-row">
