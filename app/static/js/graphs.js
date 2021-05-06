@@ -272,12 +272,11 @@ function submitForm(csrf_token, form_url, response_handler) {
     })
 }
 
-
 function submitHandler(csrf_token) {
     $('#cycle-form').submit(function(e)
     {
         e.preventDefault(); //STOP default action
-        submitForm(csrf_token, '/graphs', function (response) {
+        submitForm(csrf_token, '/cycle', function (response) {
             document.getElementById('graph').src = response.data[0];
             document.getElementById('straight-graph').src = response.data[1];
         });
