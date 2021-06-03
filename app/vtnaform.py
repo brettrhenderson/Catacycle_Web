@@ -84,14 +84,14 @@ class FitParamForm(FlaskForm):
     species = StringField('Species', id="spec-param")
     excess = StringField('Excess', id='excess')
     concs = StringField('Starting Concentrations:')
-    submit = SubmitField('Confirm')
+    submit = SubmitField('Confirm', id='add-param-submit')
 
 
 class ManualFitForm(FlaskForm):
     start = FloatField('Align Start Time', id='start-time')
     poison = FloatField('Poisoning', id='set-poison')
     order = FloatField('Reactant Order', id='rxn-order')
-    submit = SubmitField('Fit', id='manual-submit')
+    submit = SubmitField('Update', id='manual-submit')
 
 
 class AutoFitForm(FlaskForm):

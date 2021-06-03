@@ -57,21 +57,29 @@ def normalize_columns(data, totals):
         Rnorm.append(pd.concat([df.iloc[:,0], df.iloc[:, 1:].div(totals[i], axis=0)], axis=1))
     return Rnorm
 
-def get_max_times(Rnorm):
+def shift_times(data, shifts):
+    """function that normalizes all columns by the sum on that time step (excludes the time column in a sheet)"""
+    if isinstance(shifts, float):
+        shifts = [shifts for _ in data]
+    for i, df in enumerate(data):
+        df.iloc[:, 0] -= shifts[i]
+    return data
+
+def get_max_times(data):
     maxtime = []
-    for df in Rnorm:
+    for df in data:
         maxtime.append(df.iloc[:, 0].max())
     return maxtime
 
-def select_data(Rnorm, reactions=None, species=None):
+def select_data(data, reactions=None, species=None):
     """selects data to plot"""
     if reactions is None:   #return all reactions
         if species is None:     #return all species
-            return Rnorm
-        return [Rnorm[rxn].iloc[:, [0]+[spec+1 for spec in species]] for rxn in range(len(Rnorm))]
+            return data
+        return [data[rxn].iloc[:, [0]+[spec+1 for spec in species]] for rxn in range(len(data))]
     elif species is None:
-        return [Rnorm[rxn] for rxn in reactions]
-    return [Rnorm[rxn].iloc[:, [0]+[spec+1 for spec in species]] for rxn in reactions]
+        return [data[rxn] for rxn in reactions]
+    return [data[rxn].iloc[:, [0]+[spec+1 for spec in species]] for rxn in reactions]
 
 def plot_vtna(data,  concs, order=1, trans_zero=None,  windowsize=None, colors=None, marker_shape="o", markersize=15,
               linestyle=':', guide_lines=True, f_format='png', return_image=False, figsize=(8,6)):
