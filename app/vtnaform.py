@@ -84,7 +84,8 @@ class FitParamForm(FlaskForm):
     species = StringField('Species', id="spec-param")
     excess = StringField('Excess', id='excess')
     concs = StringField('Starting Concentrations:')
-    submit = SubmitField('Confirm', id='add-param-submit')
+    add = SubmitField('Confirm', id='add-param-submit')
+    submit = SubmitField('Fit', id='param-submit')
 
 
 class ManualFitForm(FlaskForm):

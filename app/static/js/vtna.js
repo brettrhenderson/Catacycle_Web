@@ -242,23 +242,25 @@ function updateParams(url, type, paramData, responseid, successHandler) {
           </div>
           <div class="collapse ml-3 mr-3" id="param-fit-${numParams}">
             <hr>
-            <form enctype="multipart/form-data" id="param-form-${numParams}" action="#" method="post">
-              <div class="form-group my-auto">
-                <label>
-                  <input checked="" class="filled-in" id="is-excess-${numParams}" type="checkbox"/>
-                  <span>Excess</span>
-                </label>
-              </div>
-              <div class="form-group input-field">
-                <label for="spec-param-${numParams}" class="active">Species</label>
-                <select id="spec-param-${numParams}" name="species" disabled>
-                </select>
-              </div>
-              <div id="param-${numParams}-concs-label-0" class="form-group input-field pb-2"><h6>Concentrations</h6></div>
-              <div class="form-group mb-0">
-                <button id="update-param-${numParams}" type="button" class="btn btn-block btn-primary pl-2 pr-2">Update</button>
-              </div>
-            </form>
+            <div class="form-group my-auto">
+              <label>
+                <input checked="" class="filled-in" id="is-excess-${numParams}" type="checkbox"/>
+                <span>Excess</span>
+              </label>
+            </div>
+            <div class="form-group input-field">
+              <label for="spec-param-${numParams}" class="active">Species</label>
+              <select id="spec-param-${numParams}" name="species" disabled>
+              </select>
+            </div>
+            <div class="form-group range-field">
+              <label for="rxn-order-${numParams}">Reactant Order</label>
+              <input class="form-control-range" id="rxn-order-${numParams}" max="3" min="0" name="order" step="0.01" type="range" value="0"><span class="thumb"><span class="value"></span></span>
+            </div>
+            <div id="param-${numParams}-concs-label-0" class="form-group input-field pb-2"><h6>Concentrations</h6></div>
+            <div class="form-group mb-0">
+              <button id="update-param-${numParams}" type="button" class="btn btn-block btn-primary pl-2 pr-2">Update</button>
+            </div>
             <hr>
           </div>`
 
@@ -269,6 +271,10 @@ function updateParams(url, type, paramData, responseid, successHandler) {
     var rxctr = 0;
     for (var [key, value] of paramData.entries()) {
         if (key === 'csrf_token') { continue; }
+        if (key === 'order') {
+            $("#rxn-order-" + numParams).val(value)
+            continue;
+        }
         if (key === 'species') {
             $("#is-excess-" + toString(numParams)).prop('checked', false);
             let specctr = 0
@@ -308,3 +314,19 @@ function updateParams(url, type, paramData, responseid, successHandler) {
 function paramSuccess() {
     console.log("Success!!");
 };
+
+
+// make file upload submit form automatically
+$("#param-submit").click(function() {
+    // Prevent redirection with AJAX for contact form
+    var form = $('#param-form');
+    var form_id = 'param-form';
+    var url = form.prop('action');
+    var type = form.prop('method');
+    var formData = getFormData(form_id);
+
+    for (var [key, value] of formData.entries()) { console.log('formData', key, value);}
+
+    // submit form via AJAX
+    send_form(form, form_id, url, type, modular_ajax, formData, '#response-xlform', plotSuccess);
+});
