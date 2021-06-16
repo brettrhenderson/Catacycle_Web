@@ -222,8 +222,8 @@ $.ajaxSetup({
 // add a parameter card for new concentrations added.
 $("#add-param-submit").click(function() {
     // Prevent redirection with AJAX for contact form
-    var form = $('#param-form');
-    var form_id = 'param-form';
+    var form = $('#param-add-form');
+    var form_id = 'param-add-form';
     var url = form.prop('action');
     var type = form.prop('method');
     var formData = getFormData(form_id);
@@ -235,12 +235,12 @@ $("#add-param-submit").click(function() {
 
 function updateParams(url, type, paramData, responseid, successHandler) {
     // add a new parameter card for fitting
-    let new_card  = `<div class="mt-3 mb-3 ml-3 mr-3">
+    let new_card  = `<div id="param-div-${numParams}" class="mt-3 mb-3 ml-3 mr-3 concentration-form">
             <a class="btn btn-block btn-secondary" data-toggle="collapse" href="#param-fit-${numParams}" role="button" aria-expanded="false" aria-controls="collapseExample">
                 Fit Param ${numParams + 1}
             </a>
           </div>
-          <div class="collapse ml-3 mr-3" id="param-fit-${numParams}">
+          <div class="collapse ml-3 mr-3 concentration-form" id="param-fit-${numParams}">
             <hr>
             <div class="form-group my-auto">
               <label>
@@ -259,24 +259,32 @@ function updateParams(url, type, paramData, responseid, successHandler) {
             </div>
             <div id="param-${numParams}-concs-label-0" class="form-group input-field pb-2"><h6>Concentrations</h6></div>
             <div class="form-group mb-0">
-              <button id="update-param-${numParams}" type="button" class="btn btn-block btn-primary pl-2 pr-2">Update</button>
+              <button id="delete-param-${numParams}" type="button" class="btn btn-block btn-primary pl-2 pr-2">Remove</button>
             </div>
             <hr>
           </div>`
 
     $("#new-param").collapse('hide');
-    $( new_card ).insertAfter( "#new-param" );
-    $("[id^=start-conc-]").val('')
+    $( new_card ).insertBefore( "#submit-params" );
+    $("[id^=start-conc-]").val('');
+    console.log("PARAM: " + numParams);
+    var dummyParams = numParams;
+    $( `#delete-param-${dummyParams}` ).click(function() {
+        $(`#param-div-${dummyParams}`).remove();
+        $(`#param-fit-${dummyParams}`).remove();
+        console.log(`#param-div-${dummyParams}`);
+    });
 
     var rxctr = 0;
     for (var [key, value] of paramData.entries()) {
+        console.log(key);
         if (key === 'csrf_token') { continue; }
         if (key === 'order') {
             $("#rxn-order-" + numParams).val(value)
             continue;
         }
         if (key === 'species') {
-            $("#is-excess-" + toString(numParams)).prop('checked', false);
+            $("#is-excess-" + numParams).prop('checked', false);
             let specctr = 0
             for (spec of specs) {
                 specText = spec + " (species " + (specctr+1) + ")";

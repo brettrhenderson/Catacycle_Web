@@ -174,8 +174,7 @@ $(document).ready(function() {
           </a>
           <div class="collapse" id="param-fit">
             <div id="param-fit-card" class="card">
-              <form enctype="multipart/form-data" id="param-form" action="{{ url_for('fit_data') }}" method="post">
-                {{ pform.hidden_tag() }}
+              <form enctype="multipart/form-data" id="param-add-form" action="#" method="post">
                 <div class="mt-3 mb-3 ml-3 mr-3">
                   <button data-toggle="collapse" href="#new-param" type="button" class="btn btn-block" id="addparam">
                       Add New   <i class="fa fa-plus pl-3"></i>
@@ -198,13 +197,23 @@ $(document).ready(function() {
                       <label for="rxn-order">Reactant Order</label>
                       <input class="form-control-range" id="rxn-order" max="3" min="0" name="order" step="0.01" type="range" value="0"><span class="thumb"><span class="value"></span></span>
                     </div>
+                    <br>
+                    <div class="form-group input-field" id="poison-label-0">
+                      <input class="form-control validate" id="poison-0" name="conc" required type="text" value="0.0">
+                      <label for="poison-0" class="active">Poisoning</label>
+                      <span class="helper-text" data-error="Must be integer or decimal value." data-success=""></span>
+                    </div>
                     <div id="concs-label-0" class="form-group input-field pb-2"><h6>Concentrations</h6></div>
                     <div class="form-group mb-0">
                       <button id="{{ pform.add.id }}" type="button" class="btn btn-block btn-primary pl-2 pr-2">{{ pform.add.label.text }}</button>
                     </div>
                   <hr>
                 </div>
-                <div class="form-group mb-0">
+              </form>
+
+              <form enctype="multipart/form-data" id="param-form" action="{{ url_for('fit_data') }}" method="post">
+                {{ pform.hidden_tag() }}
+                <div id="submit-params" class="form-group mb-0">
                   <button id="{{ pform.submit.id }}" type="button" class="btn btn-block btn-primary pl-2 pr-2">{{ pform.submit.label.text }}</button>
                 </div>
               </form>
