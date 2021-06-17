@@ -1,19 +1,20 @@
 var numParams = 0;
 var rxns;
+var specs;
 
-$("#excess").click(function (){
+$("#excess-temp").click(function (){
     if (!this.checked) {
     console.log('blah');
-        $("#spec-param").removeAttr("disabled");
-        $("#spec-param").parent(".select-wrapper").removeClass("disabled");
-        $("#spec-param").siblings(".select-dropdown").removeClass("disabled");
-        $("#spec-param").siblings(".select-dropdown").removeAttr("disabled");
-        console.log($("#spec-param").parent(".select-wrapper"))
+        $("#spec-param-temp").removeAttr("disabled");
+        $("#spec-param-temp").parent(".select-wrapper").removeClass("disabled");
+        $("#spec-param-temp").siblings(".select-dropdown").removeClass("disabled");
+        $("#spec-param-temp").siblings(".select-dropdown").removeAttr("disabled");
+        console.log($("#spec-param-temp").parent(".select-wrapper"))
     } else {
-        $("#spec-param").attr("disabled", true);
-        $("#spec-param").parent(".select-wrapper").addClass("disabled");
-        $("#spec-param").siblings(".select-dropdown").addClass("disabled");
-        $("#spec-param").siblings(".select-dropdown").attr("disabled", true);
+        $("#spec-param-temp").attr("disabled", true);
+        $("#spec-param-temp").parent(".select-wrapper").addClass("disabled");
+        $("#spec-param-temp").siblings(".select-dropdown").addClass("disabled");
+        $("#spec-param-temp").siblings(".select-dropdown").attr("disabled", true);
     }
 });
 
@@ -147,10 +148,10 @@ function plotSuccess(data) {
     }
 
     $('#spec-select option').remove();
-    $('#spec-param option').remove();
+    $('#spec-param-temp option').remove();
     var spec;
     var specctr = 0;
-    var specs = data.specs
+    specs = data.specs
 
     for (spec of data.specs) {
         specText = spec + " (species " + (specctr+1) + ")";
@@ -162,7 +163,7 @@ function plotSuccess(data) {
         else {
             $('#spec-select').append(`<option value="${specValue}">${specText}</option>`);
         }
-        $('#spec-param').append(`<option value="${specValue}">${specText}</option>`);
+        $('#spec-param-temp').append(`<option value="${specValue}">${specText}</option>`);
         specctr = specctr + 1;
     }
     $('select').formSelect();
@@ -220,7 +221,7 @@ $.ajaxSetup({
 
 
 // add a parameter card for new concentrations added.
-$("#add-param-submit").click(function() {
+$("#add-param-temp").click(function() {
     // Prevent redirection with AJAX for contact form
     var form = $('#param-add-form');
     var form_id = 'param-add-form';
@@ -257,6 +258,10 @@ function updateParams(url, type, paramData, responseid, successHandler) {
               <label for="rxn-order-${numParams}">Reactant Order</label>
               <input class="form-control-range" id="rxn-order-${numParams}" max="3" min="0" name="order" step="0.01" type="range" value="0"><span class="thumb"><span class="value"></span></span>
             </div>
+            <div class="form-group range-field">
+              <label for="poisoning-${numParams}">Poisoning</label>
+              <input class="form-control-range" id="poisoning-${numParams}" max="3" min="0" name="poisoning" step="0.01" type="range" value="0"><span class="thumb"><span class="value"></span></span>
+            </div>
             <div id="param-${numParams}-concs-label-0" class="form-group input-field pb-2"><h6>Concentrations</h6></div>
             <div class="form-group mb-0">
               <button id="delete-param-${numParams}" type="button" class="btn btn-block btn-primary pl-2 pr-2">Remove</button>
@@ -267,23 +272,33 @@ function updateParams(url, type, paramData, responseid, successHandler) {
     $("#new-param").collapse('hide');
     $( new_card ).insertBefore( "#submit-params" );
     $("[id^=start-conc-]").val('');
-    console.log("PARAM: " + numParams);
     var dummyParams = numParams;
     $( `#delete-param-${dummyParams}` ).click(function() {
         $(`#param-div-${dummyParams}`).remove();
         $(`#param-fit-${dummyParams}`).remove();
-        console.log(`#param-div-${dummyParams}`);
     });
 
     var rxctr = 0;
+
     for (var [key, value] of paramData.entries()) {
-        console.log(key);
         if (key === 'csrf_token') { continue; }
-        if (key === 'order') {
-            $("#rxn-order-" + numParams).val(value)
+
+        if (key === 'excess') {
+            if (value == 'y') {
+                $("#is-excess-" + numParams).prop('checked', true);
+                let specctr = 0
+                for (spec of specs) {
+                    specText = spec + " (species " + (specctr+1) + ")";
+                    $('#spec-param-' + numParams).append(`<option value="${specValue}">${specText}</option>`);
+                    specctr = specctr + 1;
+                }
+                $('select').formSelect();
+            }
             continue;
         }
+
         if (key === 'species') {
+            $(`#spec-param-${numParams}`).attr("disabled", false);
             $("#is-excess-" + numParams).prop('checked', false);
             let specctr = 0
             for (spec of specs) {
@@ -298,6 +313,15 @@ function updateParams(url, type, paramData, responseid, successHandler) {
                 specctr = specctr + 1;
             }
             $('select').formSelect();
+            continue;
+        }
+
+        if (key === 'order') {
+            $("#rxn-order-" + numParams).val(value)
+            continue;
+        }
+        if (key === 'poison') {
+            $("#poisoning-" + numParams).val(value)
             continue;
         }
 

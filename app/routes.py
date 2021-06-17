@@ -3,7 +3,7 @@ from app import app
 from werkzeug.utils import secure_filename
 from werkzeug.wsgi import FileWrapper
 from app.cycleform import RatesForm, DownloadForm
-from app.vtnaform import DataForm, SelectDataForm, DVTNAForm, ManualFitForm, AutoFitForm, FitParamForm, StyleForm
+from app.vtnaform import DataForm, SelectDataForm, DVTNAForm, ManualFitForm, AutoFitForm, FitParamFormTemplate, FitParamForm, StyleForm
 from app.modules.catacycle.oboros import draw, draw_straight
 from app.modules.vtna.web_plot import plot_vtna, save_dfig
 import logging
@@ -76,8 +76,8 @@ def vtna():
     totals = vh.get_sheet_totals(None, raw_data)
     norm_data = vh.normalize_columns(raw_data, totals)
 
-    upload_form, dform, sform, mform, aform, pform, stform = (DataForm(), DVTNAForm(), SelectDataForm(), ManualFitForm(),
-                                                              AutoFitForm(), FitParamForm(), StyleForm())
+    upload_form, dform, sform, mform, aform, pformt, pform, stform = (DataForm(), DVTNAForm(), SelectDataForm(), ManualFitForm(),
+                                                              AutoFitForm(), FitParamFormTemplate(), FitParamForm(), StyleForm())
 
     new_plot, fig = plot_vtna(norm_data, marker="^", linestyle=':', markersize=5, guide_lines=True,
                               legend=True)
@@ -89,7 +89,7 @@ def vtna():
     log.debug(f'Current Figures: {plt.get_fignums()}')
 
     return render_template('vtna.html', upform=upload_form, dform=dform, sform=sform, aform=aform, mform=mform,
-                           pform=pform, stform=stform, graph1=new_plot)
+                           pformt=pformt, pform=pform, stform=stform, graph1=new_plot)
 
 
 @app.route('/upload', methods=['POST'])
@@ -183,38 +183,49 @@ def select_data():
 
 @app.route('/fit', methods=['POST'])
 def fit_data():
-    fitform = ManualFitForm()
+    fitform = FitParamForm()
+    log.debug(request.form)
     if request.method == 'POST':
         result = ""
         category = "danger"
         new_plot = "none"
         rxns = "none"
         specs = "none"
-        if fitform.validate():
-            start = fitform.start.data
-            session['start'] = start
-            order = fitform.order.data
-            poison = fitform.poison.data
-            raw_data = session['raw_data']
-            rxns = session['rxns']
-            specs = session['reactants']
-            normtype = session['normtype']
-            rxns_sel = session['rxns_sel']
-            specs_sel = session['specs_sel']
-            category = "success"
-            log.debug(f"Rxns: {rxns},  Species: {specs}")
-            totals = vh.get_sheet_totals(normtype, raw_data)
-            norm_data = vh.shift_times(vh.normalize_columns(raw_data, totals), start)
-            select_data = vh.select_data(norm_data, reactions=rxns_sel, species=specs_sel)
-            new_plot, fig = plot_vtna(select_data, norm_time=False, marker="^", linestyle=':', markersize=5,
-                                      guide_lines=True, legend=True)
-            # save the filename and pickle the figure
-            pickle.dump(fig, open(session['fig'], 'wb'))
-            plt.close(fig)
-            log.debug(f'Current Figures: {plt.get_fignums()}')
-            fb = "Updated Manual VTNA Fit"
-        else:
-            fb = f"Update failed: {fitform.errors}"
+        fitform.validate()
+        log.debug(fitform.data)
+        log.debug(fitform.errors)
+#         if fitform.validate():
+#             start = fitform.start.data
+#             session['start'] = start
+#             order = fitform.order.data
+#             poison = fitform.poison.data
+#             raw_data = session['raw_data']
+#             rxns = session['rxns']
+#             specs = session['reactants']
+#             normtype = session['normtype']
+#             rxns_sel = session['rxns_sel']
+#             specs_sel = session['specs_sel']
+#             category = "success"
+#             log.debug(f"Rxns: {rxns},  Species: {specs}")
+#             totals = vh.get_sheet_totals(normtype, raw_data)
+#             norm_data = vh.shift_times(vh.normalize_columns(raw_data, totals), start)
+#             select_data = vh.select_data(norm_data, reactions=rxns_sel, species=specs_sel)
+#             new_plot, fig = plot_vtna(select_data, norm_time=False, marker="^", linestyle=':', markersize=5,
+#                                       guide_lines=True, legend=True)
+#             # save the filename and pickle the figure
+#             pickle.dump(fig, open(session['fig'], 'wb'))
+#             plt.close(fig)
+#             log.debug(f'Current Figures: {plt.get_fignums()}')
+#             fb = "Updated Manual VTNA Fit"
+#         else:
+#             fb = f"Update failed: {fitform.errors}"
+        fb = "SUCCESS"
+        rxns = session['rxns']
+        specs = session['reactants']
+        normtype = session['normtype']
+        rxns_sel = session['rxns_sel']
+        specs_sel = session['specs_sel']
+        category = "success"
         return make_response(jsonify(feedback=fb, rxns=rxns, specs=specs, category=category, new_plot=new_plot,
                              rxns_sel=rxns_sel, specs_sel=specs_sel), 200)
 

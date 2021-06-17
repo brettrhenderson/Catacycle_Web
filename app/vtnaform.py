@@ -80,18 +80,26 @@ class SelectDataForm(FlaskForm):
     submit = SubmitField('Select', id='select-submit')
 
 
-class FitParamForm(FlaskForm):
-    species = StringField('Species', id="spec-param")
-    excess = StringField('Excess', id='excess')
-    concs = StringField('Starting Concentrations:')
-    add = SubmitField('Confirm', id='add-param-submit')
-    submit = SubmitField('Fit', id='param-submit')
+class FitParamFormTemplate(FlaskForm):
+    species = StringField('Species', id="spec-param-temp")
+    excess = BooleanField('Excess', id='excess-temp')
+    poison = FloatField('Poisoning', id='set-poison')
+    order = FloatField('Reactant Order', id='rxn-order')
+    concs = SelectMultipleField('Starting Concentrations:')
+    add = SubmitField('Confirm', id='add-param-temp')
 
+class FitParamForm(FlaskForm):
+    species = SelectField('Species', id="spec-param")
+    excess = BooleanField('Excess', id='excess')
+    poison = FloatField('Poisoning')
+    order = FloatField('Reactant Order')
+    concs = FloatField('Starting Concentrations:')
+    submit = SubmitField('Fit', id='param-submit')
 
 class ManualFitForm(FlaskForm):
     start = FloatField('Align Start Time', id='start-time')
-    poison = FloatField('Poisoning', id='set-poison')
-    order = FloatField('Reactant Order', id='rxn-order')
+    poison = FloatField('Poisoning', id='set-poison-old')
+    order = FloatField('Reactant Order', id='rxn-order-old')
     submit = SubmitField('Update', id='manual-submit')
 
 

@@ -184,28 +184,27 @@ $(document).ready(function() {
                   <hr>
                     <div class="form-group my-auto">
                       <label>
-                        <input checked="" class="filled-in" id="{{ pform.excess.id }}" type="checkbox"/>
-                        <span>{{ pform.excess.label.text }}</span>
+                        {{ pformt.excess(type="checkbox", class_="filled-in", checked="") }}
+<!--                        <input checked="" class="filled-in" id="{{ pformt.excess.id }}" type="checkbox"/>-->
+                        <span>{{ pformt.excess.label.text }}</span>
                       </label>
                     </div>
                     <div class="form-group input-field">
-                      {{ pform.species.label(class_="active") }}
-                      <select id="{{ pform.species.id }}" name="species" disabled>
+                      {{ pformt.species.label(class_="active") }}
+                      <select id="{{ pformt.species.id }}" name="species" disabled>
                       </select>
                     </div>
                     <div class="form-group range-field">
-                      <label for="rxn-order">Reactant Order</label>
-                      <input class="form-control-range" id="rxn-order" max="3" min="0" name="order" step="0.01" type="range" value="0"><span class="thumb"><span class="value"></span></span>
+                      {{ pformt.order.label }}
+                      {{ pformt.order(type="range", class_="form-control-range", min="0", max="3", step="0.01", value="0") }}
                     </div>
-                    <br>
-                    <div class="form-group input-field" id="poison-label-0">
-                      <input class="form-control validate" id="poison-0" name="conc" required type="text" value="0.0">
-                      <label for="poison-0" class="active">Poisoning</label>
-                      <span class="helper-text" data-error="Must be integer or decimal value." data-success=""></span>
+                    <div class="form-group range-field">
+                      {{ pformt.poison.label }}
+                      {{ pformt.poison(type="range", class_="form-control-range", min="0", max="1", step="0.01", value="0") }}
                     </div>
                     <div id="concs-label-0" class="form-group input-field pb-2"><h6>Concentrations</h6></div>
                     <div class="form-group mb-0">
-                      <button id="{{ pform.add.id }}" type="button" class="btn btn-block btn-primary pl-2 pr-2">{{ pform.add.label.text }}</button>
+                      <button id="{{ pformt.add.id }}" type="button" class="btn btn-block btn-primary pl-2 pr-2">{{ pformt.add.label.text }}</button>
                     </div>
                   <hr>
                 </div>
