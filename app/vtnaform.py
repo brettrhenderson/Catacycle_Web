@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, BooleanField, SubmitField, SelectMultipleField, FloatField
+from wtforms import StringField, SelectField, BooleanField, SubmitField, SelectMultipleField, FloatField, FieldList, FormField
 from wtforms.validators import InputRequired, ValidationError
 from flask_wtf.file import FileRequired, FileField
 from flask import url_for
@@ -88,12 +88,17 @@ class FitParamFormTemplate(FlaskForm):
     concs = SelectMultipleField('Starting Concentrations:')
     add = SubmitField('Confirm', id='add-param-temp')
 
-class FitParamForm(FlaskForm):
-    species = SelectField('Species', id="spec-param")
-    excess = BooleanField('Excess', id='excess')
+class SingleFitParam(FlaskForm):
+    class Meta:
+        csrf = False
+    species = SelectField('Species', default='None')
+    excess = BooleanField('Excess')
     poison = FloatField('Poisoning')
     order = FloatField('Reactant Order')
-    concs = FloatField('Starting Concentrations:')
+    concs = FieldList(FloatField('Concentration'))
+
+class FitParamForm(FlaskForm):
+    params = FieldList(FormField(SingleFitParam))
     submit = SubmitField('Fit', id='param-submit')
 
 class ManualFitForm(FlaskForm):

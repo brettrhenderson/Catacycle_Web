@@ -223,7 +223,7 @@ $(document).ready(function() {
           </a>
           <div class="collapse" id="manual-fit">
             <div class="card card-body">
-              <form enctype="multipart/form-data" id="manual-form" action="{{ url_for('fit_data') }}" method="post">
+              <form enctype="multipart/form-data" id="manual-form" action="{{ url_for('set_start') }}" method="post">
                 {{ mform.hidden_tag() }}
                 <div class="form-group range-field">
                   {{ mform.start.label }}

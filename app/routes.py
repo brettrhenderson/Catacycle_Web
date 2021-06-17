@@ -11,6 +11,7 @@ from app.modules.vtna import vtna_helper as vh
 import os, uuid, matplotlib, pickle
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import numpy as np
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -145,8 +146,8 @@ def select_data():
     specs = session['reactants']
     normtype = session['normtype']
     starts = session['starts']
-    selectform.rxn.choices = [str(i) for i, _ in enumerate(rxns)]
-    selectform.species.choices = [str(i) for i, _ in enumerate(specs)]
+    selectform.rxn.choices = [(str(i), str(i)) for i, _ in enumerate(rxns)]
+    selectform.species.choices = [(str(i), str(i)) for i, _ in enumerate(specs)]
 
     if request.method == 'POST':
         category = "danger"
@@ -180,52 +181,102 @@ def select_data():
         return make_response(jsonify(feedback=fb, rxns=rxns, specs=specs, category=category, new_plot=new_plot,
                                      rxns_sel=rxns_sel, specs_sel=specs_sel), 200)
 
-
-@app.route('/fit', methods=['POST'])
-def fit_data():
-    fitform = FitParamForm()
-    log.debug(request.form)
+@app.route('/set_start', methods=['POST'])
+def set_start():
+    fitform = ManualFitForm()
     if request.method == 'POST':
         result = ""
         category = "danger"
         new_plot = "none"
         rxns = "none"
         specs = "none"
-        fitform.validate()
-        log.debug(fitform.data)
-        log.debug(fitform.errors)
-#         if fitform.validate():
-#             start = fitform.start.data
-#             session['start'] = start
-#             order = fitform.order.data
-#             poison = fitform.poison.data
-#             raw_data = session['raw_data']
-#             rxns = session['rxns']
-#             specs = session['reactants']
-#             normtype = session['normtype']
-#             rxns_sel = session['rxns_sel']
-#             specs_sel = session['specs_sel']
-#             category = "success"
-#             log.debug(f"Rxns: {rxns},  Species: {specs}")
-#             totals = vh.get_sheet_totals(normtype, raw_data)
-#             norm_data = vh.shift_times(vh.normalize_columns(raw_data, totals), start)
-#             select_data = vh.select_data(norm_data, reactions=rxns_sel, species=specs_sel)
-#             new_plot, fig = plot_vtna(select_data, norm_time=False, marker="^", linestyle=':', markersize=5,
-#                                       guide_lines=True, legend=True)
-#             # save the filename and pickle the figure
-#             pickle.dump(fig, open(session['fig'], 'wb'))
-#             plt.close(fig)
-#             log.debug(f'Current Figures: {plt.get_fignums()}')
-#             fb = "Updated Manual VTNA Fit"
-#         else:
-#             fb = f"Update failed: {fitform.errors}"
-        fb = "SUCCESS"
+        if fitform.validate():
+            start = fitform.start.data
+            session['start'] = start
+            order = fitform.order.data
+            poison = fitform.poison.data
+            raw_data = session['raw_data']
+            rxns = session['rxns']
+            specs = session['reactants']
+            normtype = session['normtype']
+            rxns_sel = session['rxns_sel']
+            specs_sel = session['specs_sel']
+            category = "success"
+            log.debug(f"Rxns: {rxns},  Species: {specs}")
+            totals = vh.get_sheet_totals(normtype, raw_data)
+            norm_data = vh.shift_times(vh.normalize_columns(raw_data, totals), start)
+            select_data = vh.select_data(norm_data, reactions=rxns_sel, species=specs_sel)
+            new_plot, fig = plot_vtna(select_data, norm_time=False, marker="^", linestyle=':', markersize=5,
+                                      guide_lines=True, legend=True)
+            # save the filename and pickle the figure
+            pickle.dump(fig, open(session['fig'], 'wb'))
+            plt.close(fig)
+            log.debug(f'Current Figures: {plt.get_fignums()}')
+            fb = "Updated Manual VTNA Fit"
+        else:
+            fb = f"Update failed: {fitform.errors}"
+        return make_response(jsonify(feedback=fb, rxns=rxns, specs=specs, category=category, new_plot=new_plot,
+                             rxns_sel=rxns_sel, specs_sel=specs_sel), 200)
+
+
+
+
+@app.route('/fit', methods=['POST'])
+def fit_data():
+    fitform = FitParamForm()
+
+    if request.method == 'POST':
+        result = ""
+        category = "danger"
+        starts = session['starts']
+        raw_data = session['raw_data']
         rxns = session['rxns']
-        specs = session['reactants']
         normtype = session['normtype']
         rxns_sel = session['rxns_sel']
         specs_sel = session['specs_sel']
-        category = "success"
+        specs = session['reactants']
+        for paramform in fitform.params:
+            paramform.species.choices = [(str(i), str(i)) for i, _ in enumerate(specs)] + [("None", "None")]
+
+        if fitform.validate():
+            category = "success"
+            log.debug(f"Rxns: {rxns},  Species: {specs}")
+
+            # parse the data into a usable form
+            orders = [form.order.data for form in fitform.params]
+            poisons = [form.poison.data for form in fitform.params]
+            excesses = [form.excess.data for form in fitform.params]
+            param_specs = [form.species.data for form in fitform.params]
+            conc_multipliers = [form.concs.data for form in fitform.params]
+
+            totals = vh.get_sheet_totals(normtype, raw_data)
+            norm_data = vh.shift_times(vh.normalize_columns(raw_data, totals), starts)
+            # norm_data = vh.multiply_concs(norm_data, concs)
+            select_data = vh.select_data(norm_data, reactions=rxns_sel, species=specs_sel)
+
+            # Get the concentrations to normalize by
+            concs = [[] for _ in select_data]
+
+            for i, rxn in enumerate(select_data):
+                for j, spec in enumerate(param_specs):
+                    if spec == "None": # This means it is an excess reagent / catalyst
+                        concs[i].append([conc_multipliers[j][i] for _ in range(rxn.values.shape[0])])
+                    else:
+                        concs[i].append(list(rxn.iloc[:, j+1].values))
+            log.debug(concs)
+            for i, rxn_concs in enumerate(concs):
+                concs[i] = np.array(rxn_concs).T
+
+            new_plot, fig = plot_vtna(select_data, norm_time=True, concs=concs, orders=np.array(orders), marker="^", linestyle=':', markersize=5,
+                                      guide_lines=True, legend=True)
+            # save the filename and pickle the figure
+            pickle.dump(fig, open(session['fig'], 'wb'))
+            plt.close(fig)
+            log.debug(f'Current Figures: {plt.get_fignums()}')
+            fb = "Updated Manual VTNA Fit"
+        else:
+            fb = f"Update failed: {fitform.errors}"
+
         return make_response(jsonify(feedback=fb, rxns=rxns, specs=specs, category=category, new_plot=new_plot,
                              rxns_sel=rxns_sel, specs_sel=specs_sel), 200)
 

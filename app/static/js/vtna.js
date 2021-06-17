@@ -245,22 +245,22 @@ function updateParams(url, type, paramData, responseid, successHandler) {
             <hr>
             <div class="form-group my-auto">
               <label>
-                <input checked="" class="filled-in" id="is-excess-${numParams}" type="checkbox"/>
+                <input checked="" class="filled-in" id="params-${numParams}-excess" name="params-${numParams}-excess" type="checkbox"/>
                 <span>Excess</span>
               </label>
             </div>
             <div class="form-group input-field">
-              <label for="spec-param-${numParams}" class="active">Species</label>
-              <select id="spec-param-${numParams}" name="species" disabled>
+              <label for="params-${numParams}-species" class="active">Species</label>
+              <select id="params-${numParams}-species" name="params-${numParams}-species" disabled>
               </select>
             </div>
             <div class="form-group range-field">
-              <label for="rxn-order-${numParams}">Reactant Order</label>
-              <input class="form-control-range" id="rxn-order-${numParams}" max="3" min="0" name="order" step="0.01" type="range" value="0"><span class="thumb"><span class="value"></span></span>
+              <label for="params-${numParams}-order">Reactant Order</label>
+              <input class="form-control-range" id="params-${numParams}-order" max="3" min="0" name="params-${numParams}-order" step="0.01" type="range" value="0"><span class="thumb"><span class="value"></span></span>
             </div>
             <div class="form-group range-field">
-              <label for="poisoning-${numParams}">Poisoning</label>
-              <input class="form-control-range" id="poisoning-${numParams}" max="3" min="0" name="poisoning" step="0.01" type="range" value="0"><span class="thumb"><span class="value"></span></span>
+              <label for="params-${numParams}-poison">Poisoning</label>
+              <input class="form-control-range" id="params-${numParams}-poison" max="3" min="0" name="params-${numParams}-poison" step="0.01" type="range" value="0"><span class="thumb"><span class="value"></span></span>
             </div>
             <div id="param-${numParams}-concs-label-0" class="form-group input-field pb-2"><h6>Concentrations</h6></div>
             <div class="form-group mb-0">
@@ -285,11 +285,11 @@ function updateParams(url, type, paramData, responseid, successHandler) {
 
         if (key === 'excess') {
             if (value == 'y') {
-                $("#is-excess-" + numParams).prop('checked', true);
+                $(`#params-${numParams}-excess`).prop('checked', true);
                 let specctr = 0
                 for (spec of specs) {
                     specText = spec + " (species " + (specctr+1) + ")";
-                    $('#spec-param-' + numParams).append(`<option value="${specValue}">${specText}</option>`);
+                    $(`#params-${numParams}-species`).append(`<option value="${specValue}">${specText}</option>`);
                     specctr = specctr + 1;
                 }
                 $('select').formSelect();
@@ -298,17 +298,17 @@ function updateParams(url, type, paramData, responseid, successHandler) {
         }
 
         if (key === 'species') {
-            $(`#spec-param-${numParams}`).attr("disabled", false);
-            $("#is-excess-" + numParams).prop('checked', false);
+            $(`#params-${numParams}-species`).attr("disabled", false);
+            $(`#params-${numParams}-excess`).prop('checked', false);
             let specctr = 0
             for (spec of specs) {
                 specText = spec + " (species " + (specctr+1) + ")";
 
                 if (value == specctr) {
-                    $('#spec-param-' + numParams).append(`<option value="${value}" selected="selected">${specText}</option>`);
+                    $(`#params-${numParams}-species`).append(`<option value="${value}" selected="selected">${specText}</option>`);
                 }
                 else {
-                    $('#spec-param-' + numParams).append(`<option value="${specValue}">${specText}</option>`);
+                    $(`#params-${numParams}-species`).append(`<option value="${specValue}">${specText}</option>`);
                 }
                 specctr = specctr + 1;
             }
@@ -317,11 +317,11 @@ function updateParams(url, type, paramData, responseid, successHandler) {
         }
 
         if (key === 'order') {
-            $("#rxn-order-" + numParams).val(value)
+            $(`#params-${numParams}-order`).val(value)
             continue;
         }
         if (key === 'poison') {
-            $("#poisoning-" + numParams).val(value)
+            $(`#params-${numParams}-poison`).val(value)
             continue;
         }
 
@@ -329,15 +329,15 @@ function updateParams(url, type, paramData, responseid, successHandler) {
         rxnValue = rxctr;
 
         var htmlstr = `<div class="form-group input-field concentration-form" id="param-${numParams}-concs-label-${(rxctr+1)}">
-             <input class="form-control validate" id="param-${numParams}-start-conc-${(rxctr+1)}" name="conc" required type="text" value="${value}">
-             <label for="param-${numParams}-start-conc" class="active">${rxnText}</label>
+             <input class="form-control validate" id="params-${numParams}-concs-${rxctr}" name="params-${numParams}-concs-${rxctr}" required type="text" value="${value}">
+             <label for="params-${numParams}-concs-${rxctr}" class="active">${rxnText}</label>
              <span class="helper-text" data-error="Required. Must be integer or decimal value." data-success=""></span>
              </div>`
         $( htmlstr ).insertAfter( "#param-" + numParams + "-concs-label-" + rxctr);
         console.log((key, value));
         rxctr = rxctr + 1;
     }
-
+    $('select').formSelect();
     numParams = numParams + 1;
 
     successHandler();
@@ -356,6 +356,8 @@ $("#param-submit").click(function() {
     var url = form.prop('action');
     var type = form.prop('method');
     var formData = getFormData(form_id);
+
+    console.log(form.serialize());
 
     for (var [key, value] of formData.entries()) { console.log('formData', key, value);}
 
