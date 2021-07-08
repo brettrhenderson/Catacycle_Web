@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, BooleanField, SubmitField, SelectMultipleField, FloatField
+from wtforms import StringField, SelectField, BooleanField, SubmitField, SelectMultipleField, FloatField, FieldList, FormField
 from wtforms.validators import InputRequired, ValidationError
 from flask_wtf.file import FileRequired, FileField
 from flask import url_for
@@ -80,18 +80,32 @@ class SelectDataForm(FlaskForm):
     submit = SubmitField('Select', id='select-submit')
 
 
-class FitParamForm(FlaskForm):
-    species = StringField('Species', id="spec-param")
-    excess = StringField('Excess', id='excess')
-    concs = StringField('Starting Concentrations:')
-    submit = SubmitField('Confirm')
+class FitParamFormTemplate(FlaskForm):
+    species = StringField('Species', id="spec-param-temp")
+    excess = BooleanField('Excess', id='excess-temp')
+    poison = FloatField('Poisoning', id='set-poison')
+    order = FloatField('Reactant Order', id='rxn-order')
+    concs = SelectMultipleField('Starting Concentrations:')
+    add = SubmitField('Confirm', id='add-param-temp')
 
+class SingleFitParam(FlaskForm):
+    class Meta:
+        csrf = False
+    species = SelectField('Species', default='None')
+    excess = BooleanField('Excess')
+    poison = FloatField('Poisoning')
+    order = FloatField('Reactant Order')
+    concs = FieldList(FloatField('Concentration'))
+
+class FitParamForm(FlaskForm):
+    params = FieldList(FormField(SingleFitParam))
+    submit = SubmitField('Fit', id='param-submit')
 
 class ManualFitForm(FlaskForm):
     start = FloatField('Align Start Time', id='start-time')
-    poison = FloatField('Poisoning', id='set-poison')
-    order = FloatField('Reactant Order', id='rxn-order')
-    submit = SubmitField('Fit', id='manual-submit')
+    poison = FloatField('Poisoning', id='set-poison-old')
+    order = FloatField('Reactant Order', id='rxn-order-old')
+    submit = SubmitField('Update', id='manual-submit')
 
 
 class AutoFitForm(FlaskForm):

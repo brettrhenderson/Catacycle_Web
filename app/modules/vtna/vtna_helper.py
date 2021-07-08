@@ -2,7 +2,10 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import logging
 
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 def load_raw(filename):
     xl = pd.ExcelFile(filename)
@@ -57,23 +60,54 @@ def normalize_columns(data, totals):
         Rnorm.append(pd.concat([df.iloc[:,0], df.iloc[:, 1:].div(totals[i], axis=0)], axis=1))
     return Rnorm
 
-def get_max_times(Rnorm):
+def shift_times(data, shifts):
+    """function that normalizes all columns by the sum on that time step (excludes the time column in a sheet)"""
+    if isinstance(shifts, float):
+        shifts = [shifts for _ in data]
+    for i, df in enumerate(data):
+        df.iloc[:, 0] -= shifts[i]
+    return data
+
+def get_max_times(data):
     maxtime = []
-    for df in Rnorm:
+    for df in data:
         maxtime.append(df.iloc[:, 0].max())
     return maxtime
 
-def select_data(Rnorm, reactions=None, species=None):
+def multiply_concs(data, concs):
+    concs = np.array(concs)
+    for i, df in enumerate(data):
+        for j in range(1, len(df.columns)):
+            df.iloc[:, j] *= concs[i, j]
+    return data
+
+def select_data(data, reactions=None, species=None):
     """selects data to plot"""
     if reactions is None:   #return all reactions
         if species is None:     #return all species
-            return Rnorm
-        return [Rnorm[rxn].iloc[:, [0]+[spec+1 for spec in species]] for rxn in range(len(Rnorm))]
+            return data
+        return [data[rxn].iloc[:, [0]+[spec+1 for spec in species]] for rxn in range(len(data))]
     elif species is None:
-        return [Rnorm[rxn] for rxn in reactions]
-    return [Rnorm[rxn].iloc[:, [0]+[spec+1 for spec in species]] for rxn in reactions]
+        return [data[rxn] for rxn in reactions]
+    return [data[rxn].iloc[:, [0]+[spec+1 for spec in species]] for rxn in reactions]
 
-def plot_vtna(data,  concs, order=1, trans_zero=None,  windowsize=None, colors=None, marker_shape="o", markersize=15,
+def time_norm(time, conc, order):
+    dt = time[1:] - time[:-1]
+    ave_conc = (conc[1:] + conc[:-1]) / 2
+    # check if conc, order are iterables
+    # if so, the integrand should have the product of the conc^order for each reagent
+    if type(order) == np.ndarray and conc.shape[1] == len(order):
+        integrand = dt
+        log.debug(f"dt: {dt}")
+        for i, o in enumerate(order):
+            log.debug(f"concentrations: {ave_conc[:, i]}")
+            integrand = integrand * ave_conc[:, i]**o
+            log.debug(f"integrand: {integrand}")
+    else:
+        integrand = ((ave_conc)**order)*dt
+    return np.concatenate((np.array([0]), np.cumsum(integrand, dtype=float)))
+
+def plot_vtna(data, concs, order=1, trans_zero=None,  windowsize=None, colors=None, marker_shape="o", markersize=15,
               linestyle=':', guide_lines=True, f_format='png', return_image=False, figsize=(8,6)):
     """Plot the Aligned Reaction Traces"""
     if trans_zero is None:

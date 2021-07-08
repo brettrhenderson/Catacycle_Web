@@ -165,6 +165,7 @@ $(document).ready(function() {
                 <div class="form-group mb-0">
                   <button id="{{ sform.submit.id }}" type="button" class="btn btn-block btn-primary">{{ sform.submit.label.text }}</button>
                 </div>
+                <div class="my-auto"><span id="response-selectform"></span></div>
               </form>
             </div>
           </div>
@@ -173,33 +174,48 @@ $(document).ready(function() {
           </a>
           <div class="collapse" id="param-fit">
             <div id="param-fit-card" class="card">
-              <div class="mt-3 mb-3 ml-3 mr-3">
-                <button data-toggle="collapse" href="#new-param" type="button" class="btn btn-block" id="addparam">
-                    Add New   <i class="fa fa-plus pl-3"></i>
-                </button>
-              </div>
-              <div class="collapse ml-3 mr-3" id="new-param">
-                <hr>
-                <form enctype="multipart/form-data" id="param-form" action="{{ url_for('fit_data') }}" method="post">
-                  {{ pform.hidden_tag() }}
-                  <div class="form-group my-auto">
-                    <label>
-                      <input checked="" class="filled-in" id="{{ pform.excess.id }}" type="checkbox"/>
-                      <span>{{ pform.excess.label.text }}</span>
-                    </label>
-                  </div>
-                  <div class="form-group input-field">
-                    {{ pform.species.label(class_="active") }}
-                    <select id="{{ pform.species.id }}" name="species" disabled>
-                    </select>
-                  </div>
-                  <div id="concs-label-0" class="form-group input-field pb-2"><h6>Concentrations</h6></div>
-                  <div class="form-group mb-0">
-                    <button id="{{ pform.submit.id }}" type="button" class="btn btn-block btn-primary pl-2 pr-2">{{ pform.submit.label.text }}</button>
-                  </div>
-                </form>
-                <hr>
-              </div>
+              <form enctype="multipart/form-data" id="param-add-form" action="#" method="post">
+                <div class="mt-3 mb-3 ml-3 mr-3">
+                  <button data-toggle="collapse" href="#new-param" type="button" class="btn btn-block" id="addparam">
+                      Add New   <i class="fa fa-plus pl-3"></i>
+                  </button>
+                </div>
+                <div class="collapse ml-3 mr-3" id="new-param">
+                  <hr>
+                    <div class="form-group my-auto">
+                      <label>
+                        {{ pformt.excess(type="checkbox", class_="filled-in", checked="") }}
+<!--                        <input checked="" class="filled-in" id="{{ pformt.excess.id }}" type="checkbox"/>-->
+                        <span>{{ pformt.excess.label.text }}</span>
+                      </label>
+                    </div>
+                    <div class="form-group input-field">
+                      {{ pformt.species.label(class_="active") }}
+                      <select id="{{ pformt.species.id }}" name="species" disabled>
+                      </select>
+                    </div>
+                    <div class="form-group range-field">
+                      {{ pformt.order.label }}
+                      {{ pformt.order(type="range", class_="form-control-range", min="0", max="3", step="0.01", value="0") }}
+                    </div>
+                    <div class="form-group range-field">
+                      {{ pformt.poison.label }}
+                      {{ pformt.poison(type="range", class_="form-control-range", min="0", max="1", step="0.01", value="0") }}
+                    </div>
+                    <div id="concs-label-0" class="form-group input-field pb-2"><h6>Concentrations</h6></div>
+                    <div class="form-group mb-0">
+                      <button id="{{ pformt.add.id }}" type="button" class="btn btn-block btn-primary pl-2 pr-2">{{ pformt.add.label.text }}</button>
+                    </div>
+                  <hr>
+                </div>
+              </form>
+
+              <form enctype="multipart/form-data" id="param-form" action="{{ url_for('fit_data') }}" method="post">
+                {{ pform.hidden_tag() }}
+                <div id="submit-params" class="form-group mb-0">
+                  <button id="{{ pform.submit.id }}" type="button" class="btn btn-block btn-primary pl-2 pr-2">{{ pform.submit.label.text }}</button>
+                </div>
+              </form>
             </div>
           </div>
           <a class="btn btn-block btn-secondary" data-toggle="collapse" href="#manual-fit" role="button" aria-expanded="false" aria-controls="collapseExample">
@@ -207,7 +223,7 @@ $(document).ready(function() {
           </a>
           <div class="collapse" id="manual-fit">
             <div class="card card-body">
-              <form enctype="multipart/form-data" id="manual-form" action="{{ url_for('fit_data') }}" method="post">
+              <form enctype="multipart/form-data" id="manual-form" action="{{ url_for('set_start') }}" method="post">
                 {{ mform.hidden_tag() }}
                 <div class="form-group range-field">
                   {{ mform.start.label }}
@@ -221,6 +237,10 @@ $(document).ready(function() {
                   {{ mform.poison.label }}
                   {{ mform.poison(type="range", class_="form-control-range", min="0", max="1", step="0.01", value="0", disabled=True) }}
                 </div>
+                <div class="form-group my-auto">
+                  <button id="{{ mform.submit.id }}" type="submit" class="btn btn-block btn-primary">{{ mform.submit.label.text }}</button>
+                </div>
+                <div class="my-auto"><span id="response-manualform"></span></div>
               </form>
             </div>
           </div>
