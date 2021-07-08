@@ -4,7 +4,7 @@ flask~=1.0.2
 flask-bootstrap4
 flask-wtf
 pandas~=1.0.3
-xlrd
+xlrd==1.2.0
 Werkzeug~=0.14.1
 WTForms~=2.2.1
 Flask_Session
