@@ -60,10 +60,10 @@ class DataForm(FlaskForm):
                                                                message="File must have .xslx extension.")],
                    description='Upload Reaction Data in Excel file format described in "How to Format Your Data"',
                    id='excelUpload', default='/static/sampledata/Hydroamination-Kinetics-Catalyst-Order.xlsx')
-    normtype = SelectField('Normalization Type', choices=[('MV', 'Max Value Normalization'),
-                                                          ('TC', 'Total Count Normalization'), ('None', 'None')],
+    normtype = SelectField('Normalization Type', choices=[('None', 'None'), ('MV', 'Max Value Normalization'),
+                                                          ('TC', 'Total Count Normalization')],
                            description='How to normalize the data.  See "Choosing data normalization method"',
-                           id='normType', default='MV')
+                           id='normType', default='None')
 
     submit = SubmitField('Plot', id="upload-submit")
 
@@ -82,7 +82,7 @@ class SelectDataForm(FlaskForm):
 
 class FitParamFormTemplate(FlaskForm):
     species = StringField('Species', id="spec-param-temp")
-    excess = BooleanField('Excess', id='excess-temp')
+    excess = BooleanField('Catalyst', id='excess-temp')
     poison = FloatField('Poisoning', id='set-poison')
     order = FloatField('Reactant Order', id='rxn-order')
     concs = SelectMultipleField('Starting Concentrations:')
