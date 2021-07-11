@@ -18,6 +18,29 @@ $("#excess-temp").click(function (){
     }
 });
 
+
+/*
+Submission Handlers:
+
+These functions handle the specific submission formats of each data form.
+The different data forms are:
+
+1) Upload: (ID: "#upload-submit"). Handles uploading new data and plotting it.
+   Invokes the plotSuccess callback, which removes all existing parameters
+   and data selections.
+2) Manual Submit: (ID: "#manual-submit"). Right now, handles just zeroing the time.
+   TODO: remove this altogether or fix the corresponding interface and maybe merge
+   it with another form
+3) Select Data: (ID: "#select-submit"). Selects which reaction data to plot.
+   TODO: Have the selected data reflected in the normalization input form.
+4) Add new Parameter: (ID: "#add-param-temp"). Adds a new parameter which can be used
+   to fit the data. Does not actually make any ajax requests, just adds a new card
+   to the front end with the additional parameters.
+5) Submit Fitting Parameters: (ID: "#param-submit"). Submits all data for fitting and
+   returns a plot that is time normalized and includes catalyst poisoning.
+
+*/
+
 // make file upload submit form automatically
 $("#upload-submit").click(function() {
     // Prevent redirection with AJAX for contact form
@@ -57,66 +80,58 @@ $("#select-submit").click(function() {
     send_form(form, form_id, url, type, modular_ajax, formData, '#response-selectform', plotSuccess);
 });
 
-// Code modified from https://medium.com/javascript-in-plain-english/how-to-form-submissions-with-flask-and-ajax-dfde9891c620
-function getFormData(form) {
-    // creates a FormData object and adds chips text
-    var formData = new FormData(document.getElementById(form));
+/* Add a parameter card for new concentrations added.
+The "action" of this form actually has no effect on the backend.*/
+$("#add-param-temp").click(function() {
+    // Prevent redirection with AJAX for contact form
+    var form = $('#param-add-form');
+    var form_id = 'param-add-form';
+    var url = form.prop('action');
+    var type = form.prop('method');
+    var formData = getFormData(form_id);
+
+    // submit form via AJAX
+    send_form(form, form_id, url, type, updateParams, formData, '#response-paramform', paramSuccess);
+});
+
+// Actually submit all normalization parameters to the backend for plotting
+$("#param-submit").click(function() {
+    // Prevent redirection with AJAX for contact form
+    var form = $('#param-form');
+    var form_id = 'param-form';
+    var url = form.prop('action');
+    var type = form.prop('method');
+    var formData = getFormData(form_id);
+
+    // console.log(form.serialize());
+
     for (var [key, value] of formData.entries()) { console.log('formData', key, value);}
-    return formData
-}
 
-function send_form(form, form_id, url, type, inner_ajax, formData, responseid, successHandler) {
-    // form validation and sending of form items
-    if ( form[0].checkValidity() && isFormDataEmpty(formData) == false ) { // checks if form is empty
-        event.preventDefault();
-        // inner AJAX call
-        inner_ajax(url, type, formData, responseid, successHandler);
-    }
-    else {
-        // first, scan the page for labels, and assign a reference to the label from the actual form element:
-        var labels = document.getElementsByTagName('LABEL');
-        for (var i = 0; i < labels.length; i++) {
-            if (labels[i].htmlFor != '') {
-                 var elem = document.getElementById(labels[i].htmlFor);
-                 if (elem)
-                    elem.label = labels[i];
-            }
-        }
-
-        // then find all invalid input elements (form fields)
-        var Form = document.getElementById(form_id);
-        var invalidList = Form.querySelectorAll(':invalid');
-
-        if ( typeof invalidList !== 'undefined' && invalidList.length > 0 ) {
-            // errors were found in the form (required fields not filled out)
-
-            // for each invalid input element (form field) return error
-            for (var item of invalidList) {
-                if (item.label) {
-                    M.toast({html: "Please correctly fill the "+item.label.innerHTML+"", classes: 'bg-danger text-white'});
-                    $(responseid).html('');
-                }
-            }
-        }
-        else {
-            M.toast({html: "Another error occured, please try again.", classes: 'bg-danger text-white'});
-            $(responseid).html('');
-        }
-    }
-}
+    // submit form via AJAX
+    send_form(form, form_id, url, type, modular_ajax, formData, '#response-xlform', fitSuccess);
+});
 
 
-function isFormDataEmpty(formData) {
-    // checks for all values in formData object if they are empty
-    for (var [key, value] of formData.entries()) {
-        if (key != 'csrf_token') {
-            if (value != '' && value != []) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
+/*
+Success Handlers:
+
+These functions handle the data returned by the python backend during
+an ajax request. They are all invoked within the submission handlers
+above, which initiate the ajax requests. The success handlers include:
+
+1) plotSuccess: Meant to handle new reaction data after an excel file
+   upload. Currently also being used to handle the data selection and
+   time zeroing.
+   TODO: Remove this as the success handler for everything other than
+   data upload and write specific handlers for each of those individual
+   cases.
+2) updateParams / paramSuccess: These handle the addition of new cards
+   for each fitting parameter added. They don't actually submit and
+   handle an ajax request and just do everything in the front end.
+3) fitSuccess: Handles the updated plot that has been time-normalized
+   Simply adds this new plot and leaves all of the submission forms
+   unchanged.
+*/
 
 function plotSuccess(data) {
     $('#graph').attr("src", data.new_plot)
@@ -169,71 +184,8 @@ function plotSuccess(data) {
     $('select').formSelect();
 }
 
-function modular_ajax(url, type, formData, responseid, successHandler) {
-    // Most simple modular AJAX building block
-    var result = '';
-    $.ajax({
-        url: url,
-        type: type,
-        data: formData,
-        processData: false,
-        contentType: false,
-        beforeSend: function() {
-            // show the preloader (progress bar)
-            $(responseid).html("<div class='progress'><div class='indeterminate'></div></div>");
-        },
-        complete: function () {
-            // hide the preloader (progress bar)
-            $(responseid).html("");
-        },
-        success: function ( data ){
-            if ( !$.trim( data.feedback )) { // response from Flask is empty
-                toast_error_msg = "An empty response was returned.";
-                toast_category = "danger";
-            }
-            else { // response from Flask contains elements
-                toast_error_msg = data.feedback;
-                toast_category = data.category;
-                successHandler(data);
-            }
-
-        },
-        error: function(xhr) {console.log("error. see details below.");
-            console.log(xhr.status + ": " + xhr.responseText);
-            toast_error_msg = "An error occured";
-            toast_category = "danger";
-        },
-    }).done(function() {
-        M.toast({html: toast_error_msg, classes: 'bg-' +toast_category+ ' text-white'});
-    });
-};
-
-var csrf_token = "{{ csrf_token() }}";
-
-$.ajaxSetup({
-    beforeSend: function(xhr, settings) {
-        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
-            xhr.setRequestHeader("X-CSRFToken", csrf_token);
-        }
-    }
-});
-
-
-
-// add a parameter card for new concentrations added.
-$("#add-param-temp").click(function() {
-    // Prevent redirection with AJAX for contact form
-    var form = $('#param-add-form');
-    var form_id = 'param-add-form';
-    var url = form.prop('action');
-    var type = form.prop('method');
-    var formData = getFormData(form_id);
-
-    // submit form via AJAX
-    send_form(form, form_id, url, type, updateParams, formData, '#response-paramform', paramSuccess);
-});
-
-
+/* This takes the place of the modular_ajax function when updating or adding
+a new fitting parameter. It does not make an ajax request*/
 function updateParams(url, type, paramData, responseid, successHandler) {
     // add a new parameter card for fitting
     let new_card  = `<div id="param-div-${numParams}" class="mt-3 mb-3 ml-3 mr-3 concentration-form">
@@ -272,10 +224,13 @@ function updateParams(url, type, paramData, responseid, successHandler) {
     $("#new-param").collapse('hide');
     $( new_card ).insertBefore( "#submit-params" );
     $("[id^=start-conc-]").val('');
+
+    // create a delete button to remove this normalization parameter
     var dummyParams = numParams;
     $( `#delete-param-${dummyParams}` ).click(function() {
         $(`#param-div-${dummyParams}`).remove();
         $(`#param-fit-${dummyParams}`).remove();
+        numParams = numParams - 1;
     });
 
     var rxctr = 0;
@@ -347,20 +302,126 @@ function paramSuccess() {
     console.log("Success!!");
 };
 
+function fitSuccess(data) {
+    $('#graph').attr("src", data.new_plot)
+    $('select').formSelect();
+}
 
-// make file upload submit form automatically
-$("#param-submit").click(function() {
-    // Prevent redirection with AJAX for contact form
-    var form = $('#param-form');
-    var form_id = 'param-form';
-    var url = form.prop('action');
-    var type = form.prop('method');
-    var formData = getFormData(form_id);
 
-    console.log(form.serialize());
+/*
+UTILITIES:
 
+These functions are generic helpers for sending form data to the python backend
+and handling the responses without refreshing the webpage. They are invoked when
+any of the form submission buttons are clicked.
+*/
+
+// Code modified from https://medium.com/javascript-in-plain-english/how-to-form-submissions-with-flask-and-ajax-dfde9891c620
+function getFormData(form) {
+    // creates a FormData object and adds chips text
+    var formData = new FormData(document.getElementById(form));
     for (var [key, value] of formData.entries()) { console.log('formData', key, value);}
+    return formData
+}
 
-    // submit form via AJAX
-    send_form(form, form_id, url, type, modular_ajax, formData, '#response-xlform', plotSuccess);
+function send_form(form, form_id, url, type, inner_ajax, formData, responseid, successHandler) {
+    // form validation and sending of form items
+    if ( form[0].checkValidity() && isFormDataEmpty(formData) == false ) { // checks if form is empty
+        event.preventDefault();
+        // inner AJAX call
+        inner_ajax(url, type, formData, responseid, successHandler);
+    }
+    else {
+        // first, scan the page for labels, and assign a reference to the label from the actual form element:
+        var labels = document.getElementsByTagName('LABEL');
+        for (var i = 0; i < labels.length; i++) {
+            if (labels[i].htmlFor != '') {
+                 var elem = document.getElementById(labels[i].htmlFor);
+                 if (elem)
+                    elem.label = labels[i];
+            }
+        }
+
+        // then find all invalid input elements (form fields)
+        var Form = document.getElementById(form_id);
+        var invalidList = Form.querySelectorAll(':invalid');
+
+        if ( typeof invalidList !== 'undefined' && invalidList.length > 0 ) {
+            // errors were found in the form (required fields not filled out)
+
+            // for each invalid input element (form field) return error
+            for (var item of invalidList) {
+                if (item.label) {
+                    M.toast({html: "Please correctly fill the "+item.label.innerHTML+"", classes: 'bg-danger text-white'});
+                    $(responseid).html('');
+                }
+            }
+        }
+        else {
+            M.toast({html: "Another error occured, please try again.", classes: 'bg-danger text-white'});
+            $(responseid).html('');
+        }
+    }
+}
+
+
+function isFormDataEmpty(formData) {
+    // checks for all values in formData object if they are empty
+    for (var [key, value] of formData.entries()) {
+        if (key != 'csrf_token') {
+            if (value != '' && value != []) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+function modular_ajax(url, type, formData, responseid, successHandler) {
+    // Most simple modular AJAX building block
+    var result = '';
+    $.ajax({
+        url: url,
+        type: type,
+        data: formData,
+        processData: false,
+        contentType: false,
+        beforeSend: function() {
+            // show the preloader (progress bar)
+            $(responseid).html("<div class='progress'><div class='indeterminate'></div></div>");
+        },
+        complete: function () {
+            // hide the preloader (progress bar)
+            $(responseid).html("");
+        },
+        success: function ( data ){
+            if ( !$.trim( data.feedback )) { // response from Flask is empty
+                toast_error_msg = "An empty response was returned.";
+                toast_category = "danger";
+            }
+            else { // response from Flask contains elements
+                toast_error_msg = data.feedback;
+                toast_category = data.category;
+                successHandler(data);
+            }
+
+        },
+        error: function(xhr) {console.log("error. see details below.");
+            console.log(xhr.status + ": " + xhr.responseText);
+            toast_error_msg = "An error occured";
+            toast_category = "danger";
+        },
+    }).done(function() {
+        M.toast({html: toast_error_msg, classes: 'bg-' +toast_category+ ' text-white'});
+    });
+};
+
+var csrf_token = "{{ csrf_token() }}";
+
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrf_token);
+        }
+    }
 });
