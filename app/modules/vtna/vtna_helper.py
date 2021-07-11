@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import logging
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.WARNING)
 
 def load_raw(filename):
     xl = pd.ExcelFile(filename)
@@ -28,9 +28,18 @@ def load_raw(filename):
         existing_reactants = [str(i) for i in range(1, len(raw_data[1].columns) + 1)]
     return raw_data, xl.sheet_names, existing_reactants[1:]
 
-#produce a column summing all counts at each
-# timestep for total ion count normalization
 def get_TC(data):
+    """
+    produce a column summing all counts at each timestep to be used for Total ion Count normalization
+
+    Parameters
+    ----------
+    data
+
+    Returns
+    -------
+
+    """
     totals = []
     for df in data:
         totals.append(df.iloc[:, 1:].sum(axis=1))
@@ -40,28 +49,60 @@ def testtc(df):
     return df.values[:, 1:].sum(axis=1)
 
 def get_sheet_totals(normalization_method, data):
-    """returns chosen normalization value"""
+    """
+    returns chosen normalization value
+
+    if neither TC nor MV is selected, the operations of Total1 and Total2
+    will not change any values
+    Parameters
+    ----------
+    normalization_method
+    data
+
+    Returns
+    -------
+
+    """
     totals = []
     if normalization_method == "TC" or normalization_method == "Total Count":
         totals = get_TC(data)
     elif normalization_method == "MV" or normalization_method == "Max Value":
         for df in data:
             totals.append(df.iloc[:, 1:].max().max())
-    # if neither TC nor MV is selected, the operations of Total1 and Total2
-    # will not change any values
     else:
         totals = [1]*len(data)
     return totals
 
 def normalize_columns(data, totals):
-    """function that normalizes all columns by the sum on that time step (excludes the time column in a sheet)"""
+    """
+    normalize all columns by the sum on that time step (excludes the time column in a sheet)
+    Parameters
+    ----------
+    data
+    totals
+
+    Returns
+    -------
+
+    """
     Rnorm = []
     for i, df in enumerate(data):
         Rnorm.append(pd.concat([df.iloc[:,0], df.iloc[:, 1:].div(totals[i], axis=0)], axis=1))
     return Rnorm
 
 def shift_times(data, shifts):
-    """function that normalizes all columns by the sum on that time step (excludes the time column in a sheet)"""
+    """
+    function that normalizes all columns by the sum on that time step (excludes the time column in a sheet)
+
+    Parameters
+    ----------
+    data
+    shifts
+
+    Returns
+    -------
+
+    """
     if isinstance(shifts, float):
         shifts = [shifts for _ in data]
     for i, df in enumerate(data):
@@ -69,11 +110,24 @@ def shift_times(data, shifts):
     return data
 
 def get_max_times(data):
+    """
+    Get the final time at the end of reaction data.
+
+    Parameters
+    ----------
+    data : list of pandas.DataFrame
+
+    Returns
+    -------
+    maximum time: float
+
+    """
     maxtime = []
     for df in data:
         maxtime.append(df.iloc[:, 0].max())
     return maxtime
 
+## update concs to be read from sheet (column 1) and have user update names of species in the website if they desire
 def multiply_concs(data, concs):
     concs = np.array(concs)
     for i, df in enumerate(data):
@@ -92,6 +146,7 @@ def select_data(data, reactions=None, species=None):
     return [data[rxn].iloc[:, [0]+[spec+1 for spec in species]] for rxn in reactions]
 
 def time_norm(time, conc, order):
+
     dt = time[1:] - time[:-1]
     ave_conc = (conc[1:] + conc[:-1]) / 2
     # check if conc, order are iterables

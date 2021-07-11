@@ -241,7 +241,7 @@ def fit_data():
         if fitform.validate():
             category = "success"
             log.debug(f"Rxns: {rxns},  Species: {specs}")
-
+            log.debug(fitform.data)
             # parse the data into a usable form
             orders = [form.order.data for form in fitform.params]
             poisons = [form.poison.data for form in fitform.params]
@@ -260,9 +260,9 @@ def fit_data():
             for i, rxn in enumerate(select_data):
                 for j, spec in enumerate(param_specs):
                     if spec == "None": # This means it is an excess reagent / catalyst
-                        concs[i].append([conc_multipliers[j][i] for _ in range(rxn.values.shape[0])])
+                        concs[i].append([conc_multipliers[j][i] - poisons[j] for _ in range(rxn.values.shape[0])])
                     else:
-                        concs[i].append(list(rxn.iloc[:, j+1].values))
+                        concs[i].append(list(rxn.iloc[:, j+1].values - poisons[j]))
             log.debug(concs)
             for i, rxn_concs in enumerate(concs):
                 concs[i] = np.array(rxn_concs).T

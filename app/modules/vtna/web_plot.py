@@ -27,12 +27,7 @@ def plot_vtna(data, concs=None, norm_time=False, orders=None, trans_zero=None,  
     maxtime = max(vh.get_max_times(data))
     for i, rxn in enumerate(data):
         if norm_time:
-            # t_vtna = (rxn.iloc[:, 0] + trans_zero[i]) * float(concs[i]) ** orders
-            log.debug(f"concs: {concs[i]}")
-            log.debug(f"orders: {orders}")
-            log.debug(f"Original Time: {rxn.iloc[:, 0].values + trans_zero[i]}")
             t_vtna = vh.time_norm(rxn.iloc[:, 0].values + trans_zero[i], concs[i], orders)
-            log.debug(f"Normalized Time: {t_vtna}")
         else:
             t_vtna = rxn.iloc[:, 0] + trans_zero[i]
         for j, col in enumerate(rxn.columns):
