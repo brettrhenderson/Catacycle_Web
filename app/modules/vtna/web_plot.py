@@ -10,7 +10,7 @@ import logging
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
-def plot_vtna(data, concs=None, norm_time=False, orders=None, poison=None, trans_zero=None,  windowsize=None, colors=None, legend=True,
+def plot_vtna(data, concs=None, norm_time=False, orders=None, trans_zero=None,  windowsize=None, colors=None, legend=True,
               guide_lines=True, f_format='svg', **kwargs):
     """Plot the Aligned Reaction Traces"""
     log.debug("Closed all figures!")
@@ -27,13 +27,7 @@ def plot_vtna(data, concs=None, norm_time=False, orders=None, poison=None, trans
     maxtime = max(vh.get_max_times(data))
     for i, rxn in enumerate(data):
         if norm_time:
-            # t_vtna = (rxn.iloc[:, 0] + trans_zero[i]) * float(concs[i]) ** orders
-            log.debug(f"concs: {concs[i]}")
-            log.debug(f"orders: {orders}")
-            #log.debug(f"poisons: {poison}")
-            log.debug(f"Original Time: {rxn.iloc[:, 0].values + trans_zero[i]}")
             t_vtna = vh.time_norm(rxn.iloc[:, 0].values + trans_zero[i], concs[i], orders)
-            log.debug(f"Normalized Time: {t_vtna}")
         else:
             t_vtna = rxn.iloc[:, 0] + trans_zero[i]
         for j, col in enumerate(rxn.columns):
