@@ -206,13 +206,13 @@ function updateParams(url, type, paramData, responseid, successHandler) {
               <select id="params-${numParams}-species" name="params-${numParams}-species" disabled>
               </select>
             </div>
-            <div class="form-group range-field">
-              <label for="params-${numParams}-order">Reactant Order</label>
-              <input class="form-control-range" id="params-${numParams}-order" max="3" min="0" name="params-${numParams}-order" step="0.01" type="range" value="0"><span class="thumb"><span class="value"></span></span>
+            <div class="form-group input-field">
+              <label class="active" for="params-${numParams}-order">Reactant Order</label>
+              <input class="form-control" id="params-${numParams}-order" max="3" min="0" name="params-${numParams}-order" step="0.01" type="number" value="0"><span class="thumb"><span class="value"></span></span>
             </div>
-            <div class="form-group range-field">
-              <label for="params-${numParams}-poison">Poisoning</label>
-              <input class="form-control-range" id="params-${numParams}-poison" max="3" min="0" name="params-${numParams}-poison" step="0.01" type="range" value="0"><span class="thumb"><span class="value"></span></span>
+            <div class="form-group input-field">
+              <label class="active" for="params-${numParams}-poison">Poisoning</label>
+              <input class="form-control" id="params-${numParams}-poison" max="3" min="0" name="params-${numParams}-poison" step="0.01" type="number" value="0"><span class="thumb"><span class="value"></span></span>
             </div>
             <div id="param-${numParams}-concs-label-0" class="form-group input-field pb-2"><h6>Concentrations</h6></div>
             <div class="form-group mb-0">
