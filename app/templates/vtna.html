@@ -206,32 +206,6 @@ $(document).ready(function() {
               </form>
             </div>
           </div>
-          <a class="btn btn-block btn-secondary" data-toggle="collapse" href="#manual-fit" role="button" aria-expanded="false" aria-controls="collapseExample">
-            Manual Fitting
-          </a>
-          <div class="collapse" id="manual-fit">
-            <div class="card card-body">
-              <form enctype="multipart/form-data" id="manual-form" action="{{ url_for('set_start') }}" method="post">
-                {{ mform.hidden_tag() }}
-                <div class="form-group range-field">
-                  {{ mform.start.label }}
-                  {{ mform.start(type="range", class_="form-control-range", min="0", max="40", step="0.1", value="0") }}
-                </div>
-                <div class="form-group range-field">
-                  {{ mform.order.label }}
-                  {{ mform.order(type="range", class_="form-control-range", min="0", max="3", step="0.01", value="0", disabled=True) }}
-                </div>
-                <div class="form-group range-field">
-                  {{ mform.poison.label }}
-                  {{ mform.poison(type="range", class_="form-control-range", min="0", max="1", step="0.01", value="0", disabled=True) }}
-                </div>
-                <div class="form-group my-auto">
-                  <button id="{{ mform.submit.id }}" type="submit" class="btn btn-block btn-primary">{{ mform.submit.label.text }}</button>
-                </div>
-                <div class="my-auto"><span id="response-manualform"></span></div>
-              </form>
-            </div>
-          </div>
           <a class="btn btn-block btn-secondary" data-toggle="collapse" href="#auto-fit" role="button" aria-expanded="false" aria-controls="collapseExample">
             Auto Fitting
           </a>
