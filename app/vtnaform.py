@@ -74,7 +74,7 @@ class StyleForm(FlaskForm):
     marker = SelectField('Marker', description="Marker Style.", id='marker',
                          choices=[('^', 'Triangles'), ('s', 'Squares'), ('.', 'Points'), ('o', 'Circles')])
     linestyle = SelectField('Linestyle', description="Line Style.", id='linestyle',
-                            choices=[(':', 'Dots'), ('-', 'Solid'), ('--', 'Dashed'), ('-.', 'Dash-Dots')])
+                            choices=[(':', 'Dots'), ('-', 'Solid'), ('--', 'Dashed'), ('-.', 'Dash-Dots'), ('', 'None')])
     markersize = IntegerField('Marker Size', description="Marker Size.", id='markersize')
     linewidth = IntegerField('Linewidth', description="Linewidth.", id='linewidth')
     guidelines = BooleanField('Guidelines', description="Toggle Guidelines.", id='guidelines')
