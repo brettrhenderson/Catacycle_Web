@@ -77,7 +77,7 @@ $("#select-submit").click(function() {
     var formData = getFormData(form_id);
 
     // submit form via AJAX
-    send_form(form, form_id, url, type, modular_ajax, formData, '#response-selectform', plotSuccess);
+    send_form(form, form_id, url, type, modular_ajax, formData, '#response-selectform', selectSuccess);
 });
 
 /* Add a parameter card for new concentrations added.
@@ -327,6 +327,11 @@ function fitSuccess(data) {
 }
 
 function styleSuccess(data) {
+    $('#graph').attr("src", data.new_plot)
+    $('select').formSelect();
+}
+
+function selectSuccess(data) {
     $('#graph').attr("src", data.new_plot)
     $('select').formSelect();
 }
