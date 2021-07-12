@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, BooleanField, SubmitField, SelectMultipleField, FloatField, FieldList, FormField
+from wtforms import StringField, SelectField, BooleanField, SubmitField, SelectMultipleField, FloatField, FieldList, FormField, IntegerField
 from wtforms.validators import InputRequired, ValidationError
 from flask_wtf.file import FileRequired, FileField
 from flask import url_for
@@ -69,8 +69,15 @@ class DataForm(FlaskForm):
 
 
 class StyleForm(FlaskForm):
-    units = StringField('Units', validators=[], description='Concentration Units to use for axes/legend.', id='units')
+    # units = StringField('Units', validators=[], description='Concentration Units to use for axes/legend.', id='units')
     legend = BooleanField('Legend', description="Add Legend to plot.", id='legend')
+    marker = SelectField('Marker', description="Marker Style.", id='marker',
+                         choices=[('^', 'Triangles'), ('s', 'Squares'), ('.', 'Points'), ('o', 'Circles')])
+    linestyle = SelectField('Linestyle', description="Line Style.", id='linestyle',
+                            choices=[(':', 'Dots'), ('-', 'Solid'), ('--', 'Dashed'), ('-.', 'Dash-Dots')])
+    markersize = IntegerField('Marker Size', description="Marker Size.", id='markersize')
+    linewidth = IntegerField('Linewidth', description="Linewidth.", id='linewidth')
+    guidelines = BooleanField('Guidelines', description="Toggle Guidelines.", id='guidelines')
     submit = SubmitField('Apply', id='style-submit')
 
 
