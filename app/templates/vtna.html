@@ -258,6 +258,14 @@ $(document).ready(function() {
                     {{ stform.linestyle.label(class_="active") }}
                     {{ stform.linestyle() }}
                 </div>
+                <div class="form-group input-field">
+                      {{ stform.markersize.label }}
+                      {{ stform.markersize(type="number", class_="form-control", min="1", max="10", step="1", value="5") }}
+                </div>
+                <div class="form-group input-field">
+                      {{ stform.linewidth.label }}
+                      {{ stform.linewidth(type="number", class_="form-control", min="1", max="10", step="1", value="2") }}
+                </div>
                 <div class="form-group mb-0">
                   <button id="{{ stform.submit.id }}" type="button" class="btn btn-block btn-primary">{{ stform.submit.label.text }}</button>
                 </div>

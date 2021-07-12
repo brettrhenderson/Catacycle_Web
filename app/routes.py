@@ -120,6 +120,10 @@ def upload_data():
                 session['specs_sel'] = [i for i, _ in enumerate(specs)]
                 session['legend'] = True
                 session['guidelines'] = True
+                session['linewidth'] = 2
+                session['linestyle'] = ':'
+                session['marker'] = '^'
+                session['markersize'] = 5
 
                 fb = f"Successfully uploaded {f.filename}<br>Found {len(raw_data)} reactions and " \
                          f"{raw_data[0].shape[1] - 1} monitored species in this file."
@@ -128,7 +132,7 @@ def upload_data():
                 totals = vh.get_sheet_totals(session['normtype'], raw_data)
                 norm_data = vh.normalize_columns(raw_data, totals)
                 new_plot, fig = plot_vtna(norm_data, norm_time=False, marker="^", linestyle=':', markersize=5,
-                                          guide_lines=True, legend=True)
+                                          linewidth=2, guide_lines=True, legend=True)
                 # save the filename and pickle the figure
                 pickle.dump(fig, open(session['fig'], 'wb'))
                 plt.close(fig)
@@ -205,13 +209,17 @@ def set_start():
             specs_sel = session['specs_sel']
             legend = session['legend']
             guidelines = session['guidelines']
+            lw = session['linewidth']
+            ls = session['linestyle']
+            m = session['marker']
+            ms = session['markersize']
             category = "success"
             log.debug(f"Rxns: {rxns},  Species: {specs}")
             totals = vh.get_sheet_totals(normtype, raw_data)
             norm_data = vh.shift_times(vh.normalize_columns(raw_data, totals), start)
             select_data = vh.select_data(norm_data, reactions=rxns_sel, species=specs_sel)
-            new_plot, fig = plot_vtna(select_data, norm_time=False, marker="^", linestyle=':', markersize=5,
-                                      guide_lines=guidelines, legend=legend)
+            new_plot, fig = plot_vtna(select_data, norm_time=False, marker=m, linestyle=ls, markersize=ms,
+                                      linewidth=lw, guide_lines=guidelines, legend=legend)
             # save the filename and pickle the figure
             pickle.dump(fig, open(session['fig'], 'wb'))
             plt.close(fig)
@@ -241,6 +249,10 @@ def fit_data():
         specs = session['reactants']
         legend = session['legend']
         guidelines = session['guidelines']
+        lw = session['linewidth']
+        ls = session['linestyle']
+        m = session['marker']
+        ms = session['markersize']
         for paramform in fitform.params:
             paramform.species.choices = [(str(i), str(i)) for i, _ in enumerate(specs)] + [("None", "None")]
 
@@ -275,8 +287,8 @@ def fit_data():
 
             session['orders'] = np.array(orders)
             session['concs'] = concs
-            new_plot, fig = plot_vtna(select_data, norm_time=True, concs=concs, orders=np.array(orders), marker="^", linestyle=':', markersize=5,
-                                      guide_lines=guidelines, legend=legend)
+            new_plot, fig = plot_vtna(select_data, norm_time=True, concs=concs, orders=np.array(orders), marker=m,
+                                      linestyle=ls, markersize=ms, linewidth=lw, guide_lines=guidelines, legend=legend)
             # save the filename and pickle the figure
             pickle.dump(fig, open(session['fig'], 'wb'))
             plt.close(fig)
@@ -308,6 +320,10 @@ def style_data():
 
         session['legend'] = styleform.legend.data
         session['guidelines'] = styleform.guidelines.data
+        session['linewidth'] = styleform.linewidth.data
+        session['linestyle'] = styleform.linestyle.data
+        session['marker'] = styleform.marker.data
+        session['markersize'] = styleform.markersize.data
 
         if styleform.validate():
             category = "success"
@@ -318,9 +334,10 @@ def style_data():
             norm_data = vh.shift_times(vh.normalize_columns(raw_data, totals), starts)
             select_data = vh.select_data(norm_data, reactions=rxns_sel, species=specs_sel)
 
-            new_plot, fig = plot_vtna(select_data, norm_time=normtime, concs=concs, orders=orders, marker="^",
-                                      linestyle=':', markersize=5,
-                                      guide_lines=session['guidelines'], legend=session['legend'])
+            new_plot, fig = plot_vtna(select_data, norm_time=normtime, concs=concs, orders=orders, marker=session['marker'],
+                                      linestyle=session['linestyle'], markersize=session['markersize'],
+                                      linewidth=session['linewidth'], guide_lines=session['guidelines'],
+                                      legend=session['legend'])
             # save the filename and pickle the figure
             pickle.dump(fig, open(session['fig'], 'wb'))
             plt.close(fig)
