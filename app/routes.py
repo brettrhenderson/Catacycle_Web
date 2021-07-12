@@ -112,7 +112,7 @@ def upload_data():
                 session['reactants'] = specs
                 session['normtype'] = xlform.normtype.data
                 session['starts'] = [0 for rxn in rxns]
-                session['poison'] = None
+                session['poisons'] = None
                 session['orders'] = None
                 session['excess'] = [False for spec in specs]
                 session['concs'] = None
@@ -124,6 +124,7 @@ def upload_data():
                 session['linestyle'] = ':'
                 session['marker'] = '^'
                 session['markersize'] = 5
+                session['conc_multipliers'] = None
 
                 fb = f"Successfully uploaded {f.filename}<br>Found {len(raw_data)} reactions and " \
                          f"{raw_data[0].shape[1] - 1} monitored species in this file."
@@ -147,17 +148,27 @@ def upload_data():
 @app.route('/select', methods=['POST'])
 def select_data():
     selectform = SelectDataForm()
-    raw_data = session['raw_data']
     rxns = session['rxns']
     specs = session['reactants']
-    normtype = session['normtype']
-    starts = session['starts']
+
     selectform.rxn.choices = [(str(i), str(i)) for i, _ in enumerate(rxns)]
     selectform.species.choices = [(str(i), str(i)) for i, _ in enumerate(specs)]
 
     if request.method == 'POST':
         category = "danger"
         new_plot = "none"
+        starts = session['starts']
+        raw_data = session['raw_data']
+        normtype = session['normtype']
+        orders = session['orders']
+        concs = session['concs']
+        normtime = True if concs is not None else False
+        legend = session['legend']
+        guidelines = session['guidelines']
+        lw = session['linewidth']
+        ls = session['linestyle']
+        m = session['marker']
+        ms = session['markersize']
 
         if selectform.validate():
             log.debug(f"Selected >> Rxns: {selectform.rxn.data},  Species: {selectform.species.data}")
@@ -171,12 +182,42 @@ def select_data():
             session['specs_sel'] = specs_sel
 
             category = "success"
-            log.debug(f"Selected >> Rxns: {rxns_sel},  Species: {specs_sel}")
+            log.debug(f"Selected >> Rxns: {session['rxns_sel']},  Species: {specs_sel}")
             totals = vh.get_sheet_totals(normtype, raw_data)
             norm_data = vh.shift_times(vh.normalize_columns(raw_data, totals), starts)
             select_data = vh.select_data(norm_data, reactions=rxns_sel, species=specs_sel)
-            new_plot, fig = plot_vtna(select_data, norm_time=False, marker="^", linestyle=':', markersize=5,
-                                      guide_lines=True, legend=True)
+
+            log.debug(f'rxns: {rxns_sel}, specs: {specs_sel}, concs shape: {concs}, orders shape: {orders}')
+            if concs is not None and rxns_sel[-1] >= len(concs):
+                conc_multipliers = session['conc_multipliers']
+                poisons = session['poisons']
+                param_specs = session['param_specs']
+                # re-create the concs data from the save raw data
+                # Get the concentrations to normalize by
+                concs = [[] for _ in select_data]
+
+                for i, rxn in enumerate(select_data):
+                    for j, spec in enumerate(param_specs):
+                        if spec == "None":  # This means it is an excess reagent / catalyst
+                            concs[i].append([conc_multipliers[j][i] - poisons[j] for _ in range(rxn.values.shape[0])])
+                        else:
+                            concs[i].append(list(rxn.iloc[:, j + 1].values - poisons[j]))
+                log.debug(concs)
+                for i, rxn_concs in enumerate(concs):
+                    concs[i] = np.array(rxn_concs).T
+            else:
+                concs_new = []
+                if concs is not None:
+                    for rx in rxns_sel:
+                        try:
+                            concs_new.append(concs[rx])
+                        except IndexError as e:
+                            pass
+                concs = concs_new
+
+            new_plot, fig = plot_vtna(select_data, norm_time=normtime, concs=concs, orders=orders, marker=m,
+                                      linestyle=ls, markersize=ms, linewidth=lw, guide_lines=True, legend=True)
+
             # save the filename and pickle the figure
             pickle.dump(fig, open(session['fig'], 'wb'))
             plt.close(fig)
@@ -258,7 +299,7 @@ def fit_data():
 
         if fitform.validate():
             category = "success"
-            log.debug(f"Rxns: {rxns},  Species: {specs}")
+            log.debug(f"Rxns: {rxns_sel},  Species: {specs_sel}")
             log.debug(fitform.data)
             # parse the data into a usable form
             orders = [form.order.data for form in fitform.params]
@@ -266,6 +307,9 @@ def fit_data():
             excesses = [form.excess.data for form in fitform.params]
             param_specs = [form.species.data for form in fitform.params]
             conc_multipliers = [form.concs.data for form in fitform.params]
+            session['param_specs'] = param_specs
+            session['conc_multipliers'] =  conc_multipliers
+            session['poisons'] = poisons
 
             totals = vh.get_sheet_totals(normtype, raw_data)
             norm_data = vh.shift_times(vh.normalize_columns(raw_data, totals), starts)
