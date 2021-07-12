@@ -173,7 +173,6 @@ $(document).ready(function() {
                     <div class="form-group my-auto">
                       <label>
                         {{ pformt.excess(type="checkbox", class_="filled-in", checked="") }}
-<!--                        <input checked="" class="filled-in" id="{{ pformt.excess.id }}" type="checkbox"/>-->
                         <span>{{ pformt.excess.label.text }}</span>
                       </label>
                     </div>
@@ -240,18 +239,28 @@ $(document).ready(function() {
                 {{ stform.hidden_tag() }}
                 <div class="form-group">
                   <label>
-                    <input class="filled-in" id="{{ stform.legend.id }}" type="checkbox" checked/>
+                    {{ stform.legend(type="checkbox", class_="filled-in", checked="") }}
                     <span>{{ stform.legend.label.text }}</span>
                   </label>
                 </div>
-                <div class="form-group input-field pt-2 mb-1">
-                  {{ stform.units(class_="form-control validate", placeholder="uM") }}
-                  {{ stform.units.label(class_="pt-2") }}
-                  <span class="helper-text" data-error="Units may be uM, mM, M" data-success=""></span>
+                <div class="form-group">
+                  <label>
+                    {{ stform.guidelines(type="checkbox", class_="filled-in", checked="") }}
+                    <span>{{ stform.guidelines.label.text }}</span>
+                  </label>
+                </div>
+                <div class="form-group input-field">
+                    {{ stform.marker.label(class_="active") }}
+                    {{ stform.marker() }}
+                </div>
+                <div class="form-group input-field">
+                    {{ stform.linestyle.label(class_="active") }}
+                    {{ stform.linestyle() }}
                 </div>
                 <div class="form-group mb-0">
-                  <button id="{{ stform.submit.id }}" type="button" class="btn btn-block btn-primary" disabled>{{ stform.submit.label.text }}</button>
+                  <button id="{{ stform.submit.id }}" type="button" class="btn btn-block btn-primary">{{ stform.submit.label.text }}</button>
                 </div>
+                <div class="my-auto"><span id="response-styleform"></span></div>
               </form>
             </div>
           </div>

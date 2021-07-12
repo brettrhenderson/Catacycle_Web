@@ -111,6 +111,25 @@ $("#param-submit").click(function() {
     send_form(form, form_id, url, type, modular_ajax, formData, '#response-xlform', fitSuccess);
 });
 
+// make plotstyle form submit
+$("#style-submit").click(function() {
+    // Prevent redirection with AJAX for contact form
+    var form = $('#style-form');
+    var form_id = 'style-form';
+    var url = form.prop('action');
+    var type = form.prop('method');
+    var formData = getFormData(form_id);
+
+    if (isFormDataEmpty(formData)) {
+        formData.append('guidelines', false)
+        formData.append('legend', false)
+    }
+
+
+    // submit form via AJAX
+    send_form(form, form_id, url, type, modular_ajax, formData, '#response-styleform', styleSuccess);
+});
+
 
 /*
 Success Handlers:
@@ -198,7 +217,7 @@ function updateParams(url, type, paramData, responseid, successHandler) {
             <div class="form-group my-auto">
               <label>
                 <input checked="" class="filled-in" id="params-${numParams}-excess" name="params-${numParams}-excess" type="checkbox"/>
-                <span>Excess</span>
+                <span>Catalyst</span>
               </label>
             </div>
             <div class="form-group input-field">
@@ -307,6 +326,10 @@ function fitSuccess(data) {
     $('select').formSelect();
 }
 
+function styleSuccess(data) {
+    $('#graph').attr("src", data.new_plot)
+    $('select').formSelect();
+}
 
 /*
 UTILITIES:
@@ -374,6 +397,7 @@ function isFormDataEmpty(formData) {
             }
         }
     }
+    console.log('Empty Form');
     return true;
 }
 
