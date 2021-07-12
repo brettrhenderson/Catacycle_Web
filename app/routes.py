@@ -80,7 +80,7 @@ def vtna():
     upload_form, dform, sform, mform, aform, pformt, pform, stform = (DataForm(), DVTNAForm(), SelectDataForm(), ManualFitForm(),
                                                               AutoFitForm(), FitParamFormTemplate(), FitParamForm(), StyleForm())
 
-    new_plot, fig = plot_vtna(norm_data, marker="^", linestyle=':', markersize=5, guide_lines=True,
+    new_plot, fig = plot_vtna(norm_data, marker="^", linestyle=':', markersize=5, guide_lines=False,
                               legend=True)
     path = os.path.join(app.config['DOWNLOADS'], str(uuid.uuid4()))
     # save the filename and pickle the figure
@@ -119,7 +119,7 @@ def upload_data():
                 session['rxns_sel'] = [i for i, _ in enumerate(rxns)]
                 session['specs_sel'] = [i for i, _ in enumerate(specs)]
                 session['legend'] = True
-                session['guidelines'] = True
+                session['guidelines'] = False
                 session['linewidth'] = 2
                 session['linestyle'] = ':'
                 session['marker'] = '^'
@@ -133,7 +133,7 @@ def upload_data():
                 totals = vh.get_sheet_totals(session['normtype'], raw_data)
                 norm_data = vh.normalize_columns(raw_data, totals)
                 new_plot, fig = plot_vtna(norm_data, norm_time=False, marker="^", linestyle=':', markersize=5,
-                                          linewidth=2, guide_lines=True, legend=True)
+                                          linewidth=2, guide_lines=False, legend=True)
                 # save the filename and pickle the figure
                 pickle.dump(fig, open(session['fig'], 'wb'))
                 plt.close(fig)
@@ -216,7 +216,7 @@ def select_data():
                 concs = concs_new
 
             new_plot, fig = plot_vtna(select_data, norm_time=normtime, concs=concs, orders=orders, marker=m,
-                                      linestyle=ls, markersize=ms, linewidth=lw, guide_lines=True, legend=True)
+                                      linestyle=ls, markersize=ms, linewidth=lw, guide_lines=False, legend=True)
 
             # save the filename and pickle the figure
             pickle.dump(fig, open(session['fig'], 'wb'))

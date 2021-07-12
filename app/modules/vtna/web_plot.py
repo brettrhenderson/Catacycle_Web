@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 def plot_vtna(data, concs=None, norm_time=False, orders=None, trans_zero=None,  windowsize=None, colors=None, legend=True,
-              guide_lines=True, f_format='svg', **kwargs):
+              guide_lines=False, f_format='svg', **kwargs):
     """Plot the Aligned Reaction Traces"""
     log.debug("Closed all figures!")
     if trans_zero is None:
@@ -20,9 +20,10 @@ def plot_vtna(data, concs=None, norm_time=False, orders=None, trans_zero=None,  
         windowsize = [1]*len(data)
     # set defaults and declare variables
     img = io.BytesIO()  # file-like object to hold image
+    plt.rcParams.update({'font.sans-serif': 'Arial'})
 
     #put ipynb fn here to plot fitted graph once order etc. is known
-    fig = plt.figure(figsize=(8, 6))
+    fig = plt.figure(figsize=(7, 5))
     ax = fig.add_subplot(111, autoscale_on=True) #, xlim=(0, 20), ylim=(-0.1, 1.1))
     maxtime = max(vh.get_max_times(data))
     for i, rxn in enumerate(data):
@@ -39,7 +40,7 @@ def plot_vtna(data, concs=None, norm_time=False, orders=None, trans_zero=None,  
         add_guidelines(ax)
 
     if legend:
-        ax.legend()
+        ax.legend(frameon=False)
 
     format_ax(ax)
     plt.tight_layout()
@@ -58,8 +59,8 @@ def plot_vtna(data, concs=None, norm_time=False, orders=None, trans_zero=None,  
 
 
 def format_ax(ax):
-    ax.set_xlabel('time', fontsize=16)
-    ax.set_ylabel('Relative Abundance', fontsize=16)
+    ax.set_xlabel('time', fontsize=14)
+    ax.set_ylabel('relative abundance', fontsize=14)
     ax.spines['right'].set_visible(False)
     ax.spines['top'].set_visible(False)
 
