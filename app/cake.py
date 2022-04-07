@@ -95,7 +95,7 @@ def TIC_norm(data, TIC=None):
 
 def read_data(file_name, sheet_name):
     try:
-        df = pd.read_excel(file_name, sheet_name=sheet_name)
+        df = pd.read_excel(file_name, sheet_name=sheet_name, engine='openpyxl')
         return df
     except ValueError as e:
         return str(e)
