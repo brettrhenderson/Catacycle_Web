@@ -1,0 +1,61 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}Catacycle{% endblock %}
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="icon" href="{{url_for('.static', filename='images/cycle_icon.png')}}">
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+{% endblock %}
+
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="{{ url_for('index') }}">
+    <img src="{{url_for('.static', filename='images/cycle_icon.png')}}" width="50" height="50" class="d-inline-block align-center" alt="">
+    CataHub
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link active" href="{{ url_for('index') }}"> All Tools </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('graphs') }}"> Catacycle </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('cake') }}"> CAKE </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('aboutus') }}"> About Us</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<br>
+<div class="container">
+  <div class="media">
+    <img class="mr-3" src="../static/images/indax.svg" width="200" height="200">
+    <div class="media-body align-self-center">
+      <a class="btn btn-outline-secondary btn" href="{{ url_for('graphs') }}">Generate Cycles</a>
+      <br>
+      Customize and download arrows to depict your chemistry.
+    </div>
+  </div>
+  <br>
+  <br>
+  <div class="media">
+    <img class="mr-3" src="../static/images/cake_logo.svg" width="200" height="150">
+    <div class="media-body align-self-center">
+      <a class="btn btn-outline-secondary btn" href="{{ url_for('cake') }}">Kinetic Data Analysis</a>
+      <br>
+      Upload your kinetic data to fit catalyst order and rate constant and correct for catalyst poisoning.
+      <br>
+    </div>
+  </div>
+</div>
+{% endblock %}

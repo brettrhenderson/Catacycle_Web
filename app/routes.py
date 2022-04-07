@@ -1,17 +1,27 @@
 from flask import render_template, request, jsonify, send_file, redirect, url_for, make_response, Response
 from werkzeug.utils import secure_filename
 from werkzeug.wsgi import FileWrapper
-from app.form import RatesForm, DownloadForm
+from werkzeug.datastructures import CombinedMultiDict
+from app.catacycle_form import RatesForm, DownloadForm
+from app.cake_form import CakeForm, CakeDownloadForm
 from app.oboros import draw, draw_straight
+from app.cake import read_data, fit_cake, plot_cake_results, pprint_cake
 from app import app
 import os
 import logging
 
 log = logging.getLogger(__name__)
-# log.setLevel(logging.DEBUG)
+log.setLevel(logging.DEBUG)
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
+def index():
+    return render_template('index.html')
+
+@app.route('/aboutus', methods=['GET', 'POST'])
+def aboutus():
+    return render_template('aboutus.html')
+
 @app.route('/graphs', methods=['GET', 'POST'])
 def graphs():
     form = RatesForm(request.form)  # initialize the backend of the web form
@@ -56,6 +66,67 @@ def download():
         log.debug(response)
         return response
         # return send_file(img, mimetype=mimetype, attachment_filename=filename, as_attachment=True)
+    else:
+        log.debug("Not sending anything")
+        return '', 204
+
+
+##########################################
+# CAKE
+##########################################
+
+@app.route('/cake', methods=['GET', 'POST'])
+def cake():
+    form = CakeForm()  # initialize the backend of the web form
+    log.debug(f'\nFORM VALID? {form.validate()}\n')
+    log.debug(f'\nFORM VALIDATION ERRORS: {form.errors.items()}\n')
+
+    if request.method == 'POST' and form.validate_on_submit():
+        log.debug(f"Collected form data from user: {form.data}")
+
+        df = read_data(form.xl.data, form.sheet_name.data)
+        log.debug(f"Read Data from user-specified Excel sheet:\n {df.head(5)}")
+
+        CAKE = fit_cake(df, form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data, form.p_end.data,
+                        form.cat_add_rate.data, form.format_k_est(), form.format_r_ord(), form.format_cat_ord(),
+                        form.format_t0_est(), form.t_col.data, form.tic_col.data, form.r_col.data, form.p_col.data,
+                        form.max_order.data, form.scale_avg_num.data, form.win.data, form.inc.data, form.fit_asp.data)
+        t, r, p, fit, fit_p, fit_r, res_val, res_err, ss_res, r_squared, cat_pois = CAKE
+
+        html = plot_cake_results(t, r, p, fit, fit_p, fit_r, form.r_col.data, form.p_col.data, f_format='svg', return_image=False)
+
+        results = pprint_cake(res_val, res_err, ss_res, r_squared, cat_pois)
+
+        return jsonify(data=[html, results])
+
+    return render_template('cake.html', form=form)
+
+@app.route('/download-cake', methods=['GET', 'POST'])
+def download_cake():
+
+    form = CakeDownloadForm()
+
+    if request.method == 'POST' and form.validate_on_submit():
+        log.debug(f"Collected form data from user: {form.data}")
+
+        df = read_data(form.xl.data, form.sheet_name.data)
+        log.debug(f"Read Data from user-specified Excel sheet:\n {df.head(5)}")
+
+        CAKE = fit_cake(df, form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data, form.p_end.data,
+                        form.cat_add_rate.data, form.format_k_est(), form.format_r_ord(), form.format_cat_ord(),
+                        form.format_t0_est(), form.t_col.data, form.tic_col.data, form.r_col.data, form.p_col.data,
+                        form.max_order.data, form.scale_avg_num.data, form.win.data, form.inc.data, form.fit_asp.data)
+        t, r, p, fit, fit_p, fit_r, res_val, res_err, ss_res, r_squared, cat_pois = CAKE
+
+        img, mimetype = plot_cake_results(t, r, p, fit, fit_p, fit_r, form.r_col.data, form.p_col.data,
+                                          f_format=form.f_format.data, return_image=True)
+        img.seek(0)
+        img = FileWrapper(img)
+        response = make_response(Response(img, mimetype=mimetype, direct_passthrough=True))
+        filename = secure_filename(f'cake.{form.f_format.data}')
+        response.headers.set('Content-Disposition', 'attachment', filename=filename)
+        log.debug(response)
+        return response
     else:
         log.debug("Not sending anything")
         return '', 204

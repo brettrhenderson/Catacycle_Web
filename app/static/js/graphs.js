@@ -164,7 +164,7 @@ function setup_card() {
     }
 
     // make sure nav link matches active tab pane
-    var activeLink = $(".nav-link.active")[0];
+    var activeLink = $(".nav-link.dummy.active")[0];
     var pane;
     for (pane of $('#cycle-card').children()) {
         if (!(pane.id == activeLink.href.split("#")[1])) {

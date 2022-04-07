@@ -1,0 +1,341 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}CAKE{% endblock %}
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{url_for('.static', filename='css/graphs.css')}}">
+<link rel="stylesheet" href="{{url_for('.static', filename='css/bootstrap-colorpicker.css')}}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!--<link rel="icon" href="{{url_for('.static', filename='images/cycle_icon.png')}}">-->
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+<script src="{{url_for('.static', filename='js/cake.js')}}"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        submitHandler("{{ form.csrf_token._value() }}");
+        downloadHandler();
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="{{ url_for('index') }}">
+        <img src="{{url_for('.static', filename='images/cycle_icon.png')}}" width="50" height="50" class="d-inline-block align-center" alt="">
+        CataHub
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('index') }}"> All Tools </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('graphs') }}"> Catacycle </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="{{ url_for('cake') }}"> CAKE </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('aboutus') }}"> About Us</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <br>
+<!--    <div class="container pb-2 mt-4 mb-2 border-bottom">-->
+<!--        <h1>CAKE Kinetic Analysis</h1>-->
+<!--    </div>-->
+    <div class="container-fluid">
+        <div class="row d-flex">
+            <div class="pb-2 col-1 d-flex flex-column"></div>
+            <form enctype="multipart/form-data" class="px-3 pt-1 pb-2 col-5 d-flex flex-column align-items-center justify-content-start" id="cake-form" action="{{ url_for('cake') }}" method="post">
+                {{ form.hidden_tag() }}
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs">
+                            <li class="nav-item">
+                                <a id="uploadlink" class="nav-link active" data-toggle="tab" href="#uploadtab">Upload</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="datalink" class="nav-link" data-toggle="tab" href="#datatab">Reaction Data</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="fittinglink" class="nav-link noticer" data-toggle="tab" href="#fittingtab">Fitting Parameters</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="outputlink" class="nav-link noticer" data-toggle="tab" href="#outputtab">Output</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body p-2">
+                        <div id="cake-card" class="tab-content">
+                            <div class="tab-pane active show" id="uploadtab">
+                                <div class="form-row">
+                                  <div class="form-group col my-auto">
+                                    {{ form.xl.label }}
+                                    {{ form.xl(class_="form-control", placeholder="Upload Excel Data", accept=".xlsx,.xls, .XLSX, .XLS") }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.sheet_name.label() }}
+                                    {{ form.sheet_name(class_="form-control") }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.t_col.label() }}
+                                    {{ form.t_col(class_="form-control") }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.tic_col.label() }}
+                                    {{ form.tic_col(class_="form-control") }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.r_col.label() }}
+                                    {{ form.r_col(class_="form-control") }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.p_col.label() }}
+                                    {{ form.p_col(class_="form-control") }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.scale_avg_num.label() }}
+                                    {{ form.scale_avg_num(class_="form-control") }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.fit_asp.label() }}
+                                    {{ form.fit_asp(class_="form-control") }}
+                                  </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="datatab">
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.stoich_r.label() }}
+                                    {{ form.stoich_r(class_="form-control") }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.stoich_p.label() }}
+                                    {{ form.stoich_p(class_="form-control") }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.r0.label() }}
+                                    {{ form.r0(class_="form-control") }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.p0.label() }}
+                                    {{ form.p0(class_="form-control") }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.p_end.label() }}
+                                    {{ form.p_end(class_="form-control") }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.cat_add_rate.label() }}
+                                    {{ form.cat_add_rate(class_="form-control") }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.win.label() }}
+                                    {{ form.win(class_="form-control") }}
+                                  </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="fittingtab">
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.inc.label() }}
+                                    {{ form.inc(class_="form-control") }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.max_order.label() }}
+                                    {{ form.max_order(class_="form-control") }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.k_est_val.label() }}
+                                    {{ form.k_est_val(class_="form-control") }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.k_est_min.label() }}
+                                    {{ form.k_est_min(class_="form-control") }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.k_est_max.label() }}
+                                    {{ form.k_est_max(class_="form-control") }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.r_ord_val.label() }}
+                                    {{ form.r_ord_val(class_="form-control") }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.r_ord_min.label() }}
+                                    {{ form.r_ord_min(class_="form-control") }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.r_ord_max.label() }}
+                                    {{ form.r_ord_max(class_="form-control") }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.cat_ord_val.label() }}
+                                    {{ form.cat_ord_val(class_="form-control") }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.cat_ord_min.label() }}
+                                    {{ form.cat_ord_min(class_="form-control") }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.cat_ord_max.label() }}
+                                    {{ form.cat_ord_max(class_="form-control") }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.t0_est_val.label() }}
+                                    {{ form.t0_est_val(class_="form-control") }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.t0_est_min.label() }}
+                                    {{ form.t0_est_min(class_="form-control") }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.t0_est_max.label() }}
+                                    {{ form.t0_est_max(class_="form-control") }}
+                                  </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="outputtab">
+                                <pre class="form-control" id="output-text">Fill in  Parameters and click "Fit" to generate output.
+                                </pre>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button id="{{ form.submit.id }}" type="submit" class="form-control btn btn-primary">{{ form.submit.label.text }}</button>
+                    </div>
+                </div>
+            </form>
+            <div class="px-3 pt-1 pb-2 col-5 d-flex flex-column align-items-center justify-content-start max-vw-50">
+                <div id="cake-select" class="row"></div>
+                <img id='cake-result' class="d-block w-100 img-fluid max-vh-75" src="../static/images/cake_logo.svg" alt="Cake Analysis Here">
+                <form class="p-2" enctype="multipart/form-data" id="download-form" style="width: 100%;" action="/download-cake" method="post" nonvalidate>
+                    <div class="form-group row">
+                        <div class="col-3"></div>
+                        <div class="col-3">
+                            <select id="dloadFormat" class="form-control" name="f_format">
+                                <option value="svg" selected>SVG</option>
+                                <option value="png">PNG</option>
+                                <option value="eps">EPS</option>
+                                <option value="pdf">PDF</option>
+                            </select>
+                        </div>
+                        <div class="col-3">
+                            <button id="fake-submit" type="submit" class="form-control btn btn-primary">
+                                <i class="fa fa-lg fa-download"></i>
+                            </button>
+                        </div>
+                        <div class="col-3"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="pb-2 col-1 d-flex flex-column"></div>
+        </div>
+    </div>
+
+    <!-- Footer.  This footer was adapted from mdbootstrap.com and is licensed under the MIT License.  Full License Text:
+    Copyright (c) 2019 MDBootstrap.com
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+    documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+    rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+    permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+    WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+    OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+    OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
+    <footer class="page-footer font-small" style="background-color:#D3D3D3">
+
+        <!-- Footer Links -->
+        <div class="container text-center text-md-left">
+          <!-- Acknowledgements -->
+          <div class="row">
+            <!-- Grid column -->
+            <div class="col-md-6 mx-auto">
+              <br> 
+              <!-- Content -->
+              <p> Citation: DOI:  
+              <a href="#" target="_blank" class="text-dark">DOI PLACEHOLDER</a> 
+              </p>
+              <p> Code: 
+              <a href="#" target="_blank" class="text-dark">GITHUB PLACEHOLDER</a>
+              </p>
+
+            </div>
+            <!-- Grid column -->
+
+            <hr class="clearfix w-100 d-md-none">
+
+            <!-- Grid column -->
+            <div class="col-md-6 pt-3 d-flex flex-column justify-content-center">
+
+                <!-- Social buttons -->
+                <div class="wrapper">
+                    <ul class="social-icons icon-circle list-unstyled list-inline">
+                        <li>
+                            <a href="https://twitter.com/mcindoe?lang=en" target="_blank" class="btn">
+                                <i class="fa fa-twitter"> </i>
+                            </a>
+                        </li>
+                        <li class="ml-3">
+                            <a href="http://web.uvic.ca/~mcindoe/" target="_blank" class="btn btn-dark">
+                                McIndoe Group
+                            </a>
+                        </li>
+                        <li class="ml-3">
+                            <a href="https://pacilab.ca/" target="_blank" class="btn btn-dark">
+                                Paci Group
+                            </a>
+                        </li>
+                        <li class="ml-3">
+                            <a href="#" target="_blank" class="btn btn-primary">
+                                Feedback
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- Social buttons -->
+
+            </div>
+            <!-- Grid column -->
+
+          </div>
+          <!-- Grid row -->
+          </div>
+
+        </div>
+
+    </footer>
+    <!-- Footer -->
+
+{% endblock %}
