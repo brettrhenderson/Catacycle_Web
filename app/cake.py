@@ -13,6 +13,7 @@ import logging
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
+
 # general kinetic simulator
 def eq_sim_gen(stoich_r, stoich_p, r0, p0, cat_add_rate, t_fit, k, x, y, t0):
     r_calc = np.zeros(len(t_fit))
@@ -152,7 +153,6 @@ def fit_cake(df, stoich_r, stoich_p, r0, p0, p_end, cat_add_rate, k_est, r_ord, 
         Aspect you want to fit to: 'r' for reactant, 'p' for product or 'rp' for both
     """
 
-    inc = inc + 1
     t = data_smooth(df, t_col, win)
     TIC = None
     if TIC_col is not None:
@@ -311,6 +311,7 @@ def fit_cake(df, stoich_r, stoich_p, r0, p0, p_end, cat_add_rate, k_est, r_ord, 
     if inc is None or inc == 1:
         fit_rate = eq_sim_gen(stoich_r, stoich_p, r0, p0, cat_add_rate, x_data, kf, xf, yf, t0f)[2]
     else:
+        inc += 1
         fit_rate = eq_sim_gen_inc(stoich_r, stoich_p, r0, p0, cat_add_rate, inc, x_data, kf, xf, yf, t0f)
 
     # calculate residuals and errors
@@ -466,23 +467,42 @@ Catalyst Poisoning (if applicable): {cat_pois}
 if __name__ == "__main__":
     stoich_r = 1  # insert stoichiometry of reactant, r
     stoich_p = 1  # insert stoichiometry of product, p
-    r0 = 3.18  # enter value of r0 in M dm^-3 or None if data are given in M dm^-3
+    r0 = 2.5  # enter value of r0 in M dm^-3 or None if data are given in M dm^-3
     p0 = 0  # enter value of p0 in M dm^-3 or None if data are given in M dm^-3
     p_end = r0  # enter end value of product in M dm^-3, r0 if equal to start r0 value, or None if data are given in M dm^-3
-    cat_add_rate = 1.57  # enter catalyst addition rate in M time_unit^-1
+    cat_add_rate = .000102  # enter catalyst addition rate in M time_unit^-1
     win = 1  # enter smoothing window (1 if smoothing not required)
 
     # Parameter fitting
     # Enter None for any order, [exact value] for fixed variable or variable with bounds [estimate, factor difference] or [estimate, lower, upper]
     inc = 1  # enter increments between adjacent points for improved simulation, None or 1 for using raw time points
-    k_est = [1E-2, 1E-5, 1E1]  # enter rate constant in (M dm^-3)^? time_unit^-1
+    k_est = [1E-1, 1E-4, 1E2]  # enter rate constant in (M dm^-3)^? time_unit^-1
     r_ord = [1, 0, 3]  # enter r order
     cat_ord = [1, 0, 3]  # enter cat order
-    t0_est = [0.167]  # enter time at which injection began in time_unit^-1
+    t0_est = [60, 60, 300]  # enter time at which injection began in time_unit^-1
     max_order = 3  # enter maximum possible order for species
+
+    # stoich_r = 1  # insert stoichiometry of reactant, r
+    # stoich_p = 1  # insert stoichiometry of product, p
+    # r0 = 3.18  # enter value of r0 in M dm^-3 or None if data are given in M dm^-3
+    # p0 = 0  # enter value of p0 in M dm^-3 or None if data are given in M dm^-3
+    # p_end = r0  # enter end value of product in M dm^-3, r0 if equal to start r0 value, or None if data are given in M dm^-3
+    # cat_add_rate = 1.57  # enter catalyst addition rate in M time_unit^-1
+    # win = 1  # enter smoothing window (1 if smoothing not required)
+    #
+    # # Parameter fitting
+    # # Enter None for any order, [exact value] for fixed variable or variable with bounds [estimate, factor difference] or [estimate, lower, upper]
+    # inc = 2  # enter increments between adjacent points for improved simulation, None or 1 for using raw time points
+    # k_est = [1E-2, 1E3]  # enter rate constant in (M dm^-3)^? time_unit^-1
+    # r_ord = [1, 0, 3]  # enter r order
+    # cat_ord = [1, 0, 3]  # enter cat order
+    # t0_est = [0.167]  # enter time at which injection began in time_unit^-1
+    # max_order = 3  # enter maximum possible order for species
 
     # Experimental data location
     file_name = r'/Users/bhenders/Desktop/CAKE/WM_220317_Light_Intensity.xlsx'  # enter filename as r'file_name'
+    file_name = r'/Users/bhenders/Downloads/PJHW_22040802.xlsx'  # enter filename as r'file_name'
+
     sheet_name = 'Sheet2'  # enter sheet name as 'sheet_name'
     t_col = 0  # enter time column
     TIC_col = None  # enter TIC column or None if no TIC
