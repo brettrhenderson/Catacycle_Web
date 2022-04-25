@@ -61,13 +61,16 @@
                                 <a id="uploadlink" class="nav-link active" data-toggle="tab" href="#uploadtab">Upload</a>
                             </li>
                             <li class="nav-item">
-                                <a id="datalink" class="nav-link" data-toggle="tab" href="#datatab">Reaction Data</a>
+                                <a id="datalink" class="nav-link" data-toggle="tab" href="#datatab">Rxn Data</a>
                             </li>
                             <li class="nav-item">
-                                <a id="fittinglink" class="nav-link noticer" data-toggle="tab" href="#fittingtab">Fitting Parameters</a>
+                                <a id="fittinglink" class="nav-link" data-toggle="tab" href="#fittingtab">Fit Params</a>
                             </li>
                             <li class="nav-item">
-                                <a id="outputlink" class="nav-link noticer" data-toggle="tab" href="#outputtab">Output</a>
+                                <a id="advancedlink" class="nav-link" data-toggle="tab" href="#advancedtab">Advanced</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="outputlink" class="nav-link" data-toggle="tab" href="#outputtab">Output</a>
                             </li>
                         </ul>
                     </div>
@@ -89,32 +92,23 @@
                                 <div class="form-row">
                                   <div class="form-group col">
                                     {{ form.t_col.label() }}
-                                    {{ form.t_col(class_="form-control") }}
+                                    {{ form.t_col(class_="form-control", min=1) }}
                                   </div>
-                                  <div class="form-group col">
-                                    {{ form.tic_col.label() }}
-                                    {{ form.tic_col(class_="form-control") }}
-                                  </div>
-                                </div>
-                                <div class="form-row">
                                   <div class="form-group col">
                                     {{ form.r_col.label() }}
-                                    {{ form.r_col(class_="form-control") }}
+                                    {{ form.r_col(class_="form-control", min=1) }}
                                   </div>
                                   <div class="form-group col">
                                     {{ form.p_col.label() }}
-                                    {{ form.p_col(class_="form-control") }}
+                                    {{ form.p_col(class_="form-control", min=1) }}
                                   </div>
                                 </div>
                                 <div class="form-row">
-                                  <div class="form-group col">
-                                    {{ form.scale_avg_num.label() }}
-                                    {{ form.scale_avg_num(class_="form-control") }}
-                                  </div>
                                   <div class="form-group col">
                                     {{ form.fit_asp.label() }}
                                     {{ form.fit_asp(class_="form-control") }}
                                   </div>
+                                  <div class="form-group col"></div>
                                 </div>
                             </div>
                             <div class="tab-pane" id="datatab">
@@ -148,78 +142,84 @@
                                     {{ form.cat_add_rate(class_="form-control") }}
                                   </div>
                                 </div>
-                                <div class="form-row">
-                                  <div class="form-group col">
-                                    {{ form.win.label() }}
-                                    {{ form.win(class_="form-control") }}
-                                  </div>
-                                </div>
                             </div>
                             <div class="tab-pane" id="fittingtab">
                                 <div class="form-row">
                                   <div class="form-group col">
-                                    {{ form.inc.label() }}
-                                    {{ form.inc(class_="form-control") }}
-                                  </div>
-                                  <div class="form-group col">
-                                    {{ form.max_order.label() }}
-                                    {{ form.max_order(class_="form-control") }}
-                                  </div>
-                                </div>
-                                <div class="form-row">
-                                  <div class="form-group col">
                                     {{ form.k_est_val.label() }}
-                                    {{ form.k_est_val(class_="form-control") }}
+                                    {{ form.k_est_val(class_="form-control", min=0) }}
                                   </div>
                                   <div class="form-group col">
                                     {{ form.k_est_min.label() }}
-                                    {{ form.k_est_min(class_="form-control") }}
+                                    {{ form.k_est_min(class_="form-control", min=0) }}
                                   </div>
                                   <div class="form-group col">
                                     {{ form.k_est_max.label() }}
-                                    {{ form.k_est_max(class_="form-control") }}
-                                  </div>
-                                </div>
-                                <div class="form-row">
-                                  <div class="form-group col">
-                                    {{ form.r_ord_val.label() }}
-                                    {{ form.r_ord_val(class_="form-control") }}
-                                  </div>
-                                  <div class="form-group col">
-                                    {{ form.r_ord_min.label() }}
-                                    {{ form.r_ord_min(class_="form-control") }}
-                                  </div>
-                                  <div class="form-group col">
-                                    {{ form.r_ord_max.label() }}
-                                    {{ form.r_ord_max(class_="form-control") }}
-                                  </div>
-                                </div>
-                                <div class="form-row">
-                                  <div class="form-group col">
-                                    {{ form.cat_ord_val.label() }}
-                                    {{ form.cat_ord_val(class_="form-control") }}
-                                  </div>
-                                  <div class="form-group col">
-                                    {{ form.cat_ord_min.label() }}
-                                    {{ form.cat_ord_min(class_="form-control") }}
-                                  </div>
-                                  <div class="form-group col">
-                                    {{ form.cat_ord_max.label() }}
-                                    {{ form.cat_ord_max(class_="form-control") }}
+                                    {{ form.k_est_max(class_="form-control", min=0) }}
                                   </div>
                                 </div>
                                 <div class="form-row">
                                   <div class="form-group col">
                                     {{ form.t0_est_val.label() }}
-                                    {{ form.t0_est_val(class_="form-control") }}
+                                    {{ form.t0_est_val(class_="form-control", min=0) }}
                                   </div>
                                   <div class="form-group col">
                                     {{ form.t0_est_min.label() }}
-                                    {{ form.t0_est_min(class_="form-control") }}
+                                    {{ form.t0_est_min(class_="form-control", min=0) }}
                                   </div>
                                   <div class="form-group col">
                                     {{ form.t0_est_max.label() }}
-                                    {{ form.t0_est_max(class_="form-control") }}
+                                    {{ form.t0_est_max(class_="form-control", min=0) }}
+                                  </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="advancedtab">
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.scale_avg_num.label() }}
+                                    {{ form.scale_avg_num(class_="form-control", min=0) }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.win.label() }}
+                                    {{ form.win(class_="form-control", min=0) }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.inc.label() }}
+                                    {{ form.inc(class_="form-control", min=0) }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.max_order.label() }}
+                                    {{ form.max_order(class_="form-control", min=0) }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.r_ord_val.label() }}
+                                    {{ form.r_ord_val(class_="form-control", min=0) }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.r_ord_min.label() }}
+                                    {{ form.r_ord_min(class_="form-control", min=0) }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.r_ord_max.label() }}
+                                    {{ form.r_ord_max(class_="form-control", min=0) }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.cat_ord_val.label() }}
+                                    {{ form.cat_ord_val(class_="form-control", min=0) }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.cat_ord_min.label() }}
+                                    {{ form.cat_ord_min(class_="form-control", min=0) }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.cat_ord_max.label() }}
+                                    {{ form.cat_ord_max(class_="form-control", min=0) }}
                                   </div>
                                 </div>
                             </div>

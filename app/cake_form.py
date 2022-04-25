@@ -51,7 +51,7 @@ class CakeForm(FlaskForm):
     fit_asp = SelectField('Fit Aspect', description="What trace to fit", id='fit_asp',
                             choices=[('r', 'Reactant'), ('p', 'Product'), ('rp', 'Reactant + Product')])
     scale_avg_num = IntegerField('Average Points', description="Number of points to average for calculating r0 and p_end",
-                                 id='scale_avg_num', default=1)
+                                 id='scale_avg_num', default=5)
     stoich_r = IntegerField('Reactant Coefficient', id='stoich_r', description="Stoichiometric coefficient of reactant",
                             default=1)
     stoich_p = IntegerField('Product Coefficient', id='stoich_p', description="Stoichiometric coefficient of product",
@@ -68,19 +68,19 @@ class CakeForm(FlaskForm):
     k_est_min = FloatField('Min Rate Constant', [optional()], id='k_est_min')
     k_est_max = FloatField('Max Rate Constant', [optional()], id='k_est_max')
 
-    r_ord_val = FloatField('Est Reactant Order', id='r_ord_val')
-    r_ord_min = FloatField('Min Reactant Order', [optional()], id='r_ord_min')
-    r_ord_max = FloatField('Max Reactant Order', [optional()], id='r_ord_max')
+    r_ord_val = FloatField('Est Reactant Order', id='r_ord_val', default=1)
+    r_ord_min = FloatField('Min Reactant Order', [optional()], id='r_ord_min', default=0)
+    r_ord_max = FloatField('Max Reactant Order', [optional()], id='r_ord_max', default=3)
 
-    cat_ord_val = FloatField('Est Catalyst Order', id='c_ord_val')
-    cat_ord_min = FloatField('Min Catalyst Order', [optional()], id='c_ord_min')
-    cat_ord_max = FloatField('Max Catalyst Order', [optional()], id='c_ord_max')
+    cat_ord_val = FloatField('Est Catalyst Order', id='c_ord_val', default=1)
+    cat_ord_min = FloatField('Min Catalyst Order', [optional()], id='c_ord_min', default=0)
+    cat_ord_max = FloatField('Max Catalyst Order', [optional()], id='c_ord_max', default=3)
 
     t0_est_val = FloatField('Est Start Time', id='t0_est_val')
     t0_est_min = FloatField('Min Start Time', [optional()], id='t0_est_min')
     t0_est_max = FloatField('Max Start Time', [optional()], id='t0_est_max')
 
-    max_order = IntegerField("Maximum Catalyst Order", id='max_order', default=3)
+    max_order = IntegerField("Maximum Order", id='max_order', default=3)
 
     submit = SubmitField('Fit')
 

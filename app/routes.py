@@ -86,10 +86,21 @@ def cake():
 
         df = read_data(form.xl.data, form.sheet_name.data)
         log.debug(f"Read Data from user-specified Excel sheet:\n {df.head(5)}")
+        log.debug(f"T COL: {form.t_col.data},  R COL: {form.r_col.data}, P COL: {form.p_col.data}")
+
+        # reset column indices to 1-indexed
+        t_col, r_col, p_col = None, None, None
+        if form.t_col.data:
+            t_col = form.t_col.data - 1
+        if form.r_col.data:
+            r_col = form.r_col.data - 1
+        if form.p_col.data:
+            p_col = form.p_col.data - 1
+        log.debug(f"T COL: {t_col},  R COL: {r_col}, P COL: {p_col}")
 
         CAKE = fit_cake(df, form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data, form.p_end.data,
                         form.cat_add_rate.data, form.format_k_est(), form.format_r_ord(), form.format_cat_ord(),
-                        form.format_t0_est(), form.t_col.data, form.tic_col.data, form.r_col.data, form.p_col.data,
+                        form.format_t0_est(), t_col, None, r_col, p_col,
                         form.max_order.data, form.scale_avg_num.data, form.win.data, form.inc.data, form.fit_asp.data)
         t, r, p, fit, fit_p, fit_r, res_val, res_err, ss_res, r_squared, cat_pois = CAKE
 
@@ -111,10 +122,21 @@ def download_cake():
 
         df = read_data(form.xl.data, form.sheet_name.data)
         log.debug(f"Read Data from user-specified Excel sheet:\n {df.head(5)}")
+        log.debug(f"T COL: {form.t_col.data},  R COL: {form.r_col.data}, P COL: {form.p_col.data}")
+
+        # reset column indices to 1-indexed
+        t_col, r_col, p_col = None, None, None
+        if form.t_col.data:
+            t_col = form.t_col.data - 1
+        if form.r_col.data:
+            r_col = form.r_col.data - 1
+        if form.p_col.data:
+            p_col = form.p_col.data - 1
+        log.debug(f"T COL: {t_col},  R COL: {r_col}, P COL: {p_col}")
 
         CAKE = fit_cake(df, form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data, form.p_end.data,
                         form.cat_add_rate.data, form.format_k_est(), form.format_r_ord(), form.format_cat_ord(),
-                        form.format_t0_est(), form.t_col.data, form.tic_col.data, form.r_col.data, form.p_col.data,
+                        form.format_t0_est(), t_col, None, r_col, p_col,
                         form.max_order.data, form.scale_avg_num.data, form.win.data, form.inc.data, form.fit_asp.data)
         t, r, p, fit, fit_p, fit_r, res_val, res_err, ss_res, r_squared, cat_pois = CAKE
 
