@@ -5,7 +5,6 @@
 <link rel="stylesheet" href="{{url_for('.static', filename='css/graphs.css')}}">
 <link rel="stylesheet" href="{{url_for('.static', filename='css/bootstrap-colorpicker.css')}}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<!--<link rel="icon" href="{{url_for('.static', filename='images/cycle_icon.png')}}">-->
 {% endblock %}
 
 {% block scripts %}
@@ -15,6 +14,10 @@
     $(document).ready(function() {
         submitHandler("{{ form.csrf_token._value() }}");
         downloadHandler();
+        $('[data-toggle="tooltip"]').tooltip({
+            placement: "right",
+            trigger: "hover focus"
+        });
     });
 </script>
 {% endblock %}
@@ -80,33 +83,39 @@
                                 <div class="form-row">
                                   <div class="form-group col my-auto">
                                     {{ form.xl.label }}
-                                    {{ form.xl(class_="form-control", placeholder="Upload Excel Data", accept=".xlsx,.xls, .XLSX, .XLS") }}
+                                    {{ form.xl(class_="form-control", placeholder="Upload Excel Data",
+                                      accept=".xlsx,.xls, .XLSX, .XLS", title=form.xl.description, data_toggle='tooltip') }}
                                   </div>
                                 </div>
                                 <div class="form-row">
                                   <div class="form-group col">
                                     {{ form.sheet_name.label() }}
-                                    {{ form.sheet_name(class_="form-control") }}
+                                    {{ form.sheet_name(class_="form-control", title=form.sheet_name.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                 </div>
                                 <div class="form-row">
                                   <div class="form-group col">
                                     {{ form.t_col.label() }}
-                                    {{ form.t_col(class_="form-control", min=1) }}
+                                    {{ form.t_col(class_="form-control", min=1, title=form.t_col.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                   <div class="form-group col">
                                     {{ form.r_col.label() }}
-                                    {{ form.r_col(class_="form-control", min=1) }}
+                                    {{ form.r_col(class_="form-control", min=1, title=form.r_col.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                   <div class="form-group col">
                                     {{ form.p_col.label() }}
-                                    {{ form.p_col(class_="form-control", min=1) }}
+                                    {{ form.p_col(class_="form-control", min=1, title=form.p_col.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                 </div>
                                 <div class="form-row">
                                   <div class="form-group col">
                                     {{ form.fit_asp.label() }}
-                                    {{ form.fit_asp(class_="form-control") }}
+                                    {{ form.fit_asp(class_="form-control", title=form.fit_asp.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                   <div class="form-group col"></div>
                                 </div>
@@ -115,31 +124,37 @@
                                 <div class="form-row">
                                   <div class="form-group col">
                                     {{ form.stoich_r.label() }}
-                                    {{ form.stoich_r(class_="form-control") }}
+                                    {{ form.stoich_r(class_="form-control", title=form.stoich_r.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                   <div class="form-group col">
                                     {{ form.stoich_p.label() }}
-                                    {{ form.stoich_p(class_="form-control") }}
+                                    {{ form.stoich_p(class_="form-control", title=form.stoich_p.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                 </div>
                                 <div class="form-row">
                                   <div class="form-group col">
                                     {{ form.r0.label() }}
-                                    {{ form.r0(class_="form-control") }}
+                                    {{ form.r0(class_="form-control", title=form.r0.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                   <div class="form-group col">
                                     {{ form.p0.label() }}
-                                    {{ form.p0(class_="form-control") }}
+                                    {{ form.p0(class_="form-control", title=form.p0.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                 </div>
                                 <div class="form-row">
                                   <div class="form-group col">
                                     {{ form.p_end.label() }}
-                                    {{ form.p_end(class_="form-control") }}
+                                    {{ form.p_end(class_="form-control", title=form.p_end.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                   <div class="form-group col">
                                     {{ form.cat_add_rate.label() }}
-                                    {{ form.cat_add_rate(class_="form-control") }}
+                                    {{ form.cat_add_rate(class_="form-control", title=form.cat_add_rate.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                 </div>
                             </div>
@@ -147,29 +162,35 @@
                                 <div class="form-row">
                                   <div class="form-group col">
                                     {{ form.k_est_val.label() }}
-                                    {{ form.k_est_val(class_="form-control", min=0) }}
+                                    {{ form.k_est_val(class_="form-control", min=0, title=form.k_est_val.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                   <div class="form-group col">
                                     {{ form.k_est_min.label() }}
-                                    {{ form.k_est_min(class_="form-control", min=0) }}
+                                    {{ form.k_est_min(class_="form-control", min=0, title=form.k_est_min.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                   <div class="form-group col">
                                     {{ form.k_est_max.label() }}
-                                    {{ form.k_est_max(class_="form-control", min=0) }}
+                                    {{ form.k_est_max(class_="form-control", min=0, title=form.k_est_max.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                 </div>
                                 <div class="form-row">
                                   <div class="form-group col">
                                     {{ form.t0_est_val.label() }}
-                                    {{ form.t0_est_val(class_="form-control", min=0) }}
+                                    {{ form.t0_est_val(class_="form-control", title=form.t0_est_val.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                   <div class="form-group col">
                                     {{ form.t0_est_min.label() }}
-                                    {{ form.t0_est_min(class_="form-control", min=0) }}
+                                    {{ form.t0_est_min(class_="form-control", title=form.t0_est_min.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                   <div class="form-group col">
                                     {{ form.t0_est_max.label() }}
-                                    {{ form.t0_est_max(class_="form-control", min=0) }}
+                                    {{ form.t0_est_max(class_="form-control", title=form.t0_est_max.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                 </div>
                             </div>
@@ -177,49 +198,59 @@
                                 <div class="form-row">
                                   <div class="form-group col">
                                     {{ form.scale_avg_num.label() }}
-                                    {{ form.scale_avg_num(class_="form-control", min=0) }}
+                                    {{ form.scale_avg_num(class_="form-control", min=1,
+                                      title=form.scale_avg_num.description, data_toggle='tooltip') }}
                                   </div>
                                   <div class="form-group col">
                                     {{ form.win.label() }}
-                                    {{ form.win(class_="form-control", min=0) }}
+                                    {{ form.win(class_="form-control", min=1, title=form.win.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                 </div>
                                 <div class="form-row">
                                   <div class="form-group col">
                                     {{ form.inc.label() }}
-                                    {{ form.inc(class_="form-control", min=0) }}
+                                    {{ form.inc(class_="form-control", min=1, title=form.inc.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                   <div class="form-group col">
                                     {{ form.max_order.label() }}
-                                    {{ form.max_order(class_="form-control", min=0) }}
+                                    {{ form.max_order(class_="form-control", title=form.max_order.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                 </div>
                                 <div class="form-row">
                                   <div class="form-group col">
                                     {{ form.r_ord_val.label() }}
-                                    {{ form.r_ord_val(class_="form-control", min=0) }}
+                                    {{ form.r_ord_val(class_="form-control", title=form.r_ord_val.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                   <div class="form-group col">
                                     {{ form.r_ord_min.label() }}
-                                    {{ form.r_ord_min(class_="form-control", min=0) }}
+                                    {{ form.r_ord_min(class_="form-control", title=form.r_ord_min.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                   <div class="form-group col">
                                     {{ form.r_ord_max.label() }}
-                                    {{ form.r_ord_max(class_="form-control", min=0) }}
+                                    {{ form.r_ord_max(class_="form-control", title=form.r_ord_max.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                 </div>
                                 <div class="form-row">
                                   <div class="form-group col">
                                     {{ form.cat_ord_val.label() }}
-                                    {{ form.cat_ord_val(class_="form-control", min=0) }}
+                                    {{ form.cat_ord_val(class_="form-control", title=form.cat_ord_val.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                   <div class="form-group col">
                                     {{ form.cat_ord_min.label() }}
-                                    {{ form.cat_ord_min(class_="form-control", min=0) }}
+                                    {{ form.cat_ord_min(class_="form-control", title=form.cat_ord_min.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                   <div class="form-group col">
                                     {{ form.cat_ord_max.label() }}
-                                    {{ form.cat_ord_max(class_="form-control", min=0) }}
+                                    {{ form.cat_ord_max(class_="form-control", title=form.cat_ord_max.description,
+                                      data_toggle='tooltip') }}
                                   </div>
                                 </div>
                             </div>
