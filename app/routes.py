@@ -5,7 +5,7 @@ from werkzeug.datastructures import CombinedMultiDict
 from app.catacycle_form import RatesForm, DownloadForm
 from app.cake_form import CakeForm, CakeDownloadForm
 from app.oboros import draw, draw_straight
-from app.cake import read_data, fit_cake, plot_cake_results, pprint_cake
+from app.cake import read_data, fit_cake, plot_cake_results, pprint_cake, write_fit_data_temp, make_param_dict
 from app import app
 import os
 import logging
@@ -86,7 +86,6 @@ def cake():
 
         df = read_data(form.xl.data, form.sheet_name.data)
         log.debug(f"Read Data from user-specified Excel sheet:\n {df.head(5)}")
-        log.debug(f"T COL: {form.t_col.data},  R COL: {form.r_col.data}, P COL: {form.p_col.data}")
 
         # reset column indices to 1-indexed
         t_col, r_col, p_col = None, None, None
@@ -96,7 +95,6 @@ def cake():
             r_col = form.r_col.data - 1
         if form.p_col.data:
             p_col = form.p_col.data - 1
-        log.debug(f"T COL: {t_col},  R COL: {r_col}, P COL: {p_col}")
 
         CAKE = fit_cake(df, form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data, form.p_end.data,
                         form.cat_add_rate.data, form.format_k_est(), form.format_r_ord(), form.format_cat_ord(),
@@ -111,6 +109,58 @@ def cake():
         return jsonify(data=[html, results])
 
     return render_template('cake.html', form=form)
+
+
+@app.route('/download-cake-xlsx', methods=['GET', 'POST'])
+def download_cake_xlsx():
+    log.debug(f"Downloading the Excel data")
+
+    form = CakeForm()
+
+    if request.method == 'POST' and form.validate_on_submit():
+        log.debug(f"Collected form data from user: {form.data}")
+
+        df = read_data(form.xl.data, form.sheet_name.data)
+        log.debug(f"Read Data from user-specified Excel sheet:\n {df.head(5)}")
+
+        # reset column indices to 1-indexed
+        t_col, r_col, p_col = None, None, None
+        if form.t_col.data:
+            t_col = form.t_col.data - 1
+        if form.r_col.data:
+            r_col = form.r_col.data - 1
+        if form.p_col.data:
+            p_col = form.p_col.data - 1
+
+        CAKE = fit_cake(df, form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data, form.p_end.data,
+                        form.cat_add_rate.data, form.format_k_est(), form.format_r_ord(), form.format_cat_ord(),
+                        form.format_t0_est(), t_col, None, r_col, p_col, form.max_order.data, form.scale_avg_num.data,
+                        form.win.data, form.inc.data, form.fit_asp.data)
+        t, r, p, fit, fit_p, fit_r, res_val, res_err, ss_res, r_squared, cat_pois = CAKE
+
+        param_dict = make_param_dict(form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data,
+                                     form.p_end.data, form.cat_add_rate.data, form.format_k_est(), form.format_r_ord(),
+                                     form.format_cat_ord(), form.format_t0_est(), t_col, None, r_col, p_col,
+                                     form.max_order.data, form.scale_avg_num.data, form.win.data, form.inc.data,
+                                     form.fit_asp.data)
+
+        tmp_file, mimetype = write_fit_data_temp(df, param_dict, t, r, p, fit_p, fit_r, res_val, res_err, ss_res,
+                                                r_squared, cat_pois)
+
+        log.debug(send_file(tmp_file, as_attachment=True,
+                         attachment_filename=secure_filename('cake_fit.xlsx')))
+
+        tmp_file.seek(0)
+
+        response = make_response(Response(FileWrapper(tmp_file), mimetype=mimetype, direct_passthrough=True))
+        filename = secure_filename('cake_fit.xlsx')
+        response.headers.set('Content-Disposition', 'attachment', filename=filename)
+        log.debug(response)
+        return response
+    else:
+        log.debug("Not sending anything")
+        return '', 204
+
 
 @app.route('/download-cake', methods=['GET', 'POST'])
 def download_cake():

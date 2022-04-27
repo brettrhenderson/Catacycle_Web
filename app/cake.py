@@ -341,6 +341,95 @@ def fit_cake(df, stoich_r, stoich_p, r0, p0, p_end, cat_add_rate, k_est, r_ord, 
     return t, r, p, fit, fit_p, fit_r, res_val, res_err, ss_res, r_squared, cat_pois
 
 
+def write_fit_data(filename, df, param_dict, t, r, p, fit_p, fit_r, res_val, res_err, ss_res, r_squared, cat_pois):
+    param_dict = {key: np.array([value]) for (key, value) in param_dict.items()}
+    out_dict = {"Rate Constant": [res_val[0]],
+                  "Reactant Order": [res_val[1]],
+                  "Catalyst Order": [res_val[2]],
+                  "Zero Time": [res_val[3]],
+                  "Catalyst Poisoning": [cat_pois],
+                  "Rate Constant Error": [res_err[0]],
+                  "Reactant Order Error": [res_err[1]],
+                  "Catalyst Order Error": [res_err[2]],
+                  "Zero Time Error": [res_err[3]],
+                  "RSS": [ss_res],
+                  "R2": [r_squared]}
+    df_outputs = pd.DataFrame.from_dict(out_dict)
+    df_params = pd.DataFrame.from_dict(param_dict)
+    if t is not None:
+        df['Time Transformed'] = t
+    if r is not None:
+        df['R Transformed'] = r
+    if p is not None:
+        df['P Transformed'] = p
+    if fit_r is not None:
+        df['Fit R'] = fit_r
+    if fit_p is not None:
+        df['Fit P'] = fit_p
+
+    writer = pd.ExcelWriter(filename, engine='openpyxl')
+    df.to_excel(writer, sheet_name='FitData')
+    df_outputs.to_excel(writer, sheet_name='Outputs')
+    df_params.to_excel(writer, sheet_name='InputParams')
+    writer.save()
+
+
+def write_fit_data_temp(df, param_dict, t, r, p, fit_p, fit_r, res_val, res_err, ss_res, r_squared, cat_pois):
+    tmp_file = io.BytesIO()
+    write_fit_data(tmp_file, df, param_dict, t, r, p, fit_p, fit_r, res_val, res_err, ss_res, r_squared, cat_pois)
+
+    return tmp_file, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+
+
+def make_param_dict(stoich_r, stoich_p, r0, p0, p_end, cat_add_rate, k_est, r_ord, cat_ord,
+                    t0_est, t_col, TIC_col, r_col, p_col, max_order, scale_avg_num, win, inc, fit_asp):
+    param_dict = {'Stoich R': stoich_r,
+     'Stoich P': stoich_p,
+     'R_0': r0,
+     'P_0': p0,
+     'P_end': p_end,
+     'Cat Add Rate': cat_add_rate,
+     'Total Ion Count col': TIC_col,
+     'R col': r_col,
+     'P col': p_col,
+     'Time col': t_col,
+     'Max Order': max_order,
+     'Concentration Calibration Points': scale_avg_num,
+     'Smoothing Window': win,
+     'Interpolation Multiplier': inc,
+     'Fitting Aspect': fit_asp
+     }
+    if len(k_est) == 1:
+        param_dict['k Estimate'] = k_est[0]
+        param_dict['k Minimum'] = k_est[0] - (0.001 * k_est[0])
+        param_dict['k Maximum'] = k_est[0] + (0.001 * k_est[0])
+    else:
+        param_dict['k Estimate'], param_dict['k Minimum'], param_dict['k Maximum'] = k_est
+
+    if len(r_ord) == 1:
+        param_dict['R Order Estimate'] = r_ord[0]
+        param_dict['R Order Minimum'] = r_ord[0] - 0.001
+        param_dict['R Order Maximum'] = r_ord[0] + 0.001
+    else:
+        param_dict['R Order Estimate'], param_dict['R Order Minimum'], param_dict['R Order Maximum'] = r_ord
+
+    if len(r_ord) == 1:
+        param_dict['Cat Order Estimate'] = cat_ord[0]
+        param_dict['Cat Order Minimum'] = cat_ord[0] - 0.001
+        param_dict['Cat Order Maximum'] = cat_ord[0] + 0.001
+    else:
+        param_dict['Cat Order Estimate'], param_dict['Cat Order Minimum'], param_dict['Cat Order Maximum'] = cat_ord
+
+    if len(t0_est) == 1:
+        param_dict['Start Time Estimate'] = t0_est[0]
+        param_dict['Start Time Minimum'] = t0_est[0] - 0.001
+        param_dict['Start Time Maximum'] = t0_est[0] + 0.001
+    else:
+        param_dict['Start Time Estimate'], param_dict['Start Time Minimum'], param_dict['Start Time Maximum'] = t0_est
+
+    return param_dict
+
+
 def plot_cake_results(t, r, p, fit, fit_p, fit_r, r_col, p_col, f_format='svg', return_image=False, save_disk=False,
                       save_to='cake.svg'):
     # graph results
@@ -513,6 +602,7 @@ if __name__ == "__main__":
     fit_asp = 'p'  # enter aspect you want to fit to: 'r' for reactant, 'p' for product or 'rp' for both
 
     pic_save = r'/Users/bhenders/Desktop/CAKE/cake_app_test.png'
+    xlsx_save = r'/Users/bhenders/Desktop/CAKE/fit_data.xlsx'
 
     df = read_data(file_name, sheet_name)
     CAKE = fit_cake(df, stoich_r, stoich_p, r0, p0, p_end, cat_add_rate, k_est, r_ord, cat_ord,
@@ -521,3 +611,12 @@ if __name__ == "__main__":
 
     html = plot_cake_results(t, r, p, fit, fit_p, fit_r, r_col, p_col, f_format='svg', return_image=False,
                              save_disk=True, save_to=pic_save)
+
+    param_dict = make_param_dict(stoich_r, stoich_p, r0, p0, p_end, cat_add_rate, k_est, r_ord, cat_ord,
+                    t0_est, t_col, TIC_col, r_col, p_col, max_order, scale_avg_num, win, inc, fit_asp)
+
+    # write_fit_data(xlsx_save, df, param_dict, t, r, p, fit_p, fit_r, res_val, res_err, ss_res, r_squared, cat_pois)
+    file, _ = write_fit_data_temp(df, param_dict, t, r, p, fit_p, fit_r, res_val, res_err, ss_res, r_squared, cat_pois)
+    file.seek(0)
+    with open(xlsx_save, "wb") as f:
+        f.write(file.getbuffer())

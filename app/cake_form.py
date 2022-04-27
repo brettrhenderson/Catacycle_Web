@@ -96,7 +96,7 @@ class CakeForm(FlaskForm):
     max_order = IntegerField("Maximum Order", id='max_order', default=3,
                              description="Maximum order search constraint (overrides other specific maximum constraints")
 
-    submit = SubmitField('Fit')
+    submit = SubmitField('Fit', id='fit-submit')
 
     def format_k_est(self):
         if self.k_est_min.data is None or self.k_est_max.data is None:

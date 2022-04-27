@@ -55,7 +55,7 @@
     <div class="container-fluid">
         <div class="row d-flex">
             <div class="pb-2 col-1 d-flex flex-column"></div>
-            <form enctype="multipart/form-data" class="px-3 pt-1 pb-2 col-5 d-flex flex-column align-items-center justify-content-start" id="cake-form" action="{{ url_for('cake') }}" method="post">
+            <form enctype="multipart/form-data" onkeydown="return event.key != 'Enter';" class="px-3 pt-1 pb-2 col-5 d-flex flex-column align-items-center justify-content-start" id="cake-form" action="{{ url_for('download_cake_xlsx') }}" method="post">
                 {{ form.hidden_tag() }}
                 <div class="card">
                     <div class="card-header">
@@ -261,7 +261,14 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button id="{{ form.submit.id }}" type="submit" class="form-control btn btn-primary">{{ form.submit.label.text }}</button>
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <input id="{{ form.submit.id }}" type="button" class="form-control btn btn-primary" value="{{ form.submit.label.text }}">
+                            </div>
+                            <div class="form-group col">
+                                <input type="submit" id="download-fit" class="form-control btn btn-primary" value="Download Fit">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </form>

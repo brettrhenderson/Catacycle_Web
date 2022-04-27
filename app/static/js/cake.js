@@ -34,9 +34,9 @@ function submitForm(csrf_token, form_url, responseHandler) {
 }
 
 function submitHandler(csrf_token) {
-    $('#cake-form').submit(function(e)
+    $('#fit-submit').click(function()
     {
-        e.preventDefault(); //STOP default action
+        console.log('Submit Triggered');
         $('#outputlink').trigger('click');
         document.getElementById('output-text').innerHTML = "Calculating...";
 
@@ -48,6 +48,15 @@ function submitHandler(csrf_token) {
 
     });
 }
+
+//function downloadFitHandler(csrf_token) {
+//    $('#cake-form').submit(function(e)
+//    {
+//        e.preventDefault();
+//        console.log('Downloading Fit Data');
+//        $("#cake-form")[0].submit();
+//    });
+//}
 
 function downloadHandler() {
     $('#download-form').submit(function(e)
