@@ -45,7 +45,7 @@ class CakeForm(FlaskForm):
                    id='excelUpload')
     sheet_name = StringField('Sheet Name', id='sheet_name', description="Name of sheet in Excel file, case sensitive",
                              default='Sheet1')
-    t_col = IntegerField('Time Column', id='t_col', description="Integer index, 0 is the first column")
+    t_col = IntegerField('Time Column', id='t_col', description="Integer index, 1 is the first column")
     tic_col = IntegerField('Total Ion Count Column', [optional()], id='tic_col',
                            description="Integer index, 1 is the first column")
     r_col = IntegerField('Reactant Column', [optional()], id='r_col',
