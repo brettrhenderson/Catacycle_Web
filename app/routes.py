@@ -147,9 +147,6 @@ def download_cake_xlsx():
         tmp_file, mimetype = write_fit_data_temp(df, param_dict, t, r, p, fit_p, fit_r, res_val, res_err, ss_res,
                                                 r_squared, cat_pois)
 
-        log.debug(send_file(tmp_file, as_attachment=True,
-                         attachment_filename=secure_filename('cake_fit.xlsx')))
-
         tmp_file.seek(0)
 
         response = make_response(Response(FileWrapper(tmp_file), mimetype=mimetype, direct_passthrough=True))
