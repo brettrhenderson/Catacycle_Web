@@ -15,7 +15,7 @@
         submitHandler("{{ form.csrf_token._value() }}");
         downloadHandler();
         $('[data-toggle="tooltip"]').tooltip({
-            placement: "right",
+            placement: "top",
             trigger: "hover focus"
         });
     });
@@ -152,8 +152,20 @@
                                       data_toggle='tooltip') }}
                                   </div>
                                   <div class="form-group col">
-                                    {{ form.cat_add_rate.label() }}
-                                    {{ form.cat_add_rate(class_="form-control", title=form.cat_add_rate.description,
+                                    {{ form.cat_sol_conc.label() }}
+                                    {{ form.cat_sol_conc(class_="form-control", title=form.cat_sol_conc.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.inject_rate.label() }}
+                                    {{ form.inject_rate(class_="form-control", title=form.inject_rate.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.react_vol_init.label() }}
+                                    {{ form.react_vol_init(class_="form-control", title=form.react_vol_init.description,
                                       data_toggle='tooltip') }}
                                   </div>
                                 </div>

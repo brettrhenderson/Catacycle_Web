@@ -5,7 +5,7 @@ from werkzeug.datastructures import CombinedMultiDict
 from app.catacycle_form import RatesForm, DownloadForm
 from app.cake_form import CakeForm, CakeDownloadForm
 from app.oboros import draw, draw_straight
-from app.cake import read_data, fit_cake, plot_cake_results, pprint_cake, write_fit_data_temp, make_param_dict
+import cake as ck
 from app import app
 import os
 import logging
@@ -13,14 +13,17 @@ import logging
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
+
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 def index():
     return render_template('index.html')
 
+
 @app.route('/aboutus', methods=['GET', 'POST'])
 def aboutus():
     return render_template('aboutus.html')
+
 
 @app.route('/graphs', methods=['GET', 'POST'])
 def graphs():
@@ -84,7 +87,7 @@ def cake():
     if request.method == 'POST' and form.validate_on_submit():
         log.debug(f"Collected form data from user: {form.data}")
 
-        df = read_data(form.xl.data, form.sheet_name.data)
+        df = ck.read_data(form.xl.data, form.sheet_name.data)
         log.debug(f"Read Data from user-specified Excel sheet:\n {df.head(5)}")
 
         # reset column indices to 1-indexed
@@ -96,15 +99,18 @@ def cake():
         if form.p_col.data:
             p_col = form.p_col.data - 1
 
-        CAKE = fit_cake(df, form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data, form.p_end.data,
-                        form.cat_add_rate.data, form.format_k_est(), form.format_r_ord(), form.format_cat_ord(),
-                        form.format_t0_est(), t_col, None, r_col, p_col,
-                        form.max_order.data, form.scale_avg_num.data, form.win.data, form.inc.data, form.fit_asp.data)
-        t, r, p, fit, fit_p, fit_r, res_val, res_err, ss_res, r_squared, cat_pois = CAKE
+        cat_add_rate = ck.get_cat_add_rate(form.cat_sol_conc.data, form.inject_rate.data, form.react_vol_init.data)
 
-        html = plot_cake_results(t, r, p, fit, fit_p, fit_r, form.r_col.data, form.p_col.data, f_format='svg', return_image=False)
+        CAKE = ck.fit_cake(df, form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data, form.p_end.data,
+                             cat_add_rate, form.format_k_est(), form.format_r_ord(), form.format_cat_ord(),
+                             form.format_t0_est(), t_col, None, r_col, p_col, form.max_order.data,
+                             form.scale_avg_num.data, form.win.data, form.inc.data, form.fit_asp.data)
+        t, r, p, fit, fit_p, fit_r, res_val, res_err, ss_res, r_squared, cat_pois, cat_pois_err = CAKE
 
-        results = pprint_cake(res_val, res_err, ss_res, r_squared, cat_pois)
+        html = ck.plot_cake_results(t, r, p, fit, fit_p, fit_r, form.r_col.data, form.p_col.data, f_format='svg',
+                                      return_image=False)
+
+        results = ck.pprint_cake(res_val, res_err, ss_res, r_squared, cat_pois, cat_pois_err)
 
         return jsonify(data=[html, results])
 
@@ -120,7 +126,7 @@ def download_cake_xlsx():
     if request.method == 'POST' and form.validate_on_submit():
         log.debug(f"Collected form data from user: {form.data}")
 
-        df = read_data(form.xl.data, form.sheet_name.data)
+        df = ck.read_data(form.xl.data, form.sheet_name.data)
         log.debug(f"Read Data from user-specified Excel sheet:\n {df.head(5)}")
 
         # reset column indices to 1-indexed
@@ -132,20 +138,22 @@ def download_cake_xlsx():
         if form.p_col.data:
             p_col = form.p_col.data - 1
 
-        CAKE = fit_cake(df, form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data, form.p_end.data,
-                        form.cat_add_rate.data, form.format_k_est(), form.format_r_ord(), form.format_cat_ord(),
-                        form.format_t0_est(), t_col, None, r_col, p_col, form.max_order.data, form.scale_avg_num.data,
-                        form.win.data, form.inc.data, form.fit_asp.data)
-        t, r, p, fit, fit_p, fit_r, res_val, res_err, ss_res, r_squared, cat_pois = CAKE
+        cat_add_rate = ck.get_cat_add_rate(form.cat_sol_conc.data, form.inject_rate.data, form.react_vol_init.data)
 
-        param_dict = make_param_dict(form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data,
-                                     form.p_end.data, form.cat_add_rate.data, form.format_k_est(), form.format_r_ord(),
-                                     form.format_cat_ord(), form.format_t0_est(), t_col, None, r_col, p_col,
-                                     form.max_order.data, form.scale_avg_num.data, form.win.data, form.inc.data,
-                                     form.fit_asp.data)
+        CAKE = ck.fit_cake(df, form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data, form.p_end.data,
+                             cat_add_rate, form.format_k_est(), form.format_r_ord(), form.format_cat_ord(),
+                             form.format_t0_est(), t_col, None, r_col, p_col, form.max_order.data,
+                             form.scale_avg_num.data, form.win.data, form.inc.data, form.fit_asp.data)
+        t, r, p, fit, fit_p, fit_r, res_val, res_err, ss_res, r_squared, cat_pois, cat_pois_err = CAKE
 
-        tmp_file, mimetype = write_fit_data_temp(df, param_dict, t, r, p, fit_p, fit_r, res_val, res_err, ss_res,
-                                                r_squared, cat_pois)
+        param_dict = ck.make_param_dict(form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data,
+                                          form.p_end.data, cat_add_rate, form.format_k_est(),
+                                          form.format_r_ord(), form.format_cat_ord(), form.format_t0_est(), t_col, None,
+                                          r_col, p_col, form.max_order.data, form.scale_avg_num.data, form.win.data,
+                                          form.inc.data, form.fit_asp.data)
+
+        tmp_file, mimetype = ck.write_fit_data_temp(df, param_dict, t, r, p, fit_p, fit_r, res_val, res_err, ss_res,
+                                                      r_squared, cat_pois, cat_pois_err)
 
         tmp_file.seek(0)
 
@@ -167,7 +175,7 @@ def download_cake():
     if request.method == 'POST' and form.validate_on_submit():
         log.debug(f"Collected form data from user: {form.data}")
 
-        df = read_data(form.xl.data, form.sheet_name.data)
+        df = ck.read_data(form.xl.data, form.sheet_name.data)
         log.debug(f"Read Data from user-specified Excel sheet:\n {df.head(5)}")
         log.debug(f"T COL: {form.t_col.data},  R COL: {form.r_col.data}, P COL: {form.p_col.data}")
 
@@ -181,14 +189,16 @@ def download_cake():
             p_col = form.p_col.data - 1
         log.debug(f"T COL: {t_col},  R COL: {r_col}, P COL: {p_col}")
 
-        CAKE = fit_cake(df, form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data, form.p_end.data,
-                        form.cat_add_rate.data, form.format_k_est(), form.format_r_ord(), form.format_cat_ord(),
-                        form.format_t0_est(), t_col, None, r_col, p_col,
-                        form.max_order.data, form.scale_avg_num.data, form.win.data, form.inc.data, form.fit_asp.data)
-        t, r, p, fit, fit_p, fit_r, res_val, res_err, ss_res, r_squared, cat_pois = CAKE
+        cat_add_rate = ck.get_cat_add_rate(form.cat_sol_conc.data, form.inject_rate.data, form.react_vol_init.data)
 
-        img, mimetype = plot_cake_results(t, r, p, fit, fit_p, fit_r, form.r_col.data, form.p_col.data,
-                                          f_format=form.f_format.data, return_image=True)
+        CAKE = ck.fit_cake(df, form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data, form.p_end.data,
+                             cat_add_rate, form.format_k_est(), form.format_r_ord(), form.format_cat_ord(),
+                             form.format_t0_est(), t_col, None, r_col, p_col, form.max_order.data,
+                             form.scale_avg_num.data, form.win.data, form.inc.data, form.fit_asp.data)
+        t, r, p, fit, fit_p, fit_r, res_val, res_err, ss_res, r_squared, cat_pois, cat_pois_err = CAKE
+
+        img, mimetype = ck.plot_cake_results(t, r, p, fit, fit_p, fit_r, form.r_col.data, form.p_col.data,
+                                               f_format=form.f_format.data, return_image=True)
         img.seek(0)
         img = FileWrapper(img)
         response = make_response(Response(img, mimetype=mimetype, direct_passthrough=True))

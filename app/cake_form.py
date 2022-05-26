@@ -63,8 +63,12 @@ class CakeForm(FlaskForm):
     r0 = FloatField('Starting Reactant Concentration', id='r0', description="Initial reactant concentration")
     p0 = FloatField('Starting Product Concentration', id='p0', description="Initial product concentration")
     p_end = FloatField('Final Product Concentration', id='p_end', description="Final Product concentration")
-    cat_add_rate = FloatField('Catalyst Addition Rate', id='cat_add_rate',
-                              description='Concentration per unit time at which catalyst was added to reaction')
+    cat_sol_conc = FloatField('Catalyst Concentration', id='cat_sol_conc',
+                              description='Concentration of the catalyst solution being added to the reaction')
+    inject_rate = FloatField('Injection Rate', id='inject_rate',
+                             description='Rate of addition of catalyst solution to the reaction mixture')
+    react_vol_init = FloatField('Initial Reactant Volume', id='react_vol_init',
+                                description='Initial volume of reactant solution to which catalyst is added')
     win = IntegerField('Smoothing Window', id='win', default=1, description="Number of points in smoothing window")
     inc = IntegerField('Interpolation Multiplier', id='inc',
                        description='Number of points to interpolate between measurements', default=1)
