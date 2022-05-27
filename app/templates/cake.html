@@ -9,14 +9,29 @@
 
 {% block scripts %}
 {{super()}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 <script src="{{url_for('.static', filename='js/cake.js')}}"></script>
 <script type="text/javascript">
+    var csrf_token = "{{ form.csrf_token._value() }}";
     $(document).ready(function() {
-        submitHandler("{{ form.csrf_token._value() }}");
         downloadHandler();
         $('[data-toggle="tooltip"]').tooltip({
             placement: "top",
             trigger: "hover focus"
+        });
+        $("#cake-form").validate({
+            ignore: [],
+            submitHandler: submitCakeHandler,
+            invalidHandler: highlightInvalidTabs
+        });
+        $.validator.messages.required = '*Required';
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrf_token)
+                }
+            }
         });
     });
 </script>
@@ -61,16 +76,16 @@
                     <div class="card-header">
                         <ul class="nav nav-tabs card-header-tabs">
                             <li class="nav-item">
-                                <a id="uploadlink" class="nav-link active" data-toggle="tab" href="#uploadtab">Upload</a>
+                                <a id="uploadlink" class="nav-link active form-tab" data-toggle="tab" href="#uploadtab">Upload</a>
                             </li>
                             <li class="nav-item">
-                                <a id="datalink" class="nav-link" data-toggle="tab" href="#datatab">Rxn Data</a>
+                                <a id="datalink" class="nav-link form-tab" data-toggle="tab" href="#datatab">Rxn Data</a>
                             </li>
                             <li class="nav-item">
-                                <a id="fittinglink" class="nav-link" data-toggle="tab" href="#fittingtab">Fit Params</a>
+                                <a id="fittinglink" class="nav-link form-tab" data-toggle="tab" href="#fittingtab">Fit Params</a>
                             </li>
                             <li class="nav-item">
-                                <a id="advancedlink" class="nav-link" data-toggle="tab" href="#advancedtab">Advanced</a>
+                                <a id="advancedlink" class="nav-link form-tab" data-toggle="tab" href="#advancedtab">Advanced</a>
                             </li>
                             <li class="nav-item">
                                 <a id="outputlink" class="nav-link" data-toggle="tab" href="#outputtab">Output</a>
@@ -275,7 +290,7 @@
                     <div class="card-footer">
                         <div class="form-row">
                             <div class="form-group col">
-                                <input id="{{ form.submit.id }}" type="button" class="form-control btn btn-primary" value="{{ form.submit.label.text }}">
+                                <input id="{{ form.submit.id }}" type="submit" class="form-control btn btn-primary" value="{{ form.submit.label.text }}">
                             </div>
                             <div class="form-group col">
                                 <input type="submit" id="download-fit" class="form-control btn btn-primary" value="Download Fit">

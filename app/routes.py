@@ -83,6 +83,7 @@ def cake():
     form = CakeForm()  # initialize the backend of the web form
     log.debug(f'\nFORM VALID? {form.validate()}\n')
     log.debug(f'\nFORM VALIDATION ERRORS: {form.errors.items()}\n')
+    log.debug(f'\nFORM DATA {form.data}\n')
 
     if request.method == 'POST' and form.validate_on_submit():
         log.debug(f"Collected form data from user: {form.data}")
