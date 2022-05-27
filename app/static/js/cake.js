@@ -1,4 +1,5 @@
 var downloadExcel = false;
+var downloadImage = false;
 
 function submitForm(form_url, responseHandler) {
     var formData = new FormData(document.getElementById('cake-form'))
@@ -29,6 +30,7 @@ function submitForm(form_url, responseHandler) {
 
 function highlightInvalidTabs(event, validator) {
     downloadExcel = false;
+    downloadImage = false;
     $("a.form-tab").removeClass('error-tab')
     var errors = validator.numberOfInvalids();
     if (errors) {
@@ -47,46 +49,49 @@ function ExcelDownloadHandler() {
 }
 
 function submitCakeHandler(form) {
-    console.log('Submit Triggered');
     $('a.form-tab').removeClass('error-tab')
 
     if (downloadExcel) {
-        console.log('Forcing normal HTML submit');
         downloadExcel = false;
         form.submit();
     }
 
-    $('#outputlink').trigger('click');
-    document.getElementById('output-text').innerHTML = "Calculating...";
+    if (downloadImage) {
+        downloadImage = false;
+        submitDownloadData();
+    }
+    else {
+        $('#outputlink').trigger('click');
+        document.getElementById('output-text').innerHTML = "Calculating...";
 
-    submitForm('/cake', function (response) {
-        console.log(response[0]);
-        document.getElementById('cake-result').src = response.data[0];
-        document.getElementById('output-text').innerHTML = response.data[1];
-    });
+        submitForm('/cake', function (response) {
+            console.log(response[0]);
+            document.getElementById('cake-result').src = response.data[0];
+            document.getElementById('output-text').innerHTML = response.data[1];
+        });
+    }
 }
 
 
 function downloadHandler() {
-    $('#download-form').submit(function(e)
-    {
-        e.preventDefault(); //STOP default action
-
-        // get all of the information in the input cake form
-        var cake_data = cloneWithSelects($('#cake-form')).find(':input')
-        cake_data.attr('hidden', true);
-        $('#download-form').append(cake_data);
-        $('#download-form').children().remove(':button')
-
-        console.log(cake_data);
-
-        // now submit the form for real
-        console.log($("#download-form")[0]);
-        console.log($("#download-form")[0].submit);
-        $("#download-form")[0].submit();
-        // clean-up
-        $('#download-form').children().remove(':input')
+    $('#fake-submit').click(function(e) {
+        // e.preventDefault(); //STOP default action
+        downloadImage = true;
+        $('#cake-form').submit();
     });
+}
+
+function submitDownloadData() {
+    // get all of the information in the input cake form
+    var cake_data = cloneWithSelects($('#cake-form')).find(':input')
+    cake_data.attr('hidden', true);
+    $('#download-form').append(cake_data);
+    $('#download-form').children().remove(':button')
+
+    // now submit the form for real
+    $("#download-form")[0].submit();
+    // clean-up
+    $('#download-form').children().remove(':input')
 }
 
 function cloneWithSelects(original) {
