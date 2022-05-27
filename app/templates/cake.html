@@ -15,6 +15,7 @@
     var csrf_token = "{{ form.csrf_token._value() }}";
     $(document).ready(function() {
         downloadHandler();
+        ExcelDownloadHandler();
         $('[data-toggle="tooltip"]').tooltip({
             placement: "top",
             trigger: "hover focus"
@@ -293,7 +294,7 @@
                                 <input id="{{ form.submit.id }}" type="submit" class="form-control btn btn-primary" value="{{ form.submit.label.text }}">
                             </div>
                             <div class="form-group col">
-                                <input type="submit" id="download-fit" class="form-control btn btn-primary" value="Download Fit">
+                                <input type="button" id="download-fit" class="form-control btn btn-primary" value="Download Fit">
                             </div>
                         </div>
                     </div>

@@ -1,3 +1,5 @@
+var downloadExcel = false;
+
 function submitForm(form_url, responseHandler) {
     var formData = new FormData(document.getElementById('cake-form'))
 
@@ -26,33 +28,34 @@ function submitForm(form_url, responseHandler) {
 }
 
 function highlightInvalidTabs(event, validator) {
+    downloadExcel = false;
     $("a.form-tab").removeClass('error-tab')
-    console.log("HIGHLIGHTING ALL INVALID TABS")
     var errors = validator.numberOfInvalids();
     if (errors) {
-      var message = errors == 1
-        ? 'You missed 1 field. It has been highlighted'
-        : 'You missed ' + errors + ' fields. They have been highlighted';
-      console.log(message);
-      console.log(validator);
-      for (let i in validator.invalid) {
-          console.log(i);
-      }
       for (let i in validator.errorList) {
           var tabId = $(validator.errorList[i].element).closest('div.tab-pane')[0].id;
           $(`a[href='#${tabId}']`).addClass('error-tab');
-
-          console.log(tabId);
       }
     }
-    else {
-      $("div.error").hide();
-    }
+}
+
+function ExcelDownloadHandler() {
+    $('#download-fit').click(function() {
+        downloadExcel = true;
+        $('#cake-form').submit();
+    });
 }
 
 function submitCakeHandler(form) {
     console.log('Submit Triggered');
-    $("a.form-tab").removeClass('error-tab')
+    $('a.form-tab').removeClass('error-tab')
+
+    if (downloadExcel) {
+        console.log('Forcing normal HTML submit');
+        downloadExcel = false;
+        form.submit();
+    }
+
     $('#outputlink').trigger('click');
     document.getElementById('output-text').innerHTML = "Calculating...";
 
