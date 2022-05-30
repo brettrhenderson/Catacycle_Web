@@ -20,10 +20,47 @@
             placement: "top",
             trigger: "hover focus"
         });
+
         $("#cake-form").validate({
             ignore: [],
             submitHandler: submitCakeHandler,
-            invalidHandler: highlightInvalidTabs
+            invalidHandler: highlightInvalidTabs,
+            rules: {
+                r_col: {
+                    required: function(element) {
+                        return $("#fit_asp").val().includes('r');
+                    }
+                },
+                p_col: {
+                    required: function(element) {
+                        return $("#fit_asp").val().includes('p');
+                    }
+                },
+                k_est_min: {
+                    lessThan: '#k_est_val'
+                },
+                k_est_max: {
+                    greaterThan: '#k_est_val'
+                },
+                r_ord_min: {
+                    lessThan: '#r_ord_val'
+                },
+                r_ord_max: {
+                    greaterThan: '#r_ord_val'
+                },
+                cat_ord_min: {
+                    lessThan: '#c_ord_val'
+                },
+                cat_ord_max: {
+                    greaterThan: '#c_ord_val'
+                },
+                t0_est_min: {
+                    lessThan: '#t0_est_val'
+                },
+                t0_est_max: {
+                    greaterThan: '#t0_est_val'
+                }
+            }
         });
         $.validator.messages.required = '*Required';
 
