@@ -1,4 +1,24 @@
-function submitForm(csrf_token, form_url, responseHandler) {
+var downloadExcel = false;
+var downloadImage = false;
+
+$.validator.addMethod("greaterThan", function (value, element, param) {
+    var $otherElement = $(param);
+    if (value && $otherElement.val()) {
+        console.log(value, element.id, parseFloat(value), parseFloat($otherElement.val()));
+    }
+    return this.optional(element) || parseFloat(value, 10) > parseFloat($otherElement.val(), 10);
+    }, "Must be > estimate.");
+
+$.validator.addMethod("lessThan", function (value, element, param) {
+    var $otherElement = $(param);
+    if (value && $otherElement.val()) {
+        console.log(value, element.id, parseFloat(value), parseFloat($otherElement.val()));
+    }
+    return this.optional(element) || parseFloat(value) < parseFloat($otherElement.val());
+    }, "Must be < estimate.");
+
+
+function submitForm(form_url, responseHandler) {
     var formData = new FormData(document.getElementById('cake-form'))
 
     var formURL = form_url;
@@ -23,61 +43,72 @@ function submitForm(csrf_token, form_url, responseHandler) {
                 alert('Form Submission Failed with the following error: ' + errorThrown);
             }
     });
-
-    $.ajaxSetup({
-        beforeSend: function(xhr, settings) {
-            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
-                xhr.setRequestHeader("X-CSRFToken", csrf_token)
-            }
-        }
-    })
 }
 
-function submitHandler(csrf_token) {
-    $('#fit-submit').click(function()
-    {
-        console.log('Submit Triggered');
+function highlightInvalidTabs(event, validator) {
+    downloadExcel = false;
+    downloadImage = false;
+    $("a.form-tab").removeClass('error-tab')
+    var errors = validator.numberOfInvalids();
+    if (errors) {
+      for (let i in validator.errorList) {
+          var tabId = $(validator.errorList[i].element).closest('div.tab-pane')[0].id;
+          $(`a[href='#${tabId}']`).addClass('error-tab');
+      }
+    }
+}
+
+function ExcelDownloadHandler() {
+    $('#download-fit').click(function() {
+        downloadExcel = true;
+        $('#cake-form').submit();
+    });
+}
+
+function submitCakeHandler(form) {
+    $('a.form-tab').removeClass('error-tab')
+
+    if (downloadExcel) {
+        downloadExcel = false;
+        form.submit();
+    }
+
+    if (downloadImage) {
+        downloadImage = false;
+        submitDownloadData();
+    }
+    else {
         $('#outputlink').trigger('click');
         document.getElementById('output-text').innerHTML = "Calculating...";
 
-        submitForm(csrf_token, '/cake', function (response) {
+        submitForm('/cake', function (response) {
             console.log(response[0]);
             document.getElementById('cake-result').src = response.data[0];
             document.getElementById('output-text').innerHTML = response.data[1];
         });
+    }
+}
 
+
+function downloadHandler() {
+    $('#fake-submit').click(function(e) {
+        // e.preventDefault(); //STOP default action
+        downloadImage = true;
+        $('#cake-form').submit();
     });
 }
 
-//function downloadFitHandler(csrf_token) {
-//    $('#cake-form').submit(function(e)
-//    {
-//        e.preventDefault();
-//        console.log('Downloading Fit Data');
-//        $("#cake-form")[0].submit();
-//    });
-//}
+function submitDownloadData() {
+    // get all of the information in the input cake form
+    var cake_data = cloneWithSelects($('#cake-form')).find(':input')
+    cake_data.attr('hidden', true);
+    $('#download-form').append(cake_data);
+    $('#download-form').children().remove(':button')
 
-function downloadHandler() {
-    $('#download-form').submit(function(e)
-    {
-        e.preventDefault(); //STOP default action
-
-        // get all of the information in the input cake form
-        var cake_data = cloneWithSelects($('#cake-form')).find(':input')
-        cake_data.attr('hidden', true);
-        $('#download-form').append(cake_data);
-        $('#download-form').children().remove(':button')
-
-        console.log(cake_data);
-
-        // now submit the form for real
-        console.log($("#download-form")[0]);
-        console.log($("#download-form")[0].submit);
-        $("#download-form")[0].submit();
-        // clean-up
-        $('#download-form').children().remove(':input')
-    });
+    // now submit the form for real
+    $("#download-form")[0].submit();
+    // clean-up
+    $('#download-form').children().remove(':input')
 }
 
 function cloneWithSelects(original) {

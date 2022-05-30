@@ -9,14 +9,67 @@
 
 {% block scripts %}
 {{super()}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 <script src="{{url_for('.static', filename='js/cake.js')}}"></script>
 <script type="text/javascript">
+    var csrf_token = "{{ form.csrf_token._value() }}";
     $(document).ready(function() {
-        submitHandler("{{ form.csrf_token._value() }}");
         downloadHandler();
+        ExcelDownloadHandler();
         $('[data-toggle="tooltip"]').tooltip({
-            placement: "right",
+            placement: "top",
             trigger: "hover focus"
+        });
+
+        $("#cake-form").validate({
+            ignore: [],
+            submitHandler: submitCakeHandler,
+            invalidHandler: highlightInvalidTabs,
+            rules: {
+                r_col: {
+                    required: function(element) {
+                        return $("#fit_asp").val().includes('r');
+                    }
+                },
+                p_col: {
+                    required: function(element) {
+                        return $("#fit_asp").val().includes('p');
+                    }
+                },
+                k_est_min: {
+                    lessThan: '#k_est_val'
+                },
+                k_est_max: {
+                    greaterThan: '#k_est_val'
+                },
+                r_ord_min: {
+                    lessThan: '#r_ord_val'
+                },
+                r_ord_max: {
+                    greaterThan: '#r_ord_val'
+                },
+                cat_ord_min: {
+                    lessThan: '#c_ord_val'
+                },
+                cat_ord_max: {
+                    greaterThan: '#c_ord_val'
+                },
+                t0_est_min: {
+                    lessThan: '#t0_est_val'
+                },
+                t0_est_max: {
+                    greaterThan: '#t0_est_val'
+                }
+            }
+        });
+        $.validator.messages.required = '*Required';
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrf_token)
+                }
+            }
         });
     });
 </script>
@@ -61,16 +114,16 @@
                     <div class="card-header">
                         <ul class="nav nav-tabs card-header-tabs">
                             <li class="nav-item">
-                                <a id="uploadlink" class="nav-link active" data-toggle="tab" href="#uploadtab">Upload</a>
+                                <a id="uploadlink" class="nav-link active form-tab" data-toggle="tab" href="#uploadtab">Upload</a>
                             </li>
                             <li class="nav-item">
-                                <a id="datalink" class="nav-link" data-toggle="tab" href="#datatab">Rxn Data</a>
+                                <a id="datalink" class="nav-link form-tab" data-toggle="tab" href="#datatab">Rxn Data</a>
                             </li>
                             <li class="nav-item">
-                                <a id="fittinglink" class="nav-link" data-toggle="tab" href="#fittingtab">Fit Params</a>
+                                <a id="fittinglink" class="nav-link form-tab" data-toggle="tab" href="#fittingtab">Fit Params</a>
                             </li>
                             <li class="nav-item">
-                                <a id="advancedlink" class="nav-link" data-toggle="tab" href="#advancedtab">Advanced</a>
+                                <a id="advancedlink" class="nav-link form-tab" data-toggle="tab" href="#advancedtab">Advanced</a>
                             </li>
                             <li class="nav-item">
                                 <a id="outputlink" class="nav-link" data-toggle="tab" href="#outputtab">Output</a>
@@ -152,8 +205,20 @@
                                       data_toggle='tooltip') }}
                                   </div>
                                   <div class="form-group col">
-                                    {{ form.cat_add_rate.label() }}
-                                    {{ form.cat_add_rate(class_="form-control", title=form.cat_add_rate.description,
+                                    {{ form.cat_sol_conc.label() }}
+                                    {{ form.cat_sol_conc(class_="form-control", title=form.cat_sol_conc.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.inject_rate.label() }}
+                                    {{ form.inject_rate(class_="form-control", title=form.inject_rate.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.react_vol_init.label() }}
+                                    {{ form.react_vol_init(class_="form-control", title=form.react_vol_init.description,
                                       data_toggle='tooltip') }}
                                   </div>
                                 </div>
@@ -263,10 +328,10 @@
                     <div class="card-footer">
                         <div class="form-row">
                             <div class="form-group col">
-                                <input id="{{ form.submit.id }}" type="button" class="form-control btn btn-primary" value="{{ form.submit.label.text }}">
+                                <input id="{{ form.submit.id }}" type="submit" class="form-control btn btn-primary" value="{{ form.submit.label.text }}">
                             </div>
                             <div class="form-group col">
-                                <input type="submit" id="download-fit" class="form-control btn btn-primary" value="Download Fit">
+                                <input type="button" id="download-fit" class="form-control btn btn-primary" value="Download Fit">
                             </div>
                         </div>
                     </div>
@@ -287,7 +352,7 @@
                             </select>
                         </div>
                         <div class="col-3">
-                            <button id="fake-submit" type="submit" class="form-control btn btn-primary">
+                            <button id="fake-submit" type="button" class="form-control btn btn-primary">
                                 <i class="fa fa-lg fa-download"></i>
                             </button>
                         </div>

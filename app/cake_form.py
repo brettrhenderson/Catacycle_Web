@@ -43,9 +43,9 @@ class CakeForm(FlaskForm):
                                                 message="File must have .xslx extension.")],
                    description='Upload Reaction Data in Excel file format.',
                    id='excelUpload')
-    sheet_name = StringField('Sheet Name', id='sheet_name', description="Name of sheet in Excel file, case sensitive",
+    sheet_name = StringField('Sheet Name', [InputRequired()], id='sheet_name', description="Name of sheet in Excel file, case sensitive",
                              default='Sheet1')
-    t_col = IntegerField('Time Column', id='t_col', description="Integer index, 1 is the first column")
+    t_col = IntegerField('Time Column', [InputRequired()], id='t_col', description="Integer index, 1 is the first column")
     tic_col = IntegerField('Total Ion Count Column', [optional()], id='tic_col',
                            description="Integer index, 1 is the first column")
     r_col = IntegerField('Reactant Column', [optional()], id='r_col',
@@ -56,38 +56,42 @@ class CakeForm(FlaskForm):
                           choices=[('r', 'Reactant'), ('p', 'Product'), ('rp', 'Reactant + Product')])
     scale_avg_num = IntegerField('Average Points', id='scale_avg_num', default=5,
                                  description="Number of points to average for calculating r0 and p_end")
-    stoich_r = IntegerField('Reactant Coefficient', id='stoich_r', description="Stoichiometric coefficient of reactant",
+    stoich_r = IntegerField('Reactant Coefficient', [InputRequired()], id='stoich_r', description="Stoichiometric coefficient of reactant",
                             default=1)
-    stoich_p = IntegerField('Product Coefficient', id='stoich_p', description="Stoichiometric coefficient of product",
+    stoich_p = IntegerField('Product Coefficient', [InputRequired()], id='stoich_p', description="Stoichiometric coefficient of product",
                             default=1)
-    r0 = FloatField('Starting Reactant Concentration', id='r0', description="Initial reactant concentration")
-    p0 = FloatField('Starting Product Concentration', id='p0', description="Initial product concentration")
-    p_end = FloatField('Final Product Concentration', id='p_end', description="Final Product concentration")
-    cat_add_rate = FloatField('Catalyst Addition Rate', id='cat_add_rate',
-                              description='Concentration per unit time at which catalyst was added to reaction')
+    r0 = FloatField('Starting Reactant Concentration', [InputRequired()], id='r0', description="Initial reactant concentration")
+    p0 = FloatField('Starting Product Concentration', [InputRequired()], id='p0', description="Initial product concentration")
+    p_end = FloatField('Final Product Concentration', [InputRequired()], id='p_end', description="Final Product concentration")
+    cat_sol_conc = FloatField('Catalyst Concentration', [InputRequired()], id='cat_sol_conc',
+                              description='Concentration of the catalyst solution being added to the reaction')
+    inject_rate = FloatField('Injection Rate', [InputRequired()], id='inject_rate',
+                             description='Rate of addition of catalyst solution to the reaction mixture')
+    react_vol_init = FloatField('Initial Reactant Volume', [InputRequired()], id='react_vol_init',
+                                description='Initial volume of reactant solution to which catalyst is added')
     win = IntegerField('Smoothing Window', id='win', default=1, description="Number of points in smoothing window")
     inc = IntegerField('Interpolation Multiplier', id='inc',
                        description='Number of points to interpolate between measurements', default=1)
 
-    k_est_val = FloatField('Est Rate Constant', id='k_est_val', description="Estimated rate constant")
+    k_est_val = FloatField('Est Rate Constant', [InputRequired()], id='k_est_val', description="Estimated rate constant")
     k_est_min = FloatField('Min Rate Constant', [optional()], id='k_est_min',
                            description="Minimum rate constant search constraint")
     k_est_max = FloatField('Max Rate Constant', [optional()], id='k_est_max',
                            description="Maximum rate constant search constraint")
 
-    r_ord_val = FloatField('Est Reactant Order', id='r_ord_val', default=1, description="Estimated reactant order")
+    r_ord_val = FloatField('Est Reactant Order', [InputRequired()], id='r_ord_val', default=1, description="Estimated reactant order")
     r_ord_min = FloatField('Min Reactant Order', [optional()], id='r_ord_min', default=0,
                            description="Minimum reactant order search constraint")
     r_ord_max = FloatField('Max Reactant Order', [optional()], id='r_ord_max', default=3,
                            description="Maximum reactant order search constraint")
 
-    cat_ord_val = FloatField('Est Catalyst Order', id='c_ord_val', default=1, description="Estimated catalyst order")
+    cat_ord_val = FloatField('Est Catalyst Order', [InputRequired()], id='c_ord_val', default=1, description="Estimated catalyst order")
     cat_ord_min = FloatField('Min Catalyst Order', [optional()], id='c_ord_min', default=0,
                              description="Minimum catalyst order search constraint")
     cat_ord_max = FloatField('Max Catalyst Order', [optional()], id='c_ord_max', default=3,
                              description="Maximum catalyst order search constraint")
 
-    t0_est_val = FloatField('Est Start Time', id='t0_est_val', description="Estimated reaction start time")
+    t0_est_val = FloatField('Est Start Time', [InputRequired()], id='t0_est_val', description="Estimated reaction start time")
     t0_est_min = FloatField('Min Start Time', [optional()], id='t0_est_min',
                             description="Minimum start time search constraint")
     t0_est_max = FloatField('Max Start Time', [optional()], id='t0_est_max',

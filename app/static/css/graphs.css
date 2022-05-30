@@ -1,3 +1,11 @@
+label.error {
+    color: #FF0000;
+}
+
+.error-tab {
+    box-shadow: 5px -5px 5px #ff6666, -5px -5px 5px #ff6666;
+}
+
 .btn-group-xs>.btn, .btn-xs {
     padding: .125rem .25rem;
     font-size: .675rem;
