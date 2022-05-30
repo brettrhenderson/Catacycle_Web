@@ -106,7 +106,7 @@ def cake():
                              cat_add_rate, form.format_k_est(), form.format_r_ord(), form.format_cat_ord(),
                              form.format_t0_est(), t_col, None, r_col, p_col, form.max_order.data,
                              form.scale_avg_num.data, form.win.data, form.inc.data, form.fit_asp.data)
-        t, r, p, fit, fit_p, fit_r, res_val, res_err, ss_res, r_squared, cat_pois, cat_pois_err = CAKE
+        t, r, p, fit, fit_p, fit_r, _, res_val, res_err, ss_res, r_squared, cat_pois, cat_pois_err = CAKE
 
         html = ck.plot_cake_results(t, r, p, fit, fit_p, fit_r, form.r_col.data, form.p_col.data, f_format='svg',
                                       return_image=False)
