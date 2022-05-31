@@ -3,17 +3,11 @@ var downloadImage = false;
 
 $.validator.addMethod("greaterThan", function (value, element, param) {
     var $otherElement = $(param);
-    if (value && $otherElement.val()) {
-        console.log(value, element.id, parseFloat(value), parseFloat($otherElement.val()));
-    }
     return this.optional(element) || parseFloat(value, 10) > parseFloat($otherElement.val(), 10);
     }, "Must be > estimate.");
 
 $.validator.addMethod("lessThan", function (value, element, param) {
     var $otherElement = $(param);
-    if (value && $otherElement.val()) {
-        console.log(value, element.id, parseFloat(value), parseFloat($otherElement.val()));
-    }
     return this.optional(element) || parseFloat(value) < parseFloat($otherElement.val());
     }, "Must be < estimate.");
 
@@ -39,8 +33,8 @@ function submitForm(form_url, responseHandler) {
             },
         error: function(jqXHR, textStatus, errorThrown)
             {
-                //if fails
-                alert('Form Submission Failed with the following error: ' + errorThrown);
+                // if fails
+                alert('CAKE failed with the following error: ' + jqXHR.responseText);
             }
     });
 }
@@ -82,7 +76,6 @@ function submitCakeHandler(form) {
         document.getElementById('output-text').innerHTML = "Calculating...";
 
         submitForm('/cake', function (response) {
-            console.log(response[0]);
             document.getElementById('cake-result').src = response.data[0];
             document.getElementById('output-text').innerHTML = response.data[1];
         });

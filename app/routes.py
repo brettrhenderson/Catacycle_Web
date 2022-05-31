@@ -88,25 +88,12 @@ def cake():
     if request.method == 'POST' and form.validate_on_submit():
         log.debug(f"Collected form data from user: {form.data}")
 
-        df = ck.read_data(form.xl.data, form.sheet_name.data)
-        log.debug(f"Read Data from user-specified Excel sheet:\n {df.head(5)}")
+        try:
+            cake_data, _ = run_cake_wrapper(form)
+        except Exception as e:
+            return e.__str__(), 400
 
-        # reset column indices to 1-indexed
-        t_col, r_col, p_col = None, None, None
-        if form.t_col.data:
-            t_col = form.t_col.data - 1
-        if form.r_col.data:
-            r_col = form.r_col.data - 1
-        if form.p_col.data:
-            p_col = form.p_col.data - 1
-
-        cat_add_rate = ck.get_cat_add_rate(form.cat_sol_conc.data, form.inject_rate.data, form.react_vol_init.data)
-
-        CAKE = ck.fit_cake(df, form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data, form.p_end.data,
-                             cat_add_rate, form.format_k_est(), form.format_r_ord(), form.format_cat_ord(),
-                             form.format_t0_est(), t_col, None, r_col, p_col, form.max_order.data,
-                             form.scale_avg_num.data, form.win.data, form.inc.data, form.fit_asp.data)
-        t, r, p, fit, fit_p, fit_r, _, res_val, res_err, ss_res, r_squared, cat_pois, cat_pois_err = CAKE
+        t, r, p, fit, fit_p, fit_r, _, res_val, res_err, ss_res, r_squared, cat_pois, cat_pois_err = cake_data
 
         html = ck.plot_cake_results(t, r, p, fit, fit_p, fit_r, form.r_col.data, form.p_col.data, f_format='svg',
                                       return_image=False)
@@ -127,26 +114,14 @@ def download_cake_xlsx():
     if request.method == 'POST' and form.validate_on_submit():
         log.debug(f"Collected form data from user: {form.data}")
 
-        df = ck.read_data(form.xl.data, form.sheet_name.data)
-        log.debug(f"Read Data from user-specified Excel sheet:\n {df.head(5)}")
+        try:
+            cake_data, df = run_cake_wrapper(form)
+        except Exception as e:
+            return e.__str__(), 400
 
-        # reset column indices to 1-indexed
-        t_col, r_col, p_col = None, None, None
-        if form.t_col.data:
-            t_col = form.t_col.data - 1
-        if form.r_col.data:
-            r_col = form.r_col.data - 1
-        if form.p_col.data:
-            p_col = form.p_col.data - 1
-
+        t, r, p, fit, fit_p, fit_r, _, res_val, res_err, ss_res, r_squared, cat_pois, cat_pois_err = cake_data
+        t_col, r_col, p_col = get_col_nums(form)
         cat_add_rate = ck.get_cat_add_rate(form.cat_sol_conc.data, form.inject_rate.data, form.react_vol_init.data)
-
-        CAKE = ck.fit_cake(df, form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data, form.p_end.data,
-                             cat_add_rate, form.format_k_est(), form.format_r_ord(), form.format_cat_ord(),
-                             form.format_t0_est(), t_col, None, r_col, p_col, form.max_order.data,
-                             form.scale_avg_num.data, form.win.data, form.inc.data, form.fit_asp.data)
-        t, r, p, fit, fit_p, fit_r, _, res_val, res_err, ss_res, r_squared, cat_pois, cat_pois_err = CAKE
-
         param_dict = ck.make_param_dict(form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data,
                                           form.p_end.data, cat_add_rate, form.format_k_est(),
                                           form.format_r_ord(), form.format_cat_ord(), form.format_t0_est(), t_col, None,
@@ -157,7 +132,6 @@ def download_cake_xlsx():
                                                       r_squared, cat_pois, cat_pois_err)
 
         tmp_file.seek(0)
-
         response = make_response(Response(FileWrapper(tmp_file), mimetype=mimetype, direct_passthrough=True))
         filename = secure_filename('cake_fit.xlsx')
         response.headers.set('Content-Disposition', 'attachment', filename=filename)
@@ -176,27 +150,12 @@ def download_cake():
     if request.method == 'POST' and form.validate_on_submit():
         log.debug(f"Collected form data from user: {form.data}")
 
-        df = ck.read_data(form.xl.data, form.sheet_name.data)
-        log.debug(f"Read Data from user-specified Excel sheet:\n {df.head(5)}")
-        log.debug(f"T COL: {form.t_col.data},  R COL: {form.r_col.data}, P COL: {form.p_col.data}")
+        try:
+            cake_data, _ = run_cake_wrapper(form)
+        except Exception as e:
+            return e.__str__(), 400
 
-        # reset column indices to 1-indexed
-        t_col, r_col, p_col = None, None, None
-        if form.t_col.data:
-            t_col = form.t_col.data - 1
-        if form.r_col.data:
-            r_col = form.r_col.data - 1
-        if form.p_col.data:
-            p_col = form.p_col.data - 1
-        log.debug(f"T COL: {t_col},  R COL: {r_col}, P COL: {p_col}")
-
-        cat_add_rate = ck.get_cat_add_rate(form.cat_sol_conc.data, form.inject_rate.data, form.react_vol_init.data)
-
-        CAKE = ck.fit_cake(df, form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data, form.p_end.data,
-                             cat_add_rate, form.format_k_est(), form.format_r_ord(), form.format_cat_ord(),
-                             form.format_t0_est(), t_col, None, r_col, p_col, form.max_order.data,
-                             form.scale_avg_num.data, form.win.data, form.inc.data, form.fit_asp.data)
-        t, r, p, fit, fit_p, fit_r, _, res_val, res_err, ss_res, r_squared, cat_pois, cat_pois_err = CAKE
+        t, r, p, fit, fit_p, fit_r, _, res_val, res_err, ss_res, r_squared, cat_pois, cat_pois_err = cake_data
 
         img, mimetype = ck.plot_cake_results(t, r, p, fit, fit_p, fit_r, form.r_col.data, form.p_col.data,
                                                f_format=form.f_format.data, return_image=True)
@@ -205,8 +164,35 @@ def download_cake():
         response = make_response(Response(img, mimetype=mimetype, direct_passthrough=True))
         filename = secure_filename(f'cake.{form.f_format.data}')
         response.headers.set('Content-Disposition', 'attachment', filename=filename)
-        log.debug(response)
         return response
     else:
         log.debug("Not sending anything")
         return '', 204
+
+
+def get_col_nums(form):
+    t_col, r_col, p_col = None, None, None
+    if form.t_col.data:
+        t_col = form.t_col.data - 1
+    if form.r_col.data:
+        r_col = form.r_col.data - 1
+    if form.p_col.data:
+        p_col = form.p_col.data - 1
+    return t_col, r_col, p_col
+
+
+def run_cake_wrapper(form):
+    df = ck.read_data(form.xl.data, form.sheet_name.data)
+    log.debug(f"Read Data from user-specified Excel sheet:\n {df.head(5)}")
+
+    # reset column indices to 1-indexed
+    t_col, r_col, p_col = get_col_nums(form)
+
+    cat_add_rate = ck.get_cat_add_rate(form.cat_sol_conc.data, form.inject_rate.data, form.react_vol_init.data)
+
+    cake_data = ck.fit_cake(df, form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data, form.p_end.data,
+                       cat_add_rate, form.format_k_est(), form.format_r_ord(), form.format_cat_ord(),
+                       form.format_t0_est(), t_col, None, r_col, p_col, form.max_order.data,
+                       form.scale_avg_num.data, form.win.data, form.inc.data, form.fit_asp.data)
+
+    return cake_data, df
