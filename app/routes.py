@@ -91,6 +91,7 @@ def cake():
         try:
             cake_data, _ = run_cake_wrapper(form)
         except Exception as e:
+            raise e
             return e.__str__(), 400
 
         t, r, p, fit, fit_p, fit_r, _, res_val, res_err, ss_res, r_squared, cat_pois, cat_pois_err = cake_data
@@ -123,9 +124,9 @@ def download_cake_xlsx():
         t_col, r_col, p_col = get_col_nums(form)
         cat_add_rate = ck.get_cat_add_rate(form.cat_sol_conc.data, form.inject_rate.data, form.react_vol_init.data)
         param_dict = ck.make_param_dict(form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data,
-                                          form.p_end.data, cat_add_rate, form.format_k_est(),
+                                          form.p_end.data, cat_add_rate, form.t_inj.data, form.format_k_est(),
                                           form.format_r_ord(), form.format_cat_ord(), form.format_t0_est(), t_col, None,
-                                          r_col, p_col, form.max_order.data, form.scale_avg_num.data, form.win.data,
+                                          r_col, p_col, form.scale_avg_num.data, form.win.data,
                                           form.inc.data, form.fit_asp.data)
 
         tmp_file, mimetype = ck.write_fit_data_temp(df, param_dict, t, r, p, fit_p, fit_r, res_val, res_err, ss_res,
@@ -191,8 +192,8 @@ def run_cake_wrapper(form):
     cat_add_rate = ck.get_cat_add_rate(form.cat_sol_conc.data, form.inject_rate.data, form.react_vol_init.data)
 
     cake_data = ck.fit_cake(df, form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data, form.p_end.data,
-                       cat_add_rate, form.format_k_est(), form.format_r_ord(), form.format_cat_ord(),
-                       form.format_t0_est(), t_col, None, r_col, p_col, form.max_order.data,
+                       cat_add_rate, form.t_inj.data, form.format_k_est(), form.format_r_ord(), form.format_cat_ord(),
+                       form.format_t0_est(), t_col, None, r_col, p_col,
                        form.scale_avg_num.data, form.win.data, form.inc.data, form.fit_asp.data)
 
     return cake_data, df

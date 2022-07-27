@@ -4,13 +4,19 @@ var downloadImage = false;
 $.validator.addMethod("greaterThan", function (value, element, param) {
     var $otherElement = $(param);
     return this.optional(element) || parseFloat(value, 10) > parseFloat($otherElement.val(), 10);
-    }, "Must be > estimate.");
+    }, "Must be > estimate or left blank.");
 
 $.validator.addMethod("lessThan", function (value, element, param) {
     var $otherElement = $(param);
     return this.optional(element) || parseFloat(value) < parseFloat($otherElement.val());
-    }, "Must be < estimate.");
+    }, "Must be < estimate or left blank.");
 
+function updateFinalProduct() {
+    $("#r0").change(function(){
+        // Update final product concentration
+        $('#p_end').val($("#r0").val() * $("#stoich_p").val() / $("#stoich_r").val())
+    });
+}
 
 function submitForm(form_url, responseHandler) {
     var formData = new FormData(document.getElementById('cake-form'))

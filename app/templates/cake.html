@@ -14,13 +14,14 @@
 <script type="text/javascript">
     var csrf_token = "{{ form.csrf_token._value() }}";
     $(document).ready(function() {
+        updateFinalProduct();
         downloadHandler();
         ExcelDownloadHandler();
         $('[data-toggle="tooltip"]').tooltip({
             placement: "top",
             trigger: "hover focus"
         });
-
+        $.validator.messages.required = '*Required';
         $("#cake-form").validate({
             ignore: [],
             submitHandler: submitCakeHandler,
@@ -60,9 +61,12 @@
                 t0_est_max: {
                     greaterThan: '#t0_est_val'
                 }
+            },
+            messages: {
+                r_col: "*Required if Reactant in 'Fit Aspect'",
+                p_col: "*Required if Product in 'Fit Aspect'"
             }
         });
-        $.validator.messages.required = '*Required';
 
         $.ajaxSetup({
             beforeSend: function(xhr, settings) {
@@ -120,7 +124,7 @@
                                 <a id="datalink" class="nav-link form-tab" data-toggle="tab" href="#datatab">Rxn Data</a>
                             </li>
                             <li class="nav-item">
-                                <a id="fittinglink" class="nav-link form-tab" data-toggle="tab" href="#fittingtab">Fit Params</a>
+                                <a id="maniplink" class="nav-link form-tab" data-toggle="tab" href="#maniptab">Data Manip</a>
                             </li>
                             <li class="nav-item">
                                 <a id="advancedlink" class="nav-link form-tab" data-toggle="tab" href="#advancedtab">Advanced</a>
@@ -188,6 +192,32 @@
                                 </div>
                                 <div class="form-row">
                                   <div class="form-group col">
+                                    {{ form.cat_sol_conc.label() }}
+                                    {{ form.cat_sol_conc(class_="form-control", title=form.cat_sol_conc.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.inject_rate.label() }}
+                                    {{ form.inject_rate(class_="form-control", title=form.inject_rate.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.react_vol_init.label() }}
+                                    {{ form.react_vol_init(class_="form-control", title=form.react_vol_init.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.t_inj.label() }}
+                                    {{ form.t_inj(class_="form-control", title=form.t_inj.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="maniptab">
+                                <div class="form-row">
+                                  <div class="form-group col">
                                     {{ form.r0.label() }}
                                     {{ form.r0(class_="form-control", title=form.r0.description,
                                       data_toggle='tooltip') }}
@@ -199,46 +229,41 @@
                                   </div>
                                 </div>
                                 <div class="form-row">
-                                  <div class="form-group col">
+                                  <div class="form-group col-6">
                                     {{ form.p_end.label() }}
                                     {{ form.p_end(class_="form-control", title=form.p_end.description,
-                                      data_toggle='tooltip') }}
-                                  </div>
-                                  <div class="form-group col">
-                                    {{ form.cat_sol_conc.label() }}
-                                    {{ form.cat_sol_conc(class_="form-control", title=form.cat_sol_conc.description,
-                                      data_toggle='tooltip') }}
+                                       data_toggle='tooltip') }}
                                   </div>
                                 </div>
                                 <div class="form-row">
                                   <div class="form-group col">
-                                    {{ form.inject_rate.label() }}
-                                    {{ form.inject_rate(class_="form-control", title=form.inject_rate.description,
-                                      data_toggle='tooltip') }}
+                                    {{ form.scale_avg_num.label() }}
+                                    {{ form.scale_avg_num(class_="form-control", min=0,
+                                      title=form.scale_avg_num.description, data_toggle='tooltip') }}
                                   </div>
                                   <div class="form-group col">
-                                    {{ form.react_vol_init.label() }}
-                                    {{ form.react_vol_init(class_="form-control", title=form.react_vol_init.description,
+                                    {{ form.win.label() }}
+                                    {{ form.win(class_="form-control", min=1, title=form.win.description,
                                       data_toggle='tooltip') }}
                                   </div>
                                 </div>
                             </div>
-                            <div class="tab-pane" id="fittingtab">
+                            <div class="tab-pane" id="advancedtab">
                                 <div class="form-row">
                                   <div class="form-group col">
                                     {{ form.k_est_val.label() }}
                                     {{ form.k_est_val(class_="form-control", min=0, title=form.k_est_val.description,
-                                      data_toggle='tooltip') }}
+                                      data_toggle='tooltip', placeholder="Estimate") }}
                                   </div>
                                   <div class="form-group col">
                                     {{ form.k_est_min.label() }}
                                     {{ form.k_est_min(class_="form-control", min=0, title=form.k_est_min.description,
-                                      data_toggle='tooltip') }}
+                                      data_toggle='tooltip', placeholder="Estimate * 1E-3") }}
                                   </div>
                                   <div class="form-group col">
                                     {{ form.k_est_max.label() }}
                                     {{ form.k_est_max(class_="form-control", min=0, title=form.k_est_max.description,
-                                      data_toggle='tooltip') }}
+                                      data_toggle='tooltip', placeholder="Estimate * 1E3") }}
                                   </div>
                                 </div>
                                 <div class="form-row">
@@ -250,38 +275,12 @@
                                   <div class="form-group col">
                                     {{ form.t0_est_min.label() }}
                                     {{ form.t0_est_min(class_="form-control", title=form.t0_est_min.description,
-                                      data_toggle='tooltip') }}
+                                      data_toggle='tooltip', placeholder="0") }}
                                   </div>
                                   <div class="form-group col">
                                     {{ form.t0_est_max.label() }}
                                     {{ form.t0_est_max(class_="form-control", title=form.t0_est_max.description,
-                                      data_toggle='tooltip') }}
-                                  </div>
-                                </div>
-                            </div>
-                            <div class="tab-pane" id="advancedtab">
-                                <div class="form-row">
-                                  <div class="form-group col">
-                                    {{ form.scale_avg_num.label() }}
-                                    {{ form.scale_avg_num(class_="form-control", min=1,
-                                      title=form.scale_avg_num.description, data_toggle='tooltip') }}
-                                  </div>
-                                  <div class="form-group col">
-                                    {{ form.win.label() }}
-                                    {{ form.win(class_="form-control", min=1, title=form.win.description,
-                                      data_toggle='tooltip') }}
-                                  </div>
-                                </div>
-                                <div class="form-row">
-                                  <div class="form-group col">
-                                    {{ form.inc.label() }}
-                                    {{ form.inc(class_="form-control", min=1, title=form.inc.description,
-                                      data_toggle='tooltip') }}
-                                  </div>
-                                  <div class="form-group col">
-                                    {{ form.max_order.label() }}
-                                    {{ form.max_order(class_="form-control", title=form.max_order.description,
-                                      data_toggle='tooltip') }}
+                                      data_toggle='tooltip', placeholder="Rxn End Time") }}
                                   </div>
                                 </div>
                                 <div class="form-row">
@@ -315,6 +314,13 @@
                                   <div class="form-group col">
                                     {{ form.cat_ord_max.label() }}
                                     {{ form.cat_ord_max(class_="form-control", title=form.cat_ord_max.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col-4">
+                                    {{ form.inc.label() }}
+                                    {{ form.inc(class_="form-control", min=1, title=form.inc.description,
                                       data_toggle='tooltip') }}
                                   </div>
                                 </div>
