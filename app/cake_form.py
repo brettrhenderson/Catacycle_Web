@@ -79,13 +79,13 @@ class CakeForm(FlaskForm):
     k_est_max = FloatField('Max Rate Constant', [optional()], id='k_est_max',
                            description="Maximum rate constant search constraint")
 
-    r_ord_val = FloatField('Est Reactant Order', [InputRequired()], id='r_ord_val', default=1, description="Estimated reactant order")
+    r_ord_val = FloatField('Est Reactant Order', [optional()], id='r_ord_val', default=1, description="Estimated reactant order")
     r_ord_min = FloatField('Min Reactant Order', [optional()], id='r_ord_min', default=0,
                            description="Minimum reactant order search constraint")
     r_ord_max = FloatField('Max Reactant Order', [optional()], id='r_ord_max', default=2,
                            description="Maximum reactant order search constraint")
 
-    cat_ord_val = FloatField('Est Catalyst Order', [InputRequired()], id='c_ord_val', default=1, description="Estimated catalyst order")
+    cat_ord_val = FloatField('Est Catalyst Order', [optional()], id='c_ord_val', default=1, description="Estimated catalyst order")
     cat_ord_min = FloatField('Min Catalyst Order', [optional()], id='c_ord_min', default=0,
                              description="Minimum catalyst order search constraint")
     cat_ord_max = FloatField('Max Catalyst Order', [optional()], id='c_ord_max', default=2,
