@@ -38,28 +38,52 @@
                     }
                 },
                 k_est_min: {
-                    lessThan: '#k_est_val'
+                    lessEqThan: '#k_est_val',
+                    lessThan: '#k_est_max'
                 },
                 k_est_max: {
-                    greaterThan: '#k_est_val'
+                    greaterEqThan: '#k_est_val',
+                    greaterThan: '#k_est_min'
+                },
+                k_est_val: {
+                    greaterEqThan: '#k_est_min',
+                    lessEqThan: '#k_est_max'
                 },
                 r_ord_min: {
-                    lessThan: '#r_ord_val'
+                    lessEqThan: '#r_ord_val',
+                    lessThan: '#r_ord_max'
                 },
                 r_ord_max: {
-                    greaterThan: '#r_ord_val'
+                    greaterEqThan: '#r_ord_val',
+                    greaterThan: '#r_ord_min'
+                },
+                r_ord_val: {
+                    greaterEqThan: '#r_ord_min',
+                    lessEqThan: '#r_ord_max'
                 },
                 cat_ord_min: {
-                    lessThan: '#c_ord_val'
+                    lessEqThan: '#c_ord_val',
+                    lessThan: '#c_ord_max'
                 },
                 cat_ord_max: {
-                    greaterThan: '#c_ord_val'
+                    greaterEqThan: '#c_ord_val',
+                    greaterThan: '#c_ord_min'
+                },
+                cat_ord_val: {
+                    greaterEqThan: '#c_ord_min',
+                    lessEqThan: '#c_ord_max'
                 },
                 t0_est_min: {
-                    lessThan: '#t0_est_val'
+                    lessEqThan: '#t0_est_val',
+                    lessThan: '#t0_est_max'
                 },
                 t0_est_max: {
-                    greaterThan: '#t0_est_val'
+                    greaterEqThan: '#t0_est_val',
+                    greaterThan: '#t0_est_min'
+                },
+                t0_est_val: {
+                    greaterEqThan: '#t0_est_min',
+                    lessEqThan: '#t0_est_max'
                 }
             },
             messages: {
@@ -270,7 +294,7 @@
                                   <div class="form-group col">
                                     {{ form.t0_est_val.label() }}
                                     {{ form.t0_est_val(class_="form-control", title=form.t0_est_val.description,
-                                      data_toggle='tooltip') }}
+                                      data_toggle='tooltip', placeholder="0") }}
                                   </div>
                                   <div class="form-group col">
                                     {{ form.t0_est_min.label() }}

@@ -3,13 +3,23 @@ var downloadImage = false;
 
 $.validator.addMethod("greaterThan", function (value, element, param) {
     var $otherElement = $(param);
-    return this.optional(element) || parseFloat(value, 10) > parseFloat($otherElement.val(), 10);
-    }, "Must be > estimate or left blank.");
+    return this.optional(element) || this.optional($otherElement[0]) || parseFloat(value, 10) > parseFloat($otherElement.val(), 10);
+    }, jQuery.validator.format("Must be > {0} or left blank.")); // "Must be > " + $("label[for='" + $($.validator.format({0})).attr('id') + "']").text() + " or left blank.");
 
 $.validator.addMethod("lessThan", function (value, element, param) {
     var $otherElement = $(param);
-    return this.optional(element) || parseFloat(value) < parseFloat($otherElement.val());
-    }, "Must be < estimate or left blank.");
+    return this.optional(element) || this.optional($otherElement[0]) || parseFloat(value) < parseFloat($otherElement.val());
+    }, jQuery.validator.format("Must be < {0} or left blank.")); // "Must be < " + $("label[for='" + $($.validator.format({0})).attr('id') + "']").text() + " or left blank."));
+
+$.validator.addMethod("greaterEqThan", function (value, element, param) {
+    var $otherElement = $(param);
+    return this.optional(element) || this.optional($otherElement[0]) || parseFloat(value, 10) >= parseFloat($otherElement.val(), 10);
+    }, jQuery.validator.format("Must be >= {0} or left blank.")); // "Must be >= " + $("label[for='" + $($.validator.format({0})).attr('id') + "']").text() + " or left blank."));
+
+$.validator.addMethod("lessEqThan", function (value, element, param) {
+    var $otherElement = $(param);
+    return this.optional(element) || this.optional($otherElement[0]) || parseFloat(value) <= parseFloat($otherElement.val());
+    }, jQuery.validator.format("Must be <= {0} or left blank.")); // "Must be <= " + $("label[for='" + $($.validator.format({0})).attr('id') + "']").text() + " or left blank."));
 
 function updateFinalProduct() {
     $("#r0").change(function(){

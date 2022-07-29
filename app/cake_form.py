@@ -91,8 +91,7 @@ class CakeForm(FlaskForm):
     cat_ord_max = FloatField('Max Catalyst Order', [optional()], id='c_ord_max', default=2,
                              description="Maximum catalyst order search constraint")
 
-    t0_est_val = FloatField('Est Start Time', [InputRequired()], id='t0_est_val', description="Estimated reaction start time",
-                            default=0)
+    t0_est_val = FloatField('Est Start Time', [optional()], id='t0_est_val', description="Estimated reaction start time")
     t0_est_min = FloatField('Min Start Time', [optional()], id='t0_est_min',
                             description="Minimum start time search constraint")
     t0_est_max = FloatField('Max Start Time', [optional()], id='t0_est_max',
@@ -101,41 +100,37 @@ class CakeForm(FlaskForm):
     submit = SubmitField('Fit', id='fit-submit')
 
     def format_k_est(self):
-        if self.k_est_min.data is None or self.k_est_max.data is None:
-            if self.k_est_val.data is None:
-                k_est = self.k_est_val.data
-            else:
-                k_est = [self.k_est_val.data]
+        if self.k_est_val.data is None:
+            k_est = self.k_est_val.data
+        elif self.k_est_min.data is None or self.k_est_max.data is None:
+            k_est = [self.k_est_val.data]
         else:
             k_est = [self.k_est_val.data, self.k_est_min.data, self.k_est_max.data]
         return k_est
 
     def format_r_ord(self):
-        if self.r_ord_min.data is None or self.r_ord_max.data is None:
-            if self.r_ord_val.data is None:
-                r_ord = self.r_ord_val.data
-            else:
-                r_ord = [self.r_ord_val.data]
+        if self.r_ord_val.data is None:
+            r_ord = self.r_ord_val.data
+        elif self.r_ord_min.data is None or self.r_ord_max.data is None:
+            r_ord = [self.r_ord_val.data]
         else:
             r_ord = [self.r_ord_val.data, self.r_ord_min.data, self.r_ord_max.data]
         return r_ord
 
     def format_cat_ord(self):
-        if self.cat_ord_min.data is None or self.cat_ord_max.data is None:
-            if self.cat_ord_val.data is None:
-                cat_ord = self.cat_ord_val.data
-            else:
-                cat_ord = [self.cat_ord_val.data]
+        if self.cat_ord_val.data is None:
+            cat_ord = self.cat_ord_val.data
+        elif self.cat_ord_min.data is None or self.cat_ord_max.data is None:
+            cat_ord = [self.cat_ord_val.data]
         else:
             cat_ord = [self.cat_ord_val.data, self.cat_ord_min.data, self.cat_ord_max.data]
         return cat_ord
 
     def format_t0_est(self):
-        if self.t0_est_min.data is None or self.t0_est_max.data is None:
-            if self.t0_est_val.data is None:
-                t0_est = self.t0_est_val.data
-            else:
-                t0_est = [self.t0_est_val.data]
+        if self.t0_est_val.data is None:
+            t0_est = self.t0_est_val.data
+        elif self.t0_est_min.data is None or self.t0_est_max.data is None:
+            t0_est = [self.t0_est_val.data]
         else:
             t0_est = [self.t0_est_val.data, self.t0_est_min.data, self.t0_est_max.data]
         return t0_est

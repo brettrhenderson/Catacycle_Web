@@ -91,7 +91,6 @@ def cake():
         try:
             cake_data, _ = run_cake_wrapper(form)
         except Exception as e:
-            raise e
             return e.__str__(), 400
 
         t, r, p, fit, fit_p, fit_r, _, res_val, res_err, ss_res, r_squared, cat_pois, cat_pois_err = cake_data
