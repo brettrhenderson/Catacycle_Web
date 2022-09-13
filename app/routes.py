@@ -25,6 +25,11 @@ def aboutus():
     return render_template('aboutus.html')
 
 
+@app.route('/user-guide', methods=['GET', 'POST'])
+def guide():
+    return render_template('guide.html')
+
+
 @app.route('/graphs', methods=['GET', 'POST'])
 def graphs():
     form = RatesForm(request.form)  # initialize the backend of the web form

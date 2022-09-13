@@ -1,0 +1,99 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}Catacycle{% endblock %}
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{url_for('.static', filename='css/guide.css')}}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="icon" href="{{url_for('.static', filename='images/cycle_icon.png')}}">
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+<script src="{{url_for('.static', filename='js/guide.js')}}"></script>
+{% endblock %}
+
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="{{ url_for('index') }}">
+    <img src="{{url_for('.static', filename='images/cycle_icon.png')}}" width="50" height="50" class="d-inline-block align-center" alt="">
+    CataHub
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('index') }}"> All Tools </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('graphs') }}"> Catacycle </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('cake') }}"> CAKE </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" href="{{ url_for('guide') }}"> User Guide</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('aboutus') }}"> About Us</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<br>
+<div class="container">
+    <div class="pb-3">
+      <a class="collapse-heading title" data-toggle="collapse" href="#cataDemo" role="button" aria-expanded="false" aria-controls="cataDemo">
+        <div class="d-flex col-3 align-items-center justify-content-between">
+          <h5 class="font-weight text-uppercase">Catacycle Demo</h5>
+          <i class="fa fa-chevron-down mb-2" aria-hidden="true"></i>
+        </div>
+      </a>
+      <div class="collapse" id="cataDemo">
+        <p align="center">
+          <video width="50%" controls>
+              <source src="{{url_for('.static', filename='files/catacycle_screencast.mp4')}}" type="video/mp4">
+              Your browser does not support the video tag.
+          </video>
+        </p>
+      </div>
+    </div>
+    <div class="pb-3">
+      <a class="collapse-heading active title" data-toggle="collapse" href="#cakeGuide" role="button" aria-expanded="true" aria-controls="cakeGuide">
+        <div class="d-flex col-3 align-items-center justify-content-between">
+          <h5 class="font-weight text-uppercase">CAKE User Guide</h5>
+          <i class="fa fa-chevron-down mb-2" aria-hidden="true"></i>
+        </div>
+      </a>
+      <div class="collapse show" id="cakeGuide">
+        <p align="center">
+          <iframe src="{{url_for('.static', filename='files/CAKE_WebApp_Guidance.pdf')}}" width="80%" height="400px"></iframe>
+        </p>
+      </div>
+    </div>
+    <div class="row d-flex pb-5">
+      <div class="col-6 d-flex flex-column align-items-center">
+        <a class="btn btn-primary collapse-heading" style="width:50%" data-toggle="collapse" href="#inputData" role="button" aria-expanded="false" aria-controls="inputData">
+          <div class="d-flex align-items-center justify-content-between">
+            Example Input Data
+            <i class="fa fa-chevron-down" aria-hidden="true"></i>
+          </div>
+        </a>
+        <div class="collapse" id="inputData" style="width:100%">
+          <iframe width="100%" height="400px" frameborder="0" scrolling="no" src="https://uvic-my.sharepoint.com/personal/peterwilliams_uvic_ca/_layouts/15/Doc.aspx?sourcedoc={dd5bfad2-6d76-45a5-bcb3-07bcaa7eb0b0}&action=embedview&wdAllowInteractivity=False&wdDownloadButton=True&wdInConfigurator=True&wdInConfigurator=True&edesNext=false&resen=false"></iframe>
+        </div>
+      </div>
+      <div class="col-6 d-flex flex-column align-items-center">
+        <a class="btn btn-primary collapse-heading" style="width:50%" data-toggle="collapse" href="#exampleOutput" role="button" aria-expanded="false" aria-controls="exampleOutput">
+          <div class="d-flex align-items-center justify-content-between">
+            Example Output
+            <i class="fa fa-chevron-down" aria-hidden="true"></i>
+          </div>
+        </a>
+        <div class="collapse" id="exampleOutput" style="width:100%">
+          <iframe width="100%" height="400px" frameborder="0" scrolling="no" src="https://uvic-my.sharepoint.com/personal/peterwilliams_uvic_ca/_layouts/15/Doc.aspx?sourcedoc={945b59a9-8499-43be-885e-68cf18b93423}&action=embedview&wdAllowInteractivity=False&ActiveCell='FitData'!B1&wdDownloadButton=True&wdInConfigurator=True&wdInConfigurator=True&edesNext=false&resen=false"></iframe>
+        </div>
+      </div>
+</div>
+{% endblock %}
