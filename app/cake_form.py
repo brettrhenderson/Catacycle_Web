@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, FloatField, IntegerField, BooleanField, SelectField
+from wtforms import StringField, SubmitField, FloatField, IntegerField, BooleanField, SelectField, FieldList, FormField
 from wtforms.validators import DataRequired, InputRequired, ValidationError, optional
 from flask_wtf.file import FileRequired, FileField
 import re
@@ -137,7 +137,170 @@ class CakeForm(FlaskForm):
 
 
 class CakeDownloadForm(CakeForm):
-
     # File Format Tab
     f_format = StringField('f_format', default='.svg')
     image_index = IntegerField('image_index', default=0)
+
+
+#################################################
+# Modular Re-write for multiple-reactant fitting
+#################################################
+
+class ContinuousAdditionForm(FlaskForm):
+    """Field Enclosure for parameters of continuous addition of a reagent"""
+    add_sol_conc = FloatField('Addition Solution Concentration', [InputRequired()], description="Concentration of reagent added.")
+    add_cont_rate = FloatField('Rate of Addition', [InputRequired()], description="Rate of addition in moles_unit volume_unit^-1 time_unit^-1.")
+    t_cont_rate = FloatField('After Time', [optional()], default=0.0, description="Time when addition began.")
+
+
+class InstantaneousAdditionForm(FlaskForm):
+    """Field Enclosure for parameters of continuous addition of a reagent"""
+    add_sol_conc = FloatField('Addition Solution Concentration', [InputRequired()], description="Concentration of reagent added.")
+    add_v_one_shot = FloatField('Volume Added', [InputRequired()], description="Volume of solution added in volume_unit.")
+    t_one_shot = FloatField('At Time', [optional()], default=0.0, description="Time when addition occured.")
+
+
+class SpeciesForm(FlaskForm):
+    """
+    A form collecting all attributes of a species participating in a reaction.
+
+    To be used as a FormField within a FieldList of species for a given reaction.
+
+    Attributes
+    ----------
+    col : :obj:`wtforms.IntegerField`
+        Column in excel sheet to use for this reaction species.
+    spec_type: :obj:`wtforms.SelectField`
+        The type of species (reactant, product, or catalyst)
+    stoich : :obj:`wtforms.IntegerField`
+        Stoichiometric coefficient for this reaction species. Default 1.
+    mol_init : :obj:`wtforms.FloatField`, optional
+        Initial amount of species in moles. If not given, excel values will be assumed to be given in moles.
+    mol_end : :obj:`wtforms.FloatField`, optional
+        Final amount of species in moles. If not given, excel values will be assumed to be given in moles.
+
+    """
+    col = IntegerField('Column', [InputRequired()], description="Integer index, 1 is the first column.")
+    spec_name = StringField('Species Name', [optional()], description="Name of species.")
+    spec_type = SelectField('Species Type', [InputRequired()], description="Type of Species (reactant, product, catalyst).",
+                            choices=[('r', 'Reactant'), ('p', 'Product'), ('c', 'Catalyst')])
+    stoich = IntegerField('Stoichiometry', [InputRequired()], description="Stoichiometric coefficient of species.", default=1)
+    mol_init = FloatField('Initial Moles', [optional()], description="Initial amount in moles.")
+    mol_end = FloatField('Final Moles', [optional()], description="Final amount in moles")
+    ord_val = FloatField('Est Order', [optional()], id='ord_val', default=1, description="Estimated species order")
+    ord_min = FloatField('Min Order', [optional()], id='ord_min', default=0, description="Minimum species order search constraint")
+    ord_max = FloatField('Max Order', [optional()], id='ord_max', default=2,
+                         description="Maximum species order search constraint")
+    pois_val = FloatField('Est Poisoning', [optional()], id='pois_val', default=0, description="Estimated species poisoning")
+    pois_min = FloatField('Min Poisoning', [optional()], id='pois_min',
+                          description="Minimum species poisoning search constraint")
+    pois_max = FloatField('Max Poisoning', [optional()], id='ord_max',
+                          description="Maximum species poisoning search constraint")
+    cont_add = FieldList(FormField(ContinuousAdditionForm), min_entries=0)
+    one_shot = FieldList(FormField(InstantaneousAdditionForm), min_entries=0)
+    for_fitting = BooleanField("Use For Fitting", description="Use this species to perform CAKE fitting.")
+
+    def format_r_ord(self):
+        if self.ord_val.data is None:
+            ord = self.ord_val.data
+        elif self.ord_min.data is None or self.ord_max.data is None:
+            ord = [self.ord_val.data]
+        else:
+            ord = [self.ord_val.data, self.ord_min.data, self.ord_max.data]
+        return ord
+
+
+class UploadForm(FlaskForm):
+    """
+    To be used as a FormField within a the overall reaction form.
+
+    Attributes
+    ----------
+    xl : :obj:`flask_wtf.file.FileField`
+        Excel file containing reaction data for CAKE analysis
+    sheet_name : :obj:`wtforms.StringField`
+        Name of the sheet in excel file containing desired reaction data.
+    t_col: :obj:`wtforms.IntegerField`
+        Column in excel sheet to use for the time variable. 1 is the first column.
+    sim: :obj: `wtforms.BooleanField`
+        Whether the reaction is to be merely simulated or actually analyzed from Excel data
+    """
+    xl = FileField('Select Data',
+                   [FileRequired(), FlaskRegexp(r'^[a-zA-Z0-9\s_.\-\(\):]+\.xlsx$', flags=re.IGNORECASE,
+                                                message="File must have .xslx extension.")],
+                   description='Upload Reaction Data in Excel file format.',
+                   id='excelUpload')
+    sheet_name = StringField('Sheet Name', [InputRequired()], id='sheet_name',
+                             description="Name of sheet in Excel file, case sensitive",
+                             default='Sheet1')
+    t_col = IntegerField('Time Column', [InputRequired()], id='t_col',
+                         description="Integer index, 1 is the first column")
+    sim = BooleanField("Simulate Reaction", description="Simulate without reading actual reaction data from Excel.")
+    t_init = FloatField("Simulation Start", description="Simulation start tike. Only used if sim==True")
+    t_final = FloatField("Simulation End", description="Simulation end time. Only used if sim==True")
+    t_interval = FloatField("Simulation Time Interval", description="Time interval for simulation run. Only used if sim==True")
+
+
+class ReactionInformationForm(FlaskForm):
+    """
+    Contains All of the information about a reaction needed to perform CAKE analysis
+
+    """
+    react_vol_init = FloatField('Initial Reaction Volume', [InputRequired()], description="Initial volume of reactants.")
+
+    k_est_val = FloatField('Est Rate Constant', [optional()], id='k_est_val', description="Estimated rate constant")
+    k_est_min = FloatField('Min Rate Constant', [optional()], id='k_est_min',
+                           description="Minimum rate constant search constraint")
+    k_est_max = FloatField('Max Rate Constant', [optional()], id='k_est_max',
+                           description="Maximum rate constant search constraint")
+    species = FieldList(FormField(SpeciesForm), min_entries=0)
+
+    def format_k_est(self):
+        if self.k_est_val.data is None:
+            k_est = self.k_est_val.data
+        elif self.k_est_min.data is None or self.k_est_max.data is None:
+            k_est = [self.k_est_val.data]
+        else:
+            k_est = [self.k_est_val.data, self.k_est_min.data, self.k_est_max.data]
+        return k_est
+
+
+class DataManipulationForm(FlaskForm):
+    """
+    Contains all parameters for smoothing and otherwise manipulating reaction data
+    """
+    scale_avg_num = IntegerField('Average Points', id='scale_avg_num', default=0,
+                                 description="Number of data points from which to calculate r0 and p_end. Default 0 (no scaling).")
+    win = IntegerField('Smoothing Window', id='win', default=1, description="Number of points in smoothing window")
+    inc = IntegerField('Interpolation Multiplier', id='inc',
+                       description='Number of points to interpolate between measurements', default=1)
+
+
+class CakeFormMulti(FlaskForm):
+    """
+    A form collecting all attributes of a species participating in a reaction.
+
+    To be used as a FormField within a FieldList of species for a given reaction.
+
+    Attributes
+    ----------
+    xl : :obj:`flask_wtf.file.FileField`
+        Excel file containing reaction data for CAKE analysis
+    sheet_name : :obj:`wtforms.StringField`
+        Name of the sheet in excel file containing desired reaction data.
+    t_col: :obj:`wtforms.IntegerField`
+        Column in excel sheet to use for the time variable. 1 is the first column.
+    """
+
+    upload = FormField(UploadForm)
+    rxn_info = FormField(ReactionInformationForm)
+    data_manip = FormField(DataManipulationForm)
+
+    submit = SubmitField('Fit', id='fit-submit')
+
+
+class CakeDownloadMultiForm(CakeFormMulti):
+    # File Format Tab
+    f_format = StringField('f_format', default='.svg')
+    image_index = IntegerField('image_index', default=0)
+
