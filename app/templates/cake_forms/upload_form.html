@@ -1,0 +1,45 @@
+{% block body %}
+
+<div class="tab-pane active show" id="uploadtab">
+    <div class="form-row">
+      <div class="form-group col my-auto">
+        {{ form.xl.label }}
+        {{ form.xl(class_="form-control", placeholder="Upload Excel Data",
+          accept=".xlsx,.xls, .XLSX, .XLS", title=form.xl.description, data_toggle='tooltip') }}
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col">
+        {{ form.sheet_name.label() }}
+        {{ form.sheet_name(class_="form-control", title=form.sheet_name.description,
+          data_toggle='tooltip') }}
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col">
+        {{ form.t_col.label() }}
+        {{ form.t_col(class_="form-control", min=1, title=form.t_col.description,
+          data_toggle='tooltip') }}
+      </div>
+      <div class="form-group col">
+        {{ form.r_col.label() }}
+        {{ form.r_col(class_="form-control", min=1, title=form.r_col.description,
+          data_toggle='tooltip') }}
+      </div>
+      <div class="form-group col">
+        {{ form.p_col.label() }}
+        {{ form.p_col(class_="form-control", min=1, title=form.p_col.description,
+          data_toggle='tooltip') }}
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col">
+        {{ form.fit_asp.label() }}
+        {{ form.fit_asp(class_="form-control", title=form.fit_asp.description,
+          data_toggle='tooltip') }}
+      </div>
+      <div class="form-group col"></div>
+    </div>
+</div>
+
+{% endblock %}
