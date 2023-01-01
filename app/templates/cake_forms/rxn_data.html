@@ -1,41 +1,68 @@
 {% block body %}
 
+<!--Initial Reaction Volume [react_vol_init]: float-->
+<!--Specify Rate Constant [k_lim]:-->
+<!--Est Value [k_est_val]-->
+<!--Min Value [k_est_min]-->
+<!--Max Value [k_est_max]-->
+<!--Species [1+]: species-->
+
+
 <div class="tab-pane" id="datatab">
+    <!--  Initial Reaction Volume  -->
     <div class="form-row">
       <div class="form-group col">
-        {{ form.stoich_r.label() }}
-        {{ form.stoich_r(class_="form-control", title=form.stoich_r.description,
-          data_toggle='tooltip') }}
-      </div>
-      <div class="form-group col">
-        {{ form.stoich_p.label() }}
-        {{ form.stoich_p(class_="form-control", title=form.stoich_p.description,
+        {{ form.rxn_info.form.react_vol_init.label() }}
+        {{ form.rxn_info.form.react_vol_init(class_="form-control", title=form.rxn_info.form.react_vol_init.description,
           data_toggle='tooltip') }}
       </div>
     </div>
+
+    <!--  Rate Constant Bounds  -->
     <div class="form-row">
       <div class="form-group col">
-        {{ form.cat_sol_conc.label() }}
-        {{ form.cat_sol_conc(class_="form-control", title=form.cat_sol_conc.description,
-          data_toggle='tooltip') }}
+        {{ form.rxn_info.form.k_est_val.label() }}
+        {{ form.rxn_info.form.k_est_val(class_="form-control", min=0, title=form.rxn_info.form.k_est_val.description,
+          data_toggle='tooltip', placeholder="Estimate") }}
       </div>
       <div class="form-group col">
-        {{ form.inject_rate.label() }}
-        {{ form.inject_rate(class_="form-control", title=form.inject_rate.description,
-          data_toggle='tooltip') }}
+        {{ form.rxn_info.form.k_est_min.label() }}
+        {{ form.rxn_info.form.k_est_min(class_="form-control", min=0, title=form.rxn_info.form.k_est_min.description,
+          data_toggle='tooltip', placeholder="Estimate * 1E-3") }}
+      </div>
+      <div class="form-group col">
+        {{ form.rxn_info.form.k_est_max.label() }}
+        {{ form.rxn_info.form.k_est_max(class_="form-control", min=0, title=form.rxn_info.form.k_est_max.description,
+          data_toggle='tooltip', placeholder="Estimate * 1E3") }}
       </div>
     </div>
-    <div class="form-row">
-      <div class="form-group col">
-        {{ form.react_vol_init.label() }}
-        {{ form.react_vol_init(class_="form-control", title=form.react_vol_init.description,
-          data_toggle='tooltip') }}
+
+    <!--  Species  -->
+    <div id="species-container" class="form-row">
+      <div class="form-group col-4">
+        <button id="sp-01-control" class="btn btn-block btn-primary" type="button" data-toggle="collapse" data-target="#species-01" aria-expanded="false" aria-controls="species-01">
+          Species 1
+          <i class="fa fa-chevron-down pt-1 float-right" aria-hidden="true"></i>
+        </button>
       </div>
-      <div class="form-group col">
-        {{ form.t_inj.label() }}
-        {{ form.t_inj(class_="form-control", title=form.t_inj.description,
-          data_toggle='tooltip') }}
+      <div id="species-01" class="collapse form-control" aria-labelledby="sp-01-control" data-parent="#species-container">
+        {% include "cake_forms/species.html" %}
       </div>
+    </div>
+
+    <!--  Add / Remove Species Button  -->
+    <div class="form-row pt-2">
+        <div class="col-sm-4">
+            <button type="button" class="btn btn-sm btn-outline-primary float-left" id="addspec">
+                <i class="fa fa-plus"></i> Species
+            </button>
+        </div>
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
+            <button type="button" class="btn btn-sm btn-outline-primary float-right" id="delspec">
+                <i class="fa fa-minus"></i> Species
+            </button>
+        </div>
     </div>
 </div>
 

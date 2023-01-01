@@ -148,14 +148,14 @@ class CakeDownloadForm(CakeForm):
 
 class ContinuousAdditionForm(FlaskForm):
     """Field Enclosure for parameters of continuous addition of a reagent"""
-    add_sol_conc = FloatField('Addition Solution Concentration', [InputRequired()], description="Concentration of reagent added.")
+    add_sol_conc = FloatField('Addition Solution Conc.', [InputRequired()], description="Concentration of reagent added.")
     add_cont_rate = FloatField('Rate of Addition', [InputRequired()], description="Rate of addition in moles_unit volume_unit^-1 time_unit^-1.")
     t_cont_rate = FloatField('After Time', [optional()], default=0.0, description="Time when addition began.")
 
 
 class InstantaneousAdditionForm(FlaskForm):
     """Field Enclosure for parameters of continuous addition of a reagent"""
-    add_sol_conc = FloatField('Addition Solution Concentration', [InputRequired()], description="Concentration of reagent added.")
+    add_sol_conc = FloatField('Addition Solution Conc.', [InputRequired()], description="Concentration of reagent added.")
     add_v_one_shot = FloatField('Volume Added', [InputRequired()], description="Volume of solution added in volume_unit.")
     t_one_shot = FloatField('At Time', [optional()], default=0.0, description="Time when addition occured.")
 
@@ -196,8 +196,8 @@ class SpeciesForm(FlaskForm):
                           description="Minimum species poisoning search constraint")
     pois_max = FloatField('Max Poisoning', [optional()], id='ord_max',
                           description="Maximum species poisoning search constraint")
-    cont_add = FieldList(FormField(ContinuousAdditionForm), min_entries=0)
-    one_shot = FieldList(FormField(InstantaneousAdditionForm), min_entries=0)
+    cont_add = FieldList(FormField(ContinuousAdditionForm), min_entries=1)
+    one_shot = FieldList(FormField(InstantaneousAdditionForm), min_entries=1)
     for_fitting = BooleanField("Use For Fitting", description="Use this species to perform CAKE fitting.")
 
     def format_r_ord(self):
@@ -235,7 +235,7 @@ class UploadForm(FlaskForm):
                              default='Sheet1')
     t_col = IntegerField('Time Column', [InputRequired()], id='t_col',
                          description="Integer index, 1 is the first column")
-    sim = BooleanField("Simulate Reaction", description="Simulate without reading actual reaction data from Excel.")
+    sim = BooleanField("Simulate Reaction", id="sim-box", description="Simulate without reading actual reaction data from Excel.")
     t_init = FloatField("Simulation Start", description="Simulation start tike. Only used if sim==True")
     t_final = FloatField("Simulation End", description="Simulation end time. Only used if sim==True")
     t_interval = FloatField("Simulation Time Interval", description="Time interval for simulation run. Only used if sim==True")
@@ -253,7 +253,7 @@ class ReactionInformationForm(FlaskForm):
                            description="Minimum rate constant search constraint")
     k_est_max = FloatField('Max Rate Constant', [optional()], id='k_est_max',
                            description="Maximum rate constant search constraint")
-    species = FieldList(FormField(SpeciesForm), min_entries=0)
+    species = FieldList(FormField(SpeciesForm), min_entries=1)
 
     def format_k_est(self):
         if self.k_est_val.data is None:

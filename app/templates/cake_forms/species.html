@@ -1,0 +1,249 @@
+{% block body %}
+
+    <!--Use For Fitting: [checkbox]-->
+    <!--Greyed out if column is not given-->
+    <div class="form-row">
+      <div class="form-check">
+        {{ form.rxn_info.form.species[0].form.for_fitting(
+            title=form.rxn_info.form.species[0].form.for_fitting.description,
+            data_toggle='tooltip') }}
+        {{ form.rxn_info.form.species[0].form.for_fitting.label() }}
+      </div>
+    </div>
+
+    <div class="form-row">
+      <!-- Species Name [spec_name]: string (def. “Species X”) -->
+      <div class="form-group col">
+        {{ form.rxn_info.form.species[0].form.spec_name.label() }}
+        {{ form.rxn_info.form.species[0].form.spec_name(class_="form-control",
+          title=form.rxn_info.form.species[0].form.spec_name.description,
+          data_toggle='tooltip') }}
+      </div>
+      <!--Species Type [spec_type]: “r”, “p”, or “c” -->
+      <div class="form-group col">
+        {{ form.rxn_info.form.species[0].form.spec_type.label() }}
+        {{ form.rxn_info.form.species[0].form.spec_type(class_="form-control",
+          title=form.rxn_info.form.species[0].form.spec_type.description,
+          data_toggle='tooltip') }}
+      </div>
+      <!--Stoichiometry [stoich]: int (default 1 for r/p, None for c)-->
+      <div class="form-group col">
+        {{ form.rxn_info.form.species[0].form.stoich.label() }}
+        {{ form.rxn_info.form.species[0].form.stoich(class_="form-control",
+          title=form.rxn_info.form.species[0].form.stoich.description,
+          data_toggle='tooltip') }}
+      </div>
+    </div>
+
+    <div class="form-row">
+      <!--Column [col]: int-->
+      <div class="form-group col">
+        {{ form.rxn_info.form.species[0].form.col.label() }}
+        {{ form.rxn_info.form.species[0].form.col(class_="form-control",
+          title=form.rxn_info.form.species[0].form.col.description, min=1,
+          data_toggle='tooltip') }}
+      </div>
+      <!--Initial Moles [mol_init]: float-->
+      <div class="form-group col">
+        {{ form.rxn_info.form.species[0].form.mol_init.label() }}
+        {{ form.rxn_info.form.species[0].form.mol_init(class_="form-control",
+          title=form.rxn_info.form.species[0].form.mol_init.description,
+          data_toggle='tooltip') }}
+      </div>
+      <!--Final Moles [mol_end]: float-->
+      <div class="form-group col">
+        {{ form.rxn_info.form.species[0].form.mol_end.label() }}
+        {{ form.rxn_info.form.species[0].form.mol_end(class_="form-control",
+          title=form.rxn_info.form.species[0].form.mol_end.description,
+          data_toggle='tooltip') }}
+      </div>
+    </div>
+
+    <!--
+    Group some lesser-used options into rows to save space
+      1. Order Limits | Poison Limits
+    -->
+    <div id="limits-container-species-0">
+      <div class="form-row">
+        <div class="col">
+          <a id="ord-control-species-0" class="btn btn-block btn-secondary" data-toggle="collapse" href="#ord-limits-species-0" role="button" aria-expanded="false" aria-controls="ord-limits">
+            Specify Order Limits
+          </a>
+        </div>
+        <div class="col">
+          <a id="pois-control-species-0" class="btn btn-block btn-secondary" data-toggle="collapse" href="#pois-limits-species-0" role="button" aria-expanded="false" aria-controls="pois-limits">
+            Specify Poisoning Limits
+          </a>
+        </div>
+
+        <!--  Specify Ord Limits [0-1] [ord_lim]: [checkbox]
+          This should be made collapsible.
+        -->
+        <div id="ord-limits-species-0"  class="collapse" aria-labelledby="ord-control" data-parent="#limits-container-species-0">
+          <div class="form-row m-1">
+            <!--Est Order [ord_val] (default 1): float-->
+            <div class="form-group col">
+              {{ form.rxn_info.form.species[0].form.ord_val.label() }}
+              {{ form.rxn_info.form.species[0].form.ord_val(class_="form-control",
+                title=form.rxn_info.form.species[0].form.ord_val.description,
+                data_toggle='tooltip') }}
+            </div>
+            <!--Min Order [ord_min] (default 0): float-->
+            <div class="form-group col">
+              {{ form.rxn_info.form.species[0].form.ord_min.label() }}
+              {{ form.rxn_info.form.species[0].form.ord_min(class_="form-control",
+                title=form.rxn_info.form.species[0].form.ord_min.description,
+                data_toggle='tooltip') }}
+            </div>
+            <!--Max Order [ord_max] (default 2): float-->
+            <div class="form-group col">
+              {{ form.rxn_info.form.species[0].form.ord_max.label() }}
+              {{ form.rxn_info.form.species[0].form.ord_max(class_="form-control",
+                title=form.rxn_info.form.species[0].form.ord_max.description,
+                data_toggle='tooltip') }}
+            </div>
+          </div>
+        </div>
+
+        <!--  Specify Poison Limits [0-1] [pois_lim]: [checkbox]
+              This should also be made collapsible
+        -->
+        <div id="pois-limits-species-0" class="collapse" aria-labelledby="pois-control" data-parent="#limits-container-species-0">
+          <div class="form-row m-1">
+            <!--Est Poisoning [pois_val] (default 0): float-->
+            <div class="form-group col">
+              {{ form.rxn_info.form.species[0].form.pois_val.label() }}
+              {{ form.rxn_info.form.species[0].form.pois_val(class_="form-control",
+                title=form.rxn_info.form.species[0].form.pois_val.description,
+                data_toggle='tooltip') }}
+            </div>
+            <!--Min Poisoning [pois_min] (default 0): float-->
+            <div class="form-group col">
+              {{ form.rxn_info.form.species[0].form.pois_min.label() }}
+              {{ form.rxn_info.form.species[0].form.pois_min(class_="form-control",
+                title=form.rxn_info.form.species[0].form.pois_min.description,
+                data_toggle='tooltip') }}
+            </div>
+            <!--Max Poisoning [pois_max] (default 0): float-->
+            <div class="form-group col">
+              {{ form.rxn_info.form.species[0].form.pois_max.label() }}
+              {{ form.rxn_info.form.species[0].form.pois_max(class_="form-control",
+                title=form.rxn_info.form.species[0].form.pois_max.description,
+                data_toggle='tooltip') }}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!--
+    Group some lesser-used options into rows to save space
+      2. Continuous Addition | Instantaneous Addition
+    -->
+    <div id="additions-container-species-0">
+      <div class="form-row mt-2">
+        <div class="col">
+          <a id="cont-add-control-species-0" class="btn btn-block btn-secondary" data-toggle="collapse" href="#cont-add-species-0" role="button" aria-expanded="false" aria-controls="cont-add">
+            Continuous Addition
+          </a>
+        </div>
+        <div class="col">
+          <a id="one-shot-control-species-0" class="btn btn-block btn-secondary" data-toggle="collapse" href="#one-shot-species-0" role="button" aria-expanded="false" aria-controls="one-shot">
+            Instantaneous Addition
+          </a>
+        </div>
+
+        <!--  Add Continuous Addition [0+]: [checkbox]
+          Should be made collapsible
+        -->
+        <div id="cont-add-species-0"  class="collapse" aria-labelledby="ord-control" data-parent="#additions-container-species-0">
+          <div id="cont-add-species-0-rows">
+            <div class="form-row m-1">
+            <!--Addition Solution Concentration [add_sol_conc]: float-->
+            <div class="form-group col">
+              {{ form.rxn_info.form.species[0].form.cont_add[0].form.add_sol_conc.label() }}
+              {{ form.rxn_info.form.species[0].form.cont_add[0].form.add_sol_conc(class_="form-control",
+                title=form.rxn_info.form.species[0].cont_add[0].form.add_sol_conc.description,
+                data_toggle='tooltip') }}
+            </div>
+            <!--At Continuous Rate [add_cont_rate]: float-->
+            <div class="form-group col">
+              {{ form.rxn_info.form.species[0].form.cont_add[0].form.add_cont_rate.label() }}
+              {{ form.rxn_info.form.species[0].form.cont_add[0].form.add_cont_rate(class_="form-control",
+                title=form.rxn_info.form.species[0].form.cont_add[0].form.add_cont_rate.description,
+                data_toggle='tooltip') }}
+            </div>
+            <!--After Time [t_cont_rate]: float-->
+            <div class="form-group col">
+              {{ form.rxn_info.form.species[0].form.cont_add[0].form.t_cont_rate.label() }}
+              {{ form.rxn_info.form.species[0].form.cont_add[0].form.t_cont_rate(class_="form-control",
+                title=form.rxn_info.form.species[0].form.cont_add[0].form.t_cont_rate.description,
+                data_toggle='tooltip') }}
+            </div>
+          </div>
+          </div>
+          <div class="form-row px-3">
+            <div class="col-sm-4">
+                <button type="button" class="btn btn-sm btn-outline-primary float-left add-cont" id="add-cont-species-0">
+                    <i class="fa fa-plus"></i> Addition
+                </button>
+            </div>
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <button type="button" class="btn btn-sm btn-outline-primary float-right del-cont" id="del-cont-species-0">
+                    <i class="fa fa-minus"></i> Addition
+                </button>
+            </div>
+          </div>
+        </div>
+
+        <!--  Add Instantaneous Addition [0+]: [checkbox]
+              Should be collabsible
+        -->
+        <div id="one-shot-species-0"  class="collapse" aria-labelledby="ord-control" data-parent="#additions-container-species-0">
+          <div id="one-shot-species-0-rows">
+            <div class="form-row m-1">
+            <!--Addition Solution Concentration [add_sol_conc]: float-->
+            <div class="form-group col">
+              {{ form.rxn_info.form.species[0].form.one_shot[0].form.add_sol_conc.label() }}
+              {{ form.rxn_info.form.species[0].form.one_shot[0].form.add_sol_conc(class_="form-control",
+                title=form.rxn_info.form.species[0].one_shot[0].form.add_sol_conc.description,
+                data_toggle='tooltip') }}
+            </div>
+            <!--Volume Added [add_v_one_shot]: float-->
+            <div class="form-group col">
+              {{ form.rxn_info.form.species[0].form.one_shot[0].form.add_v_one_shot.label() }}
+              {{ form.rxn_info.form.species[0].form.one_shot[0].form.add_v_one_shot(class_="form-control",
+                title=form.rxn_info.form.species[0].form.one_shot[0].form.add_v_one_shot.description,
+                data_toggle='tooltip') }}
+            </div>
+            <!--At Time [t_one_shot]: float-->
+            <div class="form-group col">
+              {{ form.rxn_info.form.species[0].form.one_shot[0].form.t_one_shot.label() }}
+              {{ form.rxn_info.form.species[0].form.one_shot[0].form.t_one_shot(class_="form-control",
+                title=form.rxn_info.form.species[0].form.one_shot[0].form.t_one_shot.description,
+                data_toggle='tooltip') }}
+            </div>
+          </div>
+          </div>
+          <div class="form-row px-3 ">
+            <div class="col-sm-4">
+                <button type="button" class="btn btn-sm btn-outline-primary float-left add-oneshot" id="add-oneshot-species-0">
+                    <i class="fa fa-plus"></i> Addition
+                </button>
+            </div>
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <button type="button" class="btn btn-sm btn-outline-primary float-right del-oneshot" id="del-oneshot-species-0">
+                    <i class="fa fa-minus"></i> Addition
+                </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+{% endblock %}

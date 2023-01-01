@@ -11,6 +11,8 @@
 {{super()}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 <script src="{{url_for('.static', filename='js/cake.js')}}"></script>
+<script src="{{url_for('.static', filename='js/cake/upload.js')}}"></script>
+<script src="{{url_for('.static', filename='js/cake/species.js')}}"></script>
 <script type="text/javascript">
     var csrf_token = "{{ form.csrf_token._value() }}";
     $(document).ready(function() {
@@ -154,9 +156,6 @@
                                 <a id="maniplink" class="nav-link form-tab" data-toggle="tab" href="#maniptab">Data Manip</a>
                             </li>
                             <li class="nav-item">
-                                <a id="advancedlink" class="nav-link form-tab" data-toggle="tab" href="#advancedtab">Advanced</a>
-                            </li>
-                            <li class="nav-item">
                                 <a id="outputlink" class="nav-link" data-toggle="tab" href="#outputtab">Output</a>
                             </li>
                         </ul>
@@ -166,7 +165,6 @@
                             {% include "cake_forms/upload_form.html" %}
                             {% include "cake_forms/rxn_data.html" %}
                             {% include "cake_forms/data_manip.html" %}
-                            {% include "cake_forms/advanced.html" %}
                             <div class="tab-pane" id="outputtab">
                                 <pre class="form-control" id="output-text">Fill in  Parameters and click "Fit" to generate output.
                                 </pre>
