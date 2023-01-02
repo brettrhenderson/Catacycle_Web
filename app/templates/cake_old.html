@@ -1,0 +1,480 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}CAKE{% endblock %}
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{url_for('.static', filename='css/graphs.css')}}">
+<link rel="stylesheet" href="{{url_for('.static', filename='css/bootstrap-colorpicker.css')}}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+<script src="{{url_for('.static', filename='js/cake_old.js')}}"></script>
+<script type="text/javascript">
+    var csrf_token = "{{ form.csrf_token._value() }}";
+    $(document).ready(function() {
+        updateFinalProduct();
+        downloadHandler();
+        ExcelDownloadHandler();
+        $('[data-toggle="tooltip"]').tooltip({
+            placement: "top",
+            trigger: "hover focus"
+        });
+        $.validator.messages.required = '*Required';
+        $("#cake-form").validate({
+            ignore: [],
+            submitHandler: submitCakeHandler,
+            invalidHandler: highlightInvalidTabs,
+            rules: {
+                r_col: {
+                    required: function(element) {
+                        return $("#fit_asp").val().includes('r');
+                    }
+                },
+                p_col: {
+                    required: function(element) {
+                        return $("#fit_asp").val().includes('p');
+                    }
+                },
+                k_est_min: {
+                    lessEqThan: '#k_est_val',
+                    lessThan: '#k_est_max'
+                },
+                k_est_max: {
+                    greaterEqThan: '#k_est_val',
+                    greaterThan: '#k_est_min'
+                },
+                k_est_val: {
+                    greaterEqThan: '#k_est_min',
+                    lessEqThan: '#k_est_max'
+                },
+                r_ord_min: {
+                    lessEqThan: '#r_ord_val',
+                    lessThan: '#r_ord_max'
+                },
+                r_ord_max: {
+                    greaterEqThan: '#r_ord_val',
+                    greaterThan: '#r_ord_min'
+                },
+                r_ord_val: {
+                    greaterEqThan: '#r_ord_min',
+                    lessEqThan: '#r_ord_max'
+                },
+                cat_ord_min: {
+                    lessEqThan: '#c_ord_val',
+                    lessThan: '#c_ord_max'
+                },
+                cat_ord_max: {
+                    greaterEqThan: '#c_ord_val',
+                    greaterThan: '#c_ord_min'
+                },
+                cat_ord_val: {
+                    greaterEqThan: '#c_ord_min',
+                    lessEqThan: '#c_ord_max'
+                },
+                t0_est_min: {
+                    lessEqThan: '#t0_est_val',
+                    lessThan: '#t0_est_max'
+                },
+                t0_est_max: {
+                    greaterEqThan: '#t0_est_val',
+                    greaterThan: '#t0_est_min'
+                },
+                t0_est_val: {
+                    greaterEqThan: '#t0_est_min',
+                    lessEqThan: '#t0_est_max'
+                }
+            },
+            messages: {
+                r_col: "*Required if Reactant in 'Fit Aspect'",
+                p_col: "*Required if Product in 'Fit Aspect'"
+            }
+        });
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrf_token)
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="{{ url_for('index') }}">
+        <img src="{{url_for('.static', filename='images/cycle_icon.png')}}" width="50" height="50" class="d-inline-block align-center" alt="">
+        CataHub
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('index') }}"> All Tools </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('graphs') }}"> Catacycle </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="{{ url_for('cake_old') }}"> CAKE (LEGACY) </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('cake') }}"> CAKE (DEVELOPMENT) </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('guide') }}"> User Guide</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('aboutus') }}"> About Us</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <br>
+<!--    <div class="container pb-2 mt-4 mb-2 border-bottom">-->
+<!--        <h1>CAKE Kinetic Analysis</h1>-->
+<!--    </div>-->
+    <div class="container-fluid">
+        <div class="row d-flex">
+            <div class="pb-2 col-1 d-flex flex-column"></div>
+            <form enctype="multipart/form-data" onkeydown="return event.key != 'Enter';" class="px-3 pt-1 pb-2 col-5 d-flex flex-column align-items-center justify-content-start" id="cake-form" action="{{ url_for('download_cake_xlsx') }}" method="post">
+                {{ form.hidden_tag() }}
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs">
+                            <li class="nav-item">
+                                <a id="uploadlink" class="nav-link active form-tab" data-toggle="tab" href="#uploadtab">Upload</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="datalink" class="nav-link form-tab" data-toggle="tab" href="#datatab">Rxn Data</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="maniplink" class="nav-link form-tab" data-toggle="tab" href="#maniptab">Data Manip</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="advancedlink" class="nav-link form-tab" data-toggle="tab" href="#advancedtab">Advanced</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="outputlink" class="nav-link" data-toggle="tab" href="#outputtab">Output</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body p-2">
+                        <div id="cake-card" class="tab-content">
+                            <div class="tab-pane active show" id="uploadtab">
+                                <div class="form-row">
+                                  <div class="form-group col my-auto">
+                                    {{ form.xl.label }}
+                                    {{ form.xl(class_="form-control", placeholder="Upload Excel Data",
+                                      accept=".xlsx,.xls, .XLSX, .XLS", title=form.xl.description, data_toggle='tooltip') }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.sheet_name.label() }}
+                                    {{ form.sheet_name(class_="form-control", title=form.sheet_name.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.t_col.label() }}
+                                    {{ form.t_col(class_="form-control", min=1, title=form.t_col.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.r_col.label() }}
+                                    {{ form.r_col(class_="form-control", min=1, title=form.r_col.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.p_col.label() }}
+                                    {{ form.p_col(class_="form-control", min=1, title=form.p_col.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.fit_asp.label() }}
+                                    {{ form.fit_asp(class_="form-control", title=form.fit_asp.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                  <div class="form-group col"></div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="datatab">
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.stoich_r.label() }}
+                                    {{ form.stoich_r(class_="form-control", title=form.stoich_r.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.stoich_p.label() }}
+                                    {{ form.stoich_p(class_="form-control", title=form.stoich_p.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.cat_sol_conc.label() }}
+                                    {{ form.cat_sol_conc(class_="form-control", title=form.cat_sol_conc.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.inject_rate.label() }}
+                                    {{ form.inject_rate(class_="form-control", title=form.inject_rate.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.react_vol_init.label() }}
+                                    {{ form.react_vol_init(class_="form-control", title=form.react_vol_init.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.t_inj.label() }}
+                                    {{ form.t_inj(class_="form-control", title=form.t_inj.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="maniptab">
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.r0.label() }}
+                                    {{ form.r0(class_="form-control", title=form.r0.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.p0.label() }}
+                                    {{ form.p0(class_="form-control", title=form.p0.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col-6">
+                                    {{ form.p_end.label() }}
+                                    {{ form.p_end(class_="form-control", title=form.p_end.description,
+                                       data_toggle='tooltip') }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.scale_avg_num.label() }}
+                                    {{ form.scale_avg_num(class_="form-control", min=0,
+                                      title=form.scale_avg_num.description, data_toggle='tooltip') }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.win.label() }}
+                                    {{ form.win(class_="form-control", min=1, title=form.win.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="advancedtab">
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.k_est_val.label() }}
+                                    {{ form.k_est_val(class_="form-control", min=0, title=form.k_est_val.description,
+                                      data_toggle='tooltip', placeholder="Estimate") }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.k_est_min.label() }}
+                                    {{ form.k_est_min(class_="form-control", min=0, title=form.k_est_min.description,
+                                      data_toggle='tooltip', placeholder="Estimate * 1E-3") }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.k_est_max.label() }}
+                                    {{ form.k_est_max(class_="form-control", min=0, title=form.k_est_max.description,
+                                      data_toggle='tooltip', placeholder="Estimate * 1E3") }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.t0_est_val.label() }}
+                                    {{ form.t0_est_val(class_="form-control", title=form.t0_est_val.description,
+                                      data_toggle='tooltip', placeholder="0") }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.t0_est_min.label() }}
+                                    {{ form.t0_est_min(class_="form-control", title=form.t0_est_min.description,
+                                      data_toggle='tooltip', placeholder="0") }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.t0_est_max.label() }}
+                                    {{ form.t0_est_max(class_="form-control", title=form.t0_est_max.description,
+                                      data_toggle='tooltip', placeholder="Rxn End Time") }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.r_ord_val.label() }}
+                                    {{ form.r_ord_val(class_="form-control", title=form.r_ord_val.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.r_ord_min.label() }}
+                                    {{ form.r_ord_min(class_="form-control", title=form.r_ord_min.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.r_ord_max.label() }}
+                                    {{ form.r_ord_max(class_="form-control", title=form.r_ord_max.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col">
+                                    {{ form.cat_ord_val.label() }}
+                                    {{ form.cat_ord_val(class_="form-control", title=form.cat_ord_val.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.cat_ord_min.label() }}
+                                    {{ form.cat_ord_min(class_="form-control", title=form.cat_ord_min.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                  <div class="form-group col">
+                                    {{ form.cat_ord_max.label() }}
+                                    {{ form.cat_ord_max(class_="form-control", title=form.cat_ord_max.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group col-4">
+                                    {{ form.inc.label() }}
+                                    {{ form.inc(class_="form-control", min=1, title=form.inc.description,
+                                      data_toggle='tooltip') }}
+                                  </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="outputtab">
+                                <pre class="form-control" id="output-text">Fill in  Parameters and click "Fit" to generate output.
+                                </pre>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <input id="{{ form.submit.id }}" type="submit" class="form-control btn btn-primary" value="{{ form.submit.label.text }}">
+                            </div>
+                            <div class="form-group col">
+                                <input type="button" id="download-fit" class="form-control btn btn-primary" value="Download Fit">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="px-3 pt-1 pb-2 col-5 d-flex flex-column align-items-center justify-content-start max-vw-50">
+                <div id="cake-select" class="row"></div>
+                <img id='cake-result' class="d-block w-90 img-fluid max-vh-60" src="../static/images/cake_placeholder.svg" alt="Cake Analysis Here">
+                <form class="p-2" enctype="multipart/form-data" id="download-form" style="width: 100%;" action="/download-cake" method="post" nonvalidate>
+                    <div class="form-group row">
+                        <div class="col-3"></div>
+                        <div class="col-3">
+                            <select id="dloadFormat" class="form-control" name="f_format">
+                                <option value="svg" selected>SVG</option>
+                                <option value="png">PNG</option>
+                                <option value="eps">EPS</option>
+                                <option value="pdf">PDF</option>
+                            </select>
+                        </div>
+                        <div class="col-3">
+                            <button id="fake-submit" type="button" class="form-control btn btn-primary">
+                                <i class="fa fa-lg fa-download"></i>
+                            </button>
+                        </div>
+                        <div class="col-3"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="pb-2 col-1 d-flex flex-column"></div>
+        </div>
+    </div>
+
+    <!-- Footer.  This footer was adapted from mdbootstrap.com and is licensed under the MIT License.  Full License Text:
+    Copyright (c) 2019 MDBootstrap.com
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+    documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+    rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+    permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+    WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+    OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+    OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
+    <footer class="page-footer font-small" style="background-color:#D3D3D3">
+
+        <!-- Footer Links -->
+        <div class="container text-center text-md-left">
+          <!-- Acknowledgements -->
+          <div class="row">
+            <!-- Grid column -->
+            <div class="col-md-6 mx-auto">
+              <br> 
+              <!-- Content -->
+              <p> Citation: DOI:  
+              <a href="#" target="_blank" class="text-dark">DOI PLACEHOLDER</a> 
+              </p>
+              <p> Code: 
+              <a href="#" target="_blank" class="text-dark">GITHUB PLACEHOLDER</a>
+              </p>
+
+            </div>
+            <!-- Grid column -->
+
+            <hr class="clearfix w-100 d-md-none">
+
+            <!-- Grid column -->
+            <div class="col-md-6 pt-3 d-flex flex-column justify-content-center">
+
+                <!-- Social buttons -->
+                <div class="wrapper">
+                    <ul class="social-icons icon-circle list-unstyled list-inline">
+                        <li>
+                            <a href="https://twitter.com/mcindoe?lang=en" target="_blank" class="btn">
+                                <i class="fa fa-twitter"> </i>
+                            </a>
+                        </li>
+                        <li class="ml-3">
+                            <a href="http://web.uvic.ca/~mcindoe/" target="_blank" class="btn btn-dark">
+                                McIndoe Group
+                            </a>
+                        </li>
+                        <li class="ml-3">
+                            <a href="https://pacilab.ca/" target="_blank" class="btn btn-dark">
+                                Paci Group
+                            </a>
+                        </li>
+                        <li class="ml-3">
+                            <a href="#" target="_blank" class="btn btn-primary">
+                                Feedback
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- Social buttons -->
+
+            </div>
+            <!-- Grid column -->
+
+          </div>
+          <!-- Grid row -->
+          </div>
+
+        </div>
+
+    </footer>
+    <!-- Footer -->
+
+{% endblock %}

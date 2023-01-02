@@ -28,7 +28,10 @@
         <a class="nav-link" href="{{ url_for('graphs') }}"> Catacycle </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('cake') }}"> CAKE </a>
+        <a class="nav-link" href="{{ url_for('cake_old') }}"> CAKE (LEGACY) </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('cake') }}"> CAKE (DEVELOPMENT) </a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="{{ url_for('guide') }}"> User Guide</a>
@@ -54,7 +57,16 @@
   <div class="media">
     <img class="mr-3" src="../static/images/cake_logo.png" width="200" height="150">
     <div class="media-body align-self-center">
-      <a class="btn btn-outline-secondary btn" href="{{ url_for('cake') }}">Kinetic Data Analysis</a>
+      <a class="btn btn-outline-secondary btn" href="{{ url_for('cake_old') }}">Kinetic Data Analysis (LEGACY)</a>
+      <br>
+      Upload your kinetic data to fit catalyst order and rate constant and correct for catalyst poisoning.
+      <br>
+    </div>
+  </div>
+  <div class="media">
+    <img class="mr-3" src="../static/images/cake_logo.png" width="200" height="150">
+    <div class="media-body align-self-center">
+      <a class="btn btn-outline-secondary btn" href="{{ url_for('cake') }}">Kinetic Data Analysis (DEVELOPMENT)</a>
       <br>
       Upload your kinetic data to fit catalyst order and rate constant and correct for catalyst poisoning.
       <br>

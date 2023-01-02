@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from wtforms import Form
 from wtforms import StringField, SubmitField, FloatField, IntegerField, BooleanField, SelectField, FieldList, FormField
 from wtforms.validators import DataRequired, InputRequired, ValidationError, optional
 from flask_wtf.file import FileRequired, FileField
@@ -146,21 +147,21 @@ class CakeDownloadForm(CakeForm):
 # Modular Re-write for multiple-reactant fitting
 #################################################
 
-class ContinuousAdditionForm(FlaskForm):
+class ContinuousAdditionForm(Form):
     """Field Enclosure for parameters of continuous addition of a reagent"""
-    add_sol_conc = FloatField('Addition Solution Conc.', [InputRequired()], description="Concentration of reagent added.")
-    add_cont_rate = FloatField('Rate of Addition', [InputRequired()], description="Rate of addition in moles_unit volume_unit^-1 time_unit^-1.")
+    add_sol_conc = FloatField('Addition Solution Conc.', [optional()], description="Concentration of reagent added.")
+    add_cont_rate = FloatField('Rate of Addition', [optional()], description="Rate of addition in moles_unit volume_unit^-1 time_unit^-1.")
     t_cont_rate = FloatField('After Time', [optional()], default=0.0, description="Time when addition began.")
 
 
-class InstantaneousAdditionForm(FlaskForm):
+class InstantaneousAdditionForm(Form):
     """Field Enclosure for parameters of continuous addition of a reagent"""
-    add_sol_conc = FloatField('Addition Solution Conc.', [InputRequired()], description="Concentration of reagent added.")
-    add_v_one_shot = FloatField('Volume Added', [InputRequired()], description="Volume of solution added in volume_unit.")
+    add_sol_conc = FloatField('Addition Solution Conc.', [optional()], description="Concentration of reagent added.")
+    add_v_one_shot = FloatField('Volume Added', [optional()], description="Volume of solution added in volume_unit.")
     t_one_shot = FloatField('At Time', [optional()], default=0.0, description="Time when addition occured.")
 
 
-class SpeciesForm(FlaskForm):
+class SpeciesForm(Form):
     """
     A form collecting all attributes of a species participating in a reaction.
 
@@ -196,21 +197,32 @@ class SpeciesForm(FlaskForm):
                           description="Minimum species poisoning search constraint")
     pois_max = FloatField('Max Poisoning', [optional()],
                           description="Maximum species poisoning search constraint")
-    cont_add = FieldList(FormField(ContinuousAdditionForm), min_entries=1)
-    one_shot = FieldList(FormField(InstantaneousAdditionForm), min_entries=1)
+    cont_add = FieldList(FormField(ContinuousAdditionForm), min_entries=0)
+    one_shot = FieldList(FormField(InstantaneousAdditionForm), min_entries=0)
     for_fitting = BooleanField("Use For Fitting", description="Use this species to perform CAKE fitting. Must specify column to enable")
 
-    def format_r_ord(self):
-        if self.ord_val.data is None:
-            ord = self.ord_val.data
-        elif self.ord_min.data is None or self.ord_max.data is None:
-            ord = [self.ord_val.data]
-        else:
-            ord = [self.ord_val.data, self.ord_min.data, self.ord_max.data]
-        return ord
+
+def format_ord(data_dict):
+    if data_dict['ord_val'] is None:
+        order = data_dict['ord_val']
+    elif data_dict['ord_min'] is None or data_dict['ord_max'] is None:
+        order = (data_dict['ord_val'])
+    else:
+        order = (data_dict['ord_val'], data_dict['ord_min'], data_dict['ord_max'])
+    return order
 
 
-class UploadForm(FlaskForm):
+def format_pois(data_dict):
+    if data_dict['pois_val'] is None:
+        pois = data_dict['pois_val']
+    elif data_dict['pois_min'] is None or data_dict['pois_max'] is None:
+        pois = (data_dict['pois_val'])
+    else:
+        pois = (data_dict['pois_val'], data_dict['pois_min'], data_dict['pois_max'])
+    return pois
+
+
+class UploadForm(Form):
     """
     To be used as a FormField within a the overall reaction form.
 
@@ -236,12 +248,12 @@ class UploadForm(FlaskForm):
     t_col = IntegerField('Time Column', [InputRequired()], id='t_col',
                          description="Integer index, 1 is the first column")
     sim = BooleanField("Simulate Reaction", id="sim-box", description="Simulate without reading actual reaction data from Excel.")
-    t_init = FloatField("Simulation Start", description="Simulation start tike. Only used if sim==True")
-    t_final = FloatField("Simulation End", description="Simulation end time. Only used if sim==True")
-    t_interval = FloatField("Simulation Time Interval", description="Time interval for simulation run. Only used if sim==True")
+    t_init = FloatField("Simulation Start", [optional()], description="Simulation start tike. Only used if sim==True")
+    t_final = FloatField("Simulation End", [optional()], description="Simulation end time. Only used if sim==True")
+    t_interval = FloatField("Simulation Time Interval", [optional()], description="Time interval for simulation run. Only used if sim==True")
 
 
-class ReactionInformationForm(FlaskForm):
+class ReactionInformationForm(Form):
     """
     Contains All of the information about a reaction needed to perform CAKE analysis
 
@@ -265,7 +277,7 @@ class ReactionInformationForm(FlaskForm):
         return k_est
 
 
-class DataManipulationForm(FlaskForm):
+class DataManipulationForm(Form):
     """
     Contains all parameters for smoothing and otherwise manipulating reaction data
     """
@@ -297,6 +309,11 @@ class CakeFormMulti(FlaskForm):
     data_manip = FormField(DataManipulationForm)
 
     submit = SubmitField('Fit', id='fit-submit')
+
+
+    # TODO: Data Formatters to Prepare data in the proper structures for cake_fitting.py
+
+
 
 
 class CakeDownloadMultiForm(CakeFormMulti):

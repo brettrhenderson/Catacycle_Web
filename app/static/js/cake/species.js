@@ -9,8 +9,8 @@ let specNum = 1;
 const specPerRow = 4;
 
 // list of ints. Index is species number and value is number of additions (continuous or one-shot) for that species.
-let contAddNum = [1];
-let oneShotNum = [1];
+let contAddNum = [0];
+let oneShotNum = [0];
 
 
 /*
@@ -86,8 +86,10 @@ function addSpeciesHandler() {
     $(".sol-conc").change(makeMatchingConcHandler);
     $(".species-col").change(enableFittingHandler);
 
-    // increment specNum
+    // increment specNum and append to contAddNum and oneShotNum
     specNum += 1;
+    contAddNum.push(0);
+    oneShotNum.push(0);
 }
 
 
@@ -137,7 +139,7 @@ function delContHandler() {
     // figure out which species this is being applied to
     const species = this.id.split("-")[3];
 
-    if (contAddNum[parseInt(species)] > 1) {
+    if (contAddNum[parseInt(species)] > 0) {
         // remove the HTML element
         $("#cont-add-species-" + species + "-rows").children().last().remove();
         // decrement contAddNum
@@ -168,7 +170,7 @@ function delOneShotHandler() {
     // figure out which species this is being applied to
     const species = this.id.split("-")[3];
 
-    if (oneShotNum[parseInt(species)] > 1) {
+    if (oneShotNum[parseInt(species)] > 0) {
         // remove the HTML element
         $("#one-shot-species-" + species + "-rows").children().last().remove();
         // decrement oneShotNum
@@ -420,25 +422,8 @@ function makeSpeciesHTML(specNum) {
         -->
         <div id="cont-add-species-${specNum}" class="collapse" aria-labelledby="cont-add-control-species-${specNum}" data-parent="#additions-container-species-${specNum}">
           <div id="cont-add-species-${specNum}-rows">
-            <div class="form-row m-1">
-            <!--Addition Solution Concentration [add_sol_conc]: float-->
-            <div class="form-group col">
-              <label for="rxn_info-species-${specNum}-cont_add-0-add_sol_conc">Addition Solution Conc.</label>
-              <input class="form-control sol-conc sol-conc-species-${specNum}" data-toggle="tooltip" id="rxn_info-species-${specNum}-cont_add-0-add_sol_conc" name="rxn_info-species-${specNum}-cont_add-0-add_sol_conc" required="" title="" type="text" value="" data-original-title="Concentration of reagent added.">
-            </div>
-            <!--At Continuous Rate [add_cont_rate]: float-->
-            <div class="form-group col">
-              <label for="rxn_info-species-${specNum}-cont_add-0-add_cont_rate">Rate of Addition</label>
-              <input class="form-control" data-toggle="tooltip" id="rxn_info-species-${specNum}-cont_add-0-add_cont_rate" name="rxn_info-species-${specNum}-cont_add-0-add_cont_rate" required="" title="" type="text" value="" data-original-title="Rate of addition in moles_unit volume_unit^-1 time_unit^-1.">
-            </div>
-            <!--After Time [t_cont_rate]: float-->
-            <div class="form-group col">
-              <label for="rxn_info-species-${specNum}-cont_add-0-t_cont_rate">After Time</label>
-              <input class="form-control" data-toggle="tooltip" id="rxn_info-species-${specNum}-cont_add-0-t_cont_rate" name="rxn_info-species-${specNum}-cont_add-0-t_cont_rate" title="" type="text" value="0.0" data-original-title="Time when addition began.">
-            </div>
           </div>
-          </div>
-          <div class="form-row px-3">
+          <div class="form-row px-3 pt-2">
             <div class="col-sm-4">
                 <button type="button" class="btn btn-sm btn-outline-primary float-left add-cont" id="add-cont-species-${specNum}">
                     <i class="fa fa-plus"></i> Addition
@@ -458,25 +443,8 @@ function makeSpeciesHTML(specNum) {
         -->
         <div id="one-shot-species-${specNum}" class="collapse" aria-labelledby="one-shot-control-species-${specNum}" data-parent="#additions-container-species-${specNum}">
           <div id="one-shot-species-${specNum}-rows">
-            <div class="form-row m-1">
-            <!--Addition Solution Concentration [add_sol_conc]: float-->
-            <div class="form-group col">
-              <label for="rxn_info-species-${specNum}-one_shot-0-add_sol_conc">Addition Solution Conc.</label>
-              <input class="form-control sol-conc sol-conc-species-${specNum}" data-toggle="tooltip" id="rxn_info-species-${specNum}-one_shot-0-add_sol_conc" name="rxn_info-species-${specNum}-one_shot-0-add_sol_conc" required="" title="" type="text" value="" data-original-title="Concentration of reagent added.">
-            </div>
-            <!--Volume Added [add_v_one_shot]: float-->
-            <div class="form-group col">
-              <label for="rxn_info-species-${specNum}-one_shot-0-add_v_one_shot">Volume Added</label>
-              <input class="form-control" data-toggle="tooltip" id="rxn_info-species-${specNum}-one_shot-0-add_v_one_shot" name="rxn_info-species-${specNum}-one_shot-0-add_v_one_shot" required="" title="" type="text" value="" data-original-title="Volume of solution added in volume_unit.">
-            </div>
-            <!--At Time [t_one_shot]: float-->
-            <div class="form-group col">
-              <label for="rxn_info-species-${specNum}-one_shot-0-t_one_shot">At Time</label>
-              <input class="form-control" data-toggle="tooltip" id="rxn_info-species-${specNum}-one_shot-0-t_one_shot" name="rxn_info-species-${specNum}-one_shot-0-t_one_shot" title="" type="text" value="0.0" data-original-title="Time when addition occured.">
-            </div>
           </div>
-          </div>
-          <div class="form-row px-3 ">
+          <div class="form-row px-3 pt-2">
             <div class="col-sm-4">
                 <button type="button" class="btn btn-sm btn-outline-primary float-left add-oneshot" id="add-oneshot-species-${specNum}">
                     <i class="fa fa-plus"></i> Addition

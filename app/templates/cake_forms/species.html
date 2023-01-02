@@ -159,31 +159,9 @@
         -->
         <div id="cont-add-species-0"  class="collapse" aria-labelledby="cont-add-control-species-0" data-parent="#additions-container-species-0">
           <div id="cont-add-species-0-rows">
-            <div class="form-row m-1">
-            <!--Addition Solution Concentration [add_sol_conc]: float-->
-            <div class="form-group col">
-              {{ form.rxn_info.form.species[0].form.cont_add[0].form.add_sol_conc.label() }}
-              {{ form.rxn_info.form.species[0].form.cont_add[0].form.add_sol_conc(class_="form-control sol-conc sol-conc-species-0",
-                title=form.rxn_info.form.species[0].cont_add[0].form.add_sol_conc.description,
-                data_toggle='tooltip') }}
-            </div>
-            <!--At Continuous Rate [add_cont_rate]: float-->
-            <div class="form-group col">
-              {{ form.rxn_info.form.species[0].form.cont_add[0].form.add_cont_rate.label() }}
-              {{ form.rxn_info.form.species[0].form.cont_add[0].form.add_cont_rate(class_="form-control",
-                title=form.rxn_info.form.species[0].form.cont_add[0].form.add_cont_rate.description,
-                data_toggle='tooltip') }}
-            </div>
-            <!--After Time [t_cont_rate]: float-->
-            <div class="form-group col">
-              {{ form.rxn_info.form.species[0].form.cont_add[0].form.t_cont_rate.label() }}
-              {{ form.rxn_info.form.species[0].form.cont_add[0].form.t_cont_rate(class_="form-control",
-                title=form.rxn_info.form.species[0].form.cont_add[0].form.t_cont_rate.description,
-                data_toggle='tooltip') }}
-            </div>
+
           </div>
-          </div>
-          <div class="form-row px-3">
+          <div class="form-row px-3 pt-2">
             <div class="col-sm-4">
                 <button type="button" class="btn btn-sm btn-outline-primary float-left add-cont" id="add-cont-species-0">
                     <i class="fa fa-plus"></i> Addition
@@ -203,31 +181,9 @@
         -->
         <div id="one-shot-species-0"  class="collapse" aria-labelledby="one-shot-control-species-0" data-parent="#additions-container-species-0">
           <div id="one-shot-species-0-rows">
-            <div class="form-row m-1">
-            <!--Addition Solution Concentration [add_sol_conc]: float-->
-            <div class="form-group col">
-              {{ form.rxn_info.form.species[0].form.one_shot[0].form.add_sol_conc.label() }}
-              {{ form.rxn_info.form.species[0].form.one_shot[0].form.add_sol_conc(class_="form-control sol-conc sol-conc-species-0",
-                title=form.rxn_info.form.species[0].one_shot[0].form.add_sol_conc.description,
-                data_toggle='tooltip') }}
-            </div>
-            <!--Volume Added [add_v_one_shot]: float-->
-            <div class="form-group col">
-              {{ form.rxn_info.form.species[0].form.one_shot[0].form.add_v_one_shot.label() }}
-              {{ form.rxn_info.form.species[0].form.one_shot[0].form.add_v_one_shot(class_="form-control",
-                title=form.rxn_info.form.species[0].form.one_shot[0].form.add_v_one_shot.description,
-                data_toggle='tooltip') }}
-            </div>
-            <!--At Time [t_one_shot]: float-->
-            <div class="form-group col">
-              {{ form.rxn_info.form.species[0].form.one_shot[0].form.t_one_shot.label() }}
-              {{ form.rxn_info.form.species[0].form.one_shot[0].form.t_one_shot(class_="form-control",
-                title=form.rxn_info.form.species[0].form.one_shot[0].form.t_one_shot.description,
-                data_toggle='tooltip') }}
-            </div>
+
           </div>
-          </div>
-          <div class="form-row px-3 ">
+          <div class="form-row px-3 pt-2">
             <div class="col-sm-4">
                 <button type="button" class="btn btn-sm btn-outline-primary float-left add-oneshot" id="add-oneshot-species-0">
                     <i class="fa fa-plus"></i> Addition
