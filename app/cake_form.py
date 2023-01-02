@@ -187,18 +187,18 @@ class SpeciesForm(FlaskForm):
     stoich = IntegerField('Stoichiometry', [InputRequired()], description="Stoichiometric coefficient of species.", default=1)
     mol_init = FloatField('Initial Moles', [optional()], description="Initial amount in moles.")
     mol_end = FloatField('Final Moles', [optional()], description="Final amount in moles")
-    ord_val = FloatField('Est Order', [optional()], id='ord_val', default=1, description="Estimated species order")
-    ord_min = FloatField('Min Order', [optional()], id='ord_min', default=0, description="Minimum species order search constraint")
-    ord_max = FloatField('Max Order', [optional()], id='ord_max', default=2,
+    ord_val = FloatField('Est Order', [optional()], default=1, description="Estimated species order")
+    ord_min = FloatField('Min Order', [optional()], default=0, description="Minimum species order search constraint")
+    ord_max = FloatField('Max Order', [optional()], default=2,
                          description="Maximum species order search constraint")
-    pois_val = FloatField('Est Poisoning', [optional()], id='pois_val', default=0, description="Estimated species poisoning")
-    pois_min = FloatField('Min Poisoning', [optional()], id='pois_min',
+    pois_val = FloatField('Est Poisoning', [optional()], default=0, description="Estimated species poisoning")
+    pois_min = FloatField('Min Poisoning', [optional()],
                           description="Minimum species poisoning search constraint")
-    pois_max = FloatField('Max Poisoning', [optional()], id='ord_max',
+    pois_max = FloatField('Max Poisoning', [optional()],
                           description="Maximum species poisoning search constraint")
     cont_add = FieldList(FormField(ContinuousAdditionForm), min_entries=1)
     one_shot = FieldList(FormField(InstantaneousAdditionForm), min_entries=1)
-    for_fitting = BooleanField("Use For Fitting", description="Use this species to perform CAKE fitting.")
+    for_fitting = BooleanField("Use For Fitting", description="Use this species to perform CAKE fitting. Must specify column to enable")
 
     def format_r_ord(self):
         if self.ord_val.data is None:

@@ -6,7 +6,7 @@
       <div class="form-check">
         {{ form.rxn_info.form.species[0].form.for_fitting(
             title=form.rxn_info.form.species[0].form.for_fitting.description,
-            data_toggle='tooltip') }}
+            data_toggle='tooltip', disabled=True) }}
         {{ form.rxn_info.form.species[0].form.for_fitting.label() }}
       </div>
     </div>
@@ -15,9 +15,9 @@
       <!-- Species Name [spec_name]: string (def. “Species X”) -->
       <div class="form-group col">
         {{ form.rxn_info.form.species[0].form.spec_name.label() }}
-        {{ form.rxn_info.form.species[0].form.spec_name(class_="form-control",
+        {{ form.rxn_info.form.species[0].form.spec_name(class_="form-control spec-name",
           title=form.rxn_info.form.species[0].form.spec_name.description,
-          data_toggle='tooltip') }}
+          data_toggle='tooltip', placeholder="Species 1") }}
       </div>
       <!--Species Type [spec_type]: “r”, “p”, or “c” -->
       <div class="form-group col">
@@ -39,7 +39,7 @@
       <!--Column [col]: int-->
       <div class="form-group col">
         {{ form.rxn_info.form.species[0].form.col.label() }}
-        {{ form.rxn_info.form.species[0].form.col(class_="form-control",
+        {{ form.rxn_info.form.species[0].form.col(class_="form-control species-col",
           title=form.rxn_info.form.species[0].form.col.description, min=1,
           data_toggle='tooltip') }}
       </div>
@@ -66,12 +66,12 @@
     <div id="limits-container-species-0">
       <div class="form-row">
         <div class="col">
-          <a id="ord-control-species-0" class="btn btn-block btn-secondary" data-toggle="collapse" href="#ord-limits-species-0" role="button" aria-expanded="false" aria-controls="ord-limits">
+          <a id="ord-control-species-0" class="btn btn-block btn-secondary collapse-control" data-toggle="collapse" href="#ord-limits-species-0" role="button" aria-expanded="false" aria-controls="ord-limits-species-0">
             Specify Order Limits
           </a>
         </div>
         <div class="col">
-          <a id="pois-control-species-0" class="btn btn-block btn-secondary" data-toggle="collapse" href="#pois-limits-species-0" role="button" aria-expanded="false" aria-controls="pois-limits">
+          <a id="pois-control-species-0" class="btn btn-block btn-secondary collapse-control" data-toggle="collapse" href="#pois-limits-species-0" role="button" aria-expanded="false" aria-controls="pois-limits-species-0">
             Specify Poisoning Limits
           </a>
         </div>
@@ -79,7 +79,7 @@
         <!--  Specify Ord Limits [0-1] [ord_lim]: [checkbox]
           This should be made collapsible.
         -->
-        <div id="ord-limits-species-0"  class="collapse" aria-labelledby="ord-control" data-parent="#limits-container-species-0">
+        <div id="ord-limits-species-0"  class="collapse" aria-labelledby="ord-control-species-0" data-parent="#limits-container-species-0">
           <div class="form-row m-1">
             <!--Est Order [ord_val] (default 1): float-->
             <div class="form-group col">
@@ -108,7 +108,7 @@
         <!--  Specify Poison Limits [0-1] [pois_lim]: [checkbox]
               This should also be made collapsible
         -->
-        <div id="pois-limits-species-0" class="collapse" aria-labelledby="pois-control" data-parent="#limits-container-species-0">
+        <div id="pois-limits-species-0" class="collapse" aria-labelledby="pois-control-species-0" data-parent="#limits-container-species-0">
           <div class="form-row m-1">
             <!--Est Poisoning [pois_val] (default 0): float-->
             <div class="form-group col">
@@ -144,12 +144,12 @@
     <div id="additions-container-species-0">
       <div class="form-row mt-2">
         <div class="col">
-          <a id="cont-add-control-species-0" class="btn btn-block btn-secondary" data-toggle="collapse" href="#cont-add-species-0" role="button" aria-expanded="false" aria-controls="cont-add">
+          <a id="cont-add-control-species-0" class="btn btn-block btn-secondary collapse-control" data-toggle="collapse" href="#cont-add-species-0" role="button" aria-expanded="false" aria-controls="cont-add-species-0">
             Continuous Addition
           </a>
         </div>
         <div class="col">
-          <a id="one-shot-control-species-0" class="btn btn-block btn-secondary" data-toggle="collapse" href="#one-shot-species-0" role="button" aria-expanded="false" aria-controls="one-shot">
+          <a id="one-shot-control-species-0" class="btn btn-block btn-secondary collapse-control" data-toggle="collapse" href="#one-shot-species-0" role="button" aria-expanded="false" aria-controls="one-shot-species-0">
             Instantaneous Addition
           </a>
         </div>
@@ -157,13 +157,13 @@
         <!--  Add Continuous Addition [0+]: [checkbox]
           Should be made collapsible
         -->
-        <div id="cont-add-species-0"  class="collapse" aria-labelledby="ord-control" data-parent="#additions-container-species-0">
+        <div id="cont-add-species-0"  class="collapse" aria-labelledby="cont-add-control-species-0" data-parent="#additions-container-species-0">
           <div id="cont-add-species-0-rows">
             <div class="form-row m-1">
             <!--Addition Solution Concentration [add_sol_conc]: float-->
             <div class="form-group col">
               {{ form.rxn_info.form.species[0].form.cont_add[0].form.add_sol_conc.label() }}
-              {{ form.rxn_info.form.species[0].form.cont_add[0].form.add_sol_conc(class_="form-control",
+              {{ form.rxn_info.form.species[0].form.cont_add[0].form.add_sol_conc(class_="form-control sol-conc sol-conc-species-0",
                 title=form.rxn_info.form.species[0].cont_add[0].form.add_sol_conc.description,
                 data_toggle='tooltip') }}
             </div>
@@ -201,13 +201,13 @@
         <!--  Add Instantaneous Addition [0+]: [checkbox]
               Should be collabsible
         -->
-        <div id="one-shot-species-0"  class="collapse" aria-labelledby="ord-control" data-parent="#additions-container-species-0">
+        <div id="one-shot-species-0"  class="collapse" aria-labelledby="one-shot-control-species-0" data-parent="#additions-container-species-0">
           <div id="one-shot-species-0-rows">
             <div class="form-row m-1">
             <!--Addition Solution Concentration [add_sol_conc]: float-->
             <div class="form-group col">
               {{ form.rxn_info.form.species[0].form.one_shot[0].form.add_sol_conc.label() }}
-              {{ form.rxn_info.form.species[0].form.one_shot[0].form.add_sol_conc(class_="form-control",
+              {{ form.rxn_info.form.species[0].form.one_shot[0].form.add_sol_conc(class_="form-control sol-conc sol-conc-species-0",
                 title=form.rxn_info.form.species[0].one_shot[0].form.add_sol_conc.description,
                 data_toggle='tooltip') }}
             </div>

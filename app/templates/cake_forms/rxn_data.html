@@ -38,15 +38,23 @@
     </div>
 
     <!--  Species  -->
-    <div id="species-container" class="form-row">
-      <div class="form-group col-4">
-        <button id="sp-01-control" class="btn btn-block btn-primary" type="button" data-toggle="collapse" data-target="#species-01" aria-expanded="false" aria-controls="species-01">
-          Species 1
-          <i class="fa fa-chevron-down pt-1 float-right" aria-hidden="true"></i>
-        </button>
+    <div id="species-container">
+      <!-- Container for species drop down buttons -->
+      <div id="species-buttons">
+        <div id="species-button-row-0" class="form-row">
+          <div class="form-group col-3">
+            <button id="species-0-control" class="btn btn-block btn-primary collapse-control" type="button" data-toggle="collapse" data-target="#species-0" aria-expanded="false" aria-controls="species-0">
+              Species 1
+              <i class="fa fa-chevron-down pt-1 float-right" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
       </div>
-      <div id="species-01" class="collapse form-control" aria-labelledby="sp-01-control" data-parent="#species-container">
-        {% include "cake_forms/species.html" %}
+      <!-- Container for collapsible species data panels -->
+      <div id="species-data">
+        <div id="species-0" class="collapse form-control" aria-labelledby="species-0-control" data-parent="#species-container">
+          {% include "cake_forms/species.html" %}
+        </div>
       </div>
     </div>
 
