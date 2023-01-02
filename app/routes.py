@@ -233,95 +233,13 @@ def run_cake_wrapper(form):
 
 
 def run_cake_multi_wrapper(form):
-
-    data = form.data
-
-    # reset column indices to 1-indexed
-    t_col = None
-    if data['upload']['t_col']:
-        t_col = data['upload']['t_col'] - 1
-    react_vol_init = data['rxn_info']['react_vol_init']
-    # go through each species in data
-    spec_name, spec_type, stoich, mol0, mol_end, add_sol_conc, add_cont_rate, add_one_shot, t_one_shot, t_cont, col, ord_lim, pois_lim, fit_asp = [], [], [], [], [], [], [], [], [], [], [], [], [], []
-    for i, spec in enumerate(data['rxn_info']['species']):
-        if spec['spec_name']:
-            spec_name.append(spec['spec_name'])
-        else:
-            spec_name.append(f"Species {i + 1}")
-        spec_type.append(spec['spec_type'])
-        stoich.append(spec['stoich'])
-        mol0.append(spec['mol_init'])
-        mol_end.append(spec['mol_end'])
-        col.append(spec['col'])
-        ord_lim.append(format_ord(spec))
-        pois_lim.append(format_pois(spec))
-
-        # fit aspect
-        if spec['for_fitting']:
-            fit_asp.append('y')
-        else:
-            fit_asp.append('n')
-
-        # Additions
-        if not len(spec['cont_add']) and not len(spec['one_shot']):
-            add_sol_conc.append(None)
-            add_cont_rate.append(None)
-            t_cont.append(None)
-            add_one_shot.append(None)
-            t_one_shot.append(None)
-        else:
-            if not len(spec['cont_add']):
-                add_cont_rate.append(None)
-                t_cont.append(None)
-            else:
-                conc = spec['cont_add']['add_sol_conc']
-                rates = []
-                times = []
-                for addition in spec['cont_add']:
-                    rates.append(addition['add_cont_rate'])
-                    times.append(addition['t_cont_rate'])
-                add_cont_rate.append(tuple(rates))
-                t_cont.append(tuple(times))
-
-            if not len(spec['one_shot']):
-                add_one_shot.append(None)
-                t_one_shot.append(None)
-            else:
-                conc = spec['cont_add']['add_sol_conc']
-                one_shot_amts = []
-                times = []
-                for addition in spec['one_shot']:
-                    one_shot_amts.append(addition['add_v_one_shot'])
-                    times.append(addition['t_one_shot'])
-                add_one_shot.append(tuple(one_shot_amts))
-                t_one_shot.append(tuple(times))
-            add_sol_conc.append(conc)
-
-    df = ckm.read_data(data['upload']['xl'], data['upload']['sheet_name'], t_col, col, None, None)
-    log.debug(f"df: {df.head()}\nspec_typ: {spec_type}\nreact_vol_init: {react_vol_init}\nspec_name: {spec_name}"
-              f"\nstoich: {stoich}\nmol0: {mol0}\nmol_end: {mol_end}\nadd_sol_conc: {add_sol_conc}\n"
-              f"add_cont_rate: {add_cont_rate}\nt_cont: {t_cont}\nadd_one_shot: {add_one_shot}\n"
-              f"t_one_shot: {t_one_shot}\nt_col: {t_col}\ncol: {col}\nord_lim: {ord_lim}\npois_lim: {pois_lim}\nfit_asp: {fit_asp}")
-
-    # manually set values for now
-    # kwargs = {"spec_name": ['Species 1'],
-    #           "stoich": [1],
-    #           "mol0": [None],
-    #           "mol_end": [None],
-    #           "add_sol_conc": [None],
-    #           "add_cont_rate": [None],
-    #           "t_cont": [None],
-    #           "add_one_shot": [None],
-    #           "t_one_shot": [None],
-    #           "t_col": 0,
-    #           "col": [2],
-    #           "ord_lim": [(1.0, 0.0, 2.0)],
-    #           "pois_lim": [0.0],
-    #           "fit_asp": ['y']}
-
-    #output = ckm.fit_cake(df, ['r'], 0.1, **kwargs)
-    output = ckm.fit_cake(df, spec_type, react_vol_init, spec_name=spec_name, stoich=stoich, mol0=mol0, mol_end=mol_end,
-                      add_sol_conc=add_sol_conc, add_cont_rate=add_cont_rate, t_cont=t_cont, add_one_shot=add_one_shot,
-                      t_one_shot=t_one_shot, t_col=t_col, col=col, ord_lim=ord_lim, pois_lim=pois_lim, fit_asp=fit_asp)
-
+    data = form.prepare_data()
+    log.debug(f"FORMATTED DATA: {data}")
+    df = ckm.read_data(data.pop('xl'), data.pop('sheet_name'), data['t_col'], data['col'], None, None)
+    spec_type = data.pop('spec_type')
+    react_vol_init = data.pop('react_vol_init')
+    output = ckm.fit_cake(df, spec_type, react_vol_init, **data)
+    # output = ckm.fit_cake(df, spec_type, react_vol_init, spec_name=spec_name, stoich=stoich, mol0=mol0, mol_end=mol_end,
+    #                   add_sol_conc=add_sol_conc, add_cont_rate=add_cont_rate, t_cont=t_cont, add_one_shot=add_one_shot,
+    #                   t_one_shot=t_one_shot, t_col=t_col, col=col, ord_lim=ord_lim, pois_lim=pois_lim, fit_asp=fit_asp)
     return output, df
