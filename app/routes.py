@@ -114,23 +114,32 @@ def cake_old():
 def cake():
     # form = CakeForm()  # initialize the backend of the web form
     form = CakeFormMulti()  # initialize the backend of the web form
+    data = form.data
     log.debug(f'\nFORM VALID? {form.validate()}\n')
     log.debug(f'\nFORM VALIDATION ERRORS: {form.errors.items()}\n')
-    log.debug(f'\nFORM DATA {form.data}\n')
+    log.debug(f'\nFORM DATA {data}\n')
 
     if request.method == 'POST' and form.validate_on_submit():
-        log.debug(f"Collected form data from user: {form.data}")
-
+        log.debug(f"Collected form data from user: {data}")
         try:
-            cake_data, df = run_cake_multi_wrapper(form)
+            sim = data['upload']['sim']
+            if sim:
+                sim_data, fit_asp = sim_cake_multi_wrapper(form)
+            else:
+                cake_data, df = run_cake_multi_wrapper(form)
         except Exception as e:
-            return e.__str__(), 400
+            raise e
+            # return e.__str__(), 400
+        if sim:
+            x_data_df, y_fit_conc_df, y_fit_rate_df = sim_data
+            html = ckm.plot_sim_results(x_data_df, y_fit_conc_df, fit_asp, f_format='svg', return_image=False)
+            results = "Simulation Completed."
+        else:
+            x_data_df, y_exp_df, y_fit_conc_df, y_fit_rate_df, k_val_est, k_fit, k_fit_err, \
+            ord_fit, ord_fit_err, pois_fit, pois_fit_err, ss_res, r_squared, col = cake_data
 
-        x_data_df, y_exp_df, y_fit_conc_df, y_fit_rate_df, k_val_est, k_fit, k_fit_err, \
-        ord_fit, ord_fit_err, pois_fit, pois_fit_err, ss_res, r_squared, col = cake_data
-
-        html = ckm.plot_fit_results(x_data_df, y_exp_df, y_fit_conc_df, col, f_format='svg', return_image=False)
-        results = ckm.pprint_cake(k_fit, k_fit_err, ord_fit, ord_fit_err, pois_fit, pois_fit_err, ss_res, r_squared)
+            html = ckm.plot_fit_results(x_data_df, y_exp_df, y_fit_conc_df, col, f_format='svg', return_image=False)
+            results = ckm.pprint_cake(k_fit, k_fit_err, ord_fit, ord_fit_err, pois_fit, pois_fit_err, ss_res, r_squared)
 
         return jsonify(data=[html, results])
 
@@ -218,28 +227,38 @@ def get_col_nums(form):
 def run_cake_wrapper(form):
     df = ck.read_data(form.xl.data, form.sheet_name.data)
     log.debug(f"Read Data from user-specified Excel sheet:\n {df.head(5)}")
-
     # reset column indices to 1-indexed
     t_col, r_col, p_col = get_col_nums(form)
-
     cat_add_rate = ck.get_cat_add_rate(form.cat_sol_conc.data, form.inject_rate.data, form.react_vol_init.data)
-
     cake_data = ck.fit_cake(df, form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data, form.p_end.data,
-                       cat_add_rate, form.t_inj.data, form.format_k_est(), form.format_r_ord(), form.format_cat_ord(),
-                       form.format_t0_est(), t_col, None, r_col, p_col,
-                       form.scale_avg_num.data, form.win.data, form.inc.data, form.fit_asp.data)
+                            cat_add_rate, form.t_inj.data, form.format_k_est(), form.format_r_ord(),
+                            form.format_cat_ord(), form.format_t0_est(), t_col, None, r_col, p_col,
+                            form.scale_avg_num.data, form.win.data, form.inc.data, form.fit_asp.data)
 
     return cake_data, df
 
 
 def run_cake_multi_wrapper(form):
     data = form.prepare_data()
+    # remove sim time params
+    data.pop('t_param')
+    data.pop('sim')
     log.debug(f"FORMATTED DATA: {data}")
     df = ckm.read_data(data.pop('xl'), data.pop('sheet_name'), data['t_col'], data['col'], None, None)
     spec_type = data.pop('spec_type')
     react_vol_init = data.pop('react_vol_init')
     output = ckm.fit_cake(df, spec_type, react_vol_init, **data)
-    # output = ckm.fit_cake(df, spec_type, react_vol_init, spec_name=spec_name, stoich=stoich, mol0=mol0, mol_end=mol_end,
-    #                   add_sol_conc=add_sol_conc, add_cont_rate=add_cont_rate, t_cont=t_cont, add_one_shot=add_one_shot,
-    #                   t_one_shot=t_one_shot, t_col=t_col, col=col, ord_lim=ord_lim, pois_lim=pois_lim, fit_asp=fit_asp)
     return output, df
+
+
+def sim_cake_multi_wrapper(form):
+    data = form.prepare_data()
+    # remove unnecessary excel data
+    for key in ['sim', 'xl', 'sheet_name', 't_col', 'col', 'scale_avg_num']:
+        data.pop(key)
+    log.debug(f"FORMATTED DATA: {data}")
+    spec_type = data.pop('spec_type')
+    react_vol_init = data.pop('react_vol_init')
+    t = data.pop('t_param')
+    output = ckm.sim_cake(t, spec_type, react_vol_init, **data)
+    return output, data['fit_asp']

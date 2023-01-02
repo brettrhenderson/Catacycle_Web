@@ -242,14 +242,14 @@ class UploadForm(Form):
         Whether the reaction is to be merely simulated or actually analyzed from Excel data
     """
     xl = FileField('Select Data',
-                   [FileRequired(), FlaskRegexp(r'^[a-zA-Z0-9\s_.\-\(\):]+\.xlsx$', flags=re.IGNORECASE,
+                   [optional(), FlaskRegexp(r'^[a-zA-Z0-9\s_.\-\(\):]+\.xlsx$', flags=re.IGNORECASE,
                                                 message="File must have .xslx extension.")],
                    description='Upload Reaction Data in Excel file format.',
                    id='excelUpload')
-    sheet_name = StringField('Sheet Name', [InputRequired()], id='sheet_name',
+    sheet_name = StringField('Sheet Name', [optional()], id='sheet_name',
                              description="Name of sheet in Excel file, case sensitive",
                              default='Sheet1')
-    t_col = IntegerField('Time Column', [InputRequired()], id='t_col',
+    t_col = IntegerField('Time Column', [optional()], id='t_col',
                          description="Integer index, 1 is the first column")
     sim = BooleanField("Simulate Reaction", id="sim-box", description="Simulate without reading actual reaction data from Excel.")
     t_init = FloatField("Simulation Start", [optional()], description="Simulation start tike. Only used if sim==True")
@@ -318,6 +318,8 @@ class CakeFormMulti(FlaskForm):
     def prepare_data(self):
         data = self.data
         react_vol_init = data['rxn_info']['react_vol_init']
+        t_param = (data['upload']['t_init'], data['upload']['t_final'], data['upload']['t_interval'])
+        k_lim = self.rxn_info.format_k_est()
 
         # reset column indices to 1-indexed
         t_col = None
@@ -358,7 +360,7 @@ class CakeFormMulti(FlaskForm):
                     add_cont_rate.append(None)
                     t_cont.append(None)
                 else:
-                    conc = spec['cont_add']['add_sol_conc']
+                    conc = spec['cont_add'][0]['add_sol_conc']
                     rates = []
                     times = []
                     for addition in spec['cont_add']:
@@ -371,7 +373,8 @@ class CakeFormMulti(FlaskForm):
                     add_one_shot.append(None)
                     t_one_shot.append(None)
                 else:
-                    conc = spec['cont_add']['add_sol_conc']
+                    log.debug(spec['one_shot'])
+                    conc = spec['one_shot'][0]['add_sol_conc']
                     one_shot_amts = []
                     times = []
                     for addition in spec['one_shot']:
@@ -381,7 +384,9 @@ class CakeFormMulti(FlaskForm):
                     t_one_shot.append(tuple(times))
                 add_sol_conc.append(conc)
 
-        data_dict = {"xl": data['upload']['xl'],
+        data_dict = {"sim": data['upload']['sim'],
+                     "t_param": t_param,
+                     "xl": data['upload']['xl'],
                      "sheet_name": data['upload']['sheet_name'],
                      "spec_name": spec_name,
                      "spec_type": spec_type,
@@ -396,9 +401,13 @@ class CakeFormMulti(FlaskForm):
                      "t_one_shot": t_one_shot,
                      "t_col": t_col,
                      "col": col,
+                     "k_lim": k_lim,
                      "ord_lim": ord_lim,
                      "pois_lim": pois_lim,
-                     "fit_asp": fit_asp}
+                     "fit_asp": fit_asp,
+                     "scale_avg_num": data["data_manip"]["scale_avg_num"],
+                     "win": data["data_manip"]["win"],
+                     "inc": data["data_manip"]["inc"]}
 
         return data_dict
 
