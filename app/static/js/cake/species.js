@@ -81,10 +81,11 @@ function addSpeciesHandler() {
     $(".add-oneshot" ).click(addOneShotHandler);
     $(".del-oneshot" ).click(delOneShotHandler);
     $(".spec-name").change(specNameChangeHandler);
-    $('.collapse').on('show.bs.collapse', collapseShowHandler);
-    $('.collapse').on('hide.bs.collapse', collapseHideHandler);
+    $('.collapse').on('shown.bs.collapse', collapseShowHandler(event));
+    $('.collapse').on('hidden.bs.collapse', collapseHideHandler(event));
     $(".sol-conc").change(makeMatchingConcHandler);
-    $(".species-col").change(enableFittingHandler);
+    // $(".species-col").change(enableFittingHandler);
+    // $(".species-col").change(enableFittingHandler);
 
     // increment specNum and append to contAddNum and oneShotNum
     specNum += 1;
@@ -188,15 +189,21 @@ function specNameChangeHandler() {
 }
 
 
-function collapseShowHandler() {
-    const button_id = $(this).attr("aria-labelledby");
-    $("#" + button_id).addClass('active');
+function collapseShowHandler(event) {
+    const target = event.target;
+    if (this.id == target.id) {
+        const button_id = $(this).attr("aria-labelledby");
+        $("#" + button_id).addClass('active');
+    }
 }
 
 
-function collapseHideHandler() {
-    const button_id = $(this).attr("aria-labelledby");
-    $("#" + button_id).removeClass('active');
+function collapseHideHandler(event) {
+    const target = event.target;
+    if (this.id == target.id) {
+        const button_id = $(this).attr("aria-labelledby");
+        $("#" + button_id).removeClass('active');
+    }
 }
 
 
@@ -293,7 +300,7 @@ function makeSpeciesHTML(specNum) {
     <!--Greyed out if column is not given-->
     <div class="form-row">
       <div class="form-check">
-        <input data-toggle="tooltip" id="rxn_info-species-${specNum}-for_fitting" name="rxn_info-species-${specNum}-for_fitting" title="" type="checkbox" value="y" data-original-title="Use this species to perform CAKE fitting." disabled>
+        <input data-toggle="tooltip" id="rxn_info-species-${specNum}-for_fitting" name="rxn_info-species-${specNum}-for_fitting" title="" type="checkbox" value="y" data-original-title="Use this species to perform CAKE fitting.">
         <label for="rxn_info-species-${specNum}-for_fitting">Use For Fitting</label>
       </div>
     </div>

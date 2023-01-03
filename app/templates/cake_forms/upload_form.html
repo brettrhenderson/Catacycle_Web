@@ -9,21 +9,23 @@
 
 <div class="tab-pane active show" id="uploadtab">
     <!--  Excel File, Sheet Name, and Time Column  -->
-    <div class="form-row">
-      <div class="form-group col-6 my-auto">
-        {{ form.upload.form.xl.label }}
-        {{ form.upload.form.xl(class_="form-control", placeholder="Upload Excel Data",
-          accept=".xlsx,.xls, .XLSX, .XLS", title=form.upload.form.xl.description, data_toggle='tooltip') }}
-      </div>
-      <div class="form-group col-3 my-auto">
-        {{ form.upload.form.sheet_name.label() }}
-        {{ form.upload.form.sheet_name(class_="form-control", title=form.upload.form.sheet_name.description,
-          data_toggle='tooltip') }}
-      </div>
-      <div class="form-group col-3 my-auto">
-        {{ form.upload.form.t_col.label() }}
-        {{ form.upload.form.t_col(class_="form-control", min=1, title=form.upload.form.t_col.description,
-          data_toggle='tooltip') }}
+    <div class="collapse show" id="xl_params">
+      <div class="form-row">
+        <div class="form-group col-6 my-auto">
+          {{ form.upload.form.xl.label }}
+          {{ form.upload.form.xl(class_="form-control", placeholder="Upload Excel Data",
+            accept=".xlsx,.xls, .XLSX, .XLS", title=form.upload.form.xl.description, data_toggle='tooltip') }}
+        </div>
+        <div class="form-group col-3 my-auto">
+          {{ form.upload.form.sheet_name.label() }}
+          {{ form.upload.form.sheet_name(class_="form-control", title=form.upload.form.sheet_name.description,
+            data_toggle='tooltip') }}
+        </div>
+        <div class="form-group col-3 my-auto">
+          {{ form.upload.form.t_col.label() }}
+          {{ form.upload.form.t_col(class_="form-control", min=1, title=form.upload.form.t_col.description,
+            data_toggle='tooltip') }}
+        </div>
       </div>
     </div>
     <!--  Whether to Perform a Pure Simulation  -->
