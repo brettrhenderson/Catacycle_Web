@@ -96,7 +96,8 @@ def cake_old():
         try:
             cake_data, _ = run_cake_wrapper(form)
         except Exception as e:
-            return e.__str__(), 400
+            raise e
+            # return e.__str__(), 400
 
         t, r, p, fit, fit_p, fit_r, _, res_val, res_err, ss_res, r_squared, cat_pois, cat_pois_err = cake_data
 
@@ -120,7 +121,6 @@ def cake():
     log.debug(f'\nFORM DATA {data}\n')
 
     if request.method == 'POST' and form.validate_on_submit():
-        log.debug(f"Collected form data from user: {data}")
         try:
             sim = data['upload']['sim']
             if sim:
@@ -159,7 +159,8 @@ def download_cake_xlsx():
         try:
             cake_data, df = run_cake_wrapper(form)
         except Exception as e:
-            return e.__str__(), 400
+            raise e
+            # return e.__str__(), 400
 
         t, r, p, fit, fit_p, fit_r, _, res_val, res_err, ss_res, r_squared, cat_pois, cat_pois_err = cake_data
         t_col, r_col, p_col = get_col_nums(form)
@@ -184,11 +185,11 @@ def download_cake_xlsx():
         return '', 204
 
 
-@app.route('/download-cake', methods=['GET', 'POST'])
-def download_cake():
-
-    # form = CakeDownloadForm()
-    form = CakeDownloadMultiForm()
+@app.route('/download-cake-old', methods=['GET', 'POST'])
+def download_cake_old():
+    log.debug("INCORRECT ROUTING")
+    form = CakeDownloadForm()
+    # form = CakeDownloadMultiForm()
 
     if request.method == 'POST' and form.validate_on_submit():
         log.debug(f"Collected form data from user: {form.data}")
@@ -196,7 +197,8 @@ def download_cake():
         try:
             cake_data, _ = run_cake_wrapper(form)
         except Exception as e:
-            return e.__str__(), 400
+            raise e
+            # return e.__str__(), 400
 
         t, r, p, fit, fit_p, fit_r, _, res_val, res_err, ss_res, r_squared, cat_pois, cat_pois_err = cake_data
 
@@ -206,6 +208,43 @@ def download_cake():
         img = FileWrapper(img)
         response = make_response(Response(img, mimetype=mimetype, direct_passthrough=True))
         filename = secure_filename(f'cake.{form.f_format.data}')
+        response.headers.set('Content-Disposition', 'attachment', filename=filename)
+        return response
+    else:
+        log.debug("Not sending anything")
+        return '', 204
+
+
+@app.route('/download-cake', methods=['GET', 'POST'])
+def download_cake():
+    # form = CakeDownloadForm()
+    form = CakeDownloadMultiForm()
+    data = form.data
+    img_format = data.pop('f_format')
+
+    if request.method == 'POST' and form.validate_on_submit():
+        try:
+            sim = data['upload']['sim']
+            if sim:
+                sim_data, fit_asp = sim_cake_multi_wrapper(form)
+            else:
+                cake_data, df = run_cake_multi_wrapper(form)
+        except Exception as e:
+            raise e
+            # return e.__str__(), 400
+        if sim:
+            x_data_df, y_fit_conc_df, y_fit_rate_df = sim_data
+            img, mimetype = ckm.plot_sim_results(x_data_df, y_fit_conc_df, fit_asp, f_format=img_format, return_image=True)
+        else:
+            x_data_df, y_exp_df, y_fit_conc_df, y_fit_rate_df, k_val_est, k_fit, k_fit_err, \
+            ord_fit, ord_fit_err, pois_fit, pois_fit_err, ss_res, r_squared, col = cake_data
+
+            img, mimetype = ckm.plot_fit_results(x_data_df, y_exp_df, y_fit_conc_df, col, f_format=img_format, return_image=True)
+
+        img.seek(0)
+        img = FileWrapper(img)
+        response = make_response(Response(img, mimetype=mimetype, direct_passthrough=True))
+        filename = secure_filename(f'cake.{img_format}')
         response.headers.set('Content-Disposition', 'attachment', filename=filename)
         return response
     else:

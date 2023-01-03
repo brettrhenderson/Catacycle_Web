@@ -327,7 +327,7 @@ function makeSpeciesHTML(specNum) {
       <!--Column [col]: int-->
       <div class="form-group col">
         <label for="rxn_info-species-${specNum}-col">Column</label>
-        <input class="form-control species-col" data-toggle="tooltip" id="rxn_info-species-${specNum}-col" min="1" name="rxn_info-species-${specNum}-col" required="" title="" type="number" value="" data-original-title="Integer index, 1 is the first column.">
+        <input class="form-control species-col" data-toggle="tooltip" id="rxn_info-species-${specNum}-col" min="1" name="rxn_info-species-${specNum}-col" title="" type="number" value="" data-original-title="Integer index, 1 is the first column.">
       </div>
       <!--Initial Moles [mol_init]: float-->
       <div class="form-group col">

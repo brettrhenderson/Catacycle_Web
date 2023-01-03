@@ -185,7 +185,7 @@ class SpeciesForm(Form):
         Final amount of species in moles. If not given, excel values will be assumed to be given in moles.
 
     """
-    col = IntegerField('Column', [InputRequired()], description="Integer index, 1 is the first column.")
+    col = IntegerField('Column', [optional()], description="Integer index, 1 is the first column.")
     spec_name = StringField('Species Name', [optional()], description="Name of species.")
     spec_type = SelectField('Species Type', [InputRequired()], description="Type of Species (reactant, product, catalyst).",
                             choices=[('r', 'Reactant'), ('p', 'Product'), ('c', 'Catalyst')])
