@@ -26,32 +26,40 @@ $(document).ready(function() {
     // Delete Species
     $("#delspec").click(delSpeciesHandler);
 
-    // If New Cont Add Button is Pressed, add another continuous addition row
-    $(".add-cont" ).click(addContHandler);
-
-    // If Del Cont Add Button is Pressed, remove continuous addition row if there are any
-    $(".del-cont" ).click(delContHandler);
-
-    // If New One Shot Button is Pressed, add another instantaneous addition row
-    $(".add-oneshot" ).click(addOneShotHandler);
-
-    // If Del One Shot Button is Pressed, remove instantaneous addition row if there are any
-    $(".del-oneshot" ).click(delOneShotHandler);
-
-    // If a species name changes, update the name on it's corresponding drop-down button
-    $(".spec-name").change(specNameChangeHandler);
-
-    // Configure changes in collapse control buttons during show / hide events
-    $('.collapse').on('show.bs.collapse', collapseShowHandler);
-    $('.collapse').on('hide.bs.collapse', collapseHideHandler);
-
-    // Addition solution concentration must be constant between all addition forms
-    $(".sol-conc").change(makeMatchingConcHandler);
-
+    bindSpeciesListeners(0);
     // Use for Fitting is only active if column has a value
-    $(".species-col").change(enableFittingHandler);
+    // $(".species-col").change(enableFittingHandler);
 
 });
+
+
+/*
+  Event Listener Binders
+*/
+
+function bindSpeciesListeners(specNum) {
+    // If New Cont Add Button is Pressed, add another continuous addition row
+    $("#add-cont-species-" + specNum).click(addContHandler);
+    // If Del Cont Add Button is Pressed, remove continuous addition row if there are any
+    $("#del-cont-species-" + specNum).click(delContHandler);
+    // If New One Shot Button is Pressed, add another instantaneous addition row
+    $("#add-oneshot-species-" + specNum).click(addOneShotHandler);
+    // If Del One Shot Button is Pressed, remove instantaneous addition row if there are any
+    $("#del-oneshot-species-" + specNum).click(delOneShotHandler);
+    // If a species name changes, update the name on it's corresponding drop-down button
+    $("#rxn_info-species-" + specNum + "-spec_name").change(specNameChangeHandler);
+    // Configure changes in collapse control buttons during show / hide events
+    $("#species-" + specNum).on('show.bs.collapse', collapseShowHandler);
+    $("#species-" + specNum).on('hide.bs.collapse', collapseHideHandler);
+    $("#cont-add-species-" + specNum).on('show.bs.collapse', collapseShowHandler);
+    $("#cont-add-species-" + specNum).on('hide.bs.collapse', collapseHideHandler);
+    $("#one-shot-species-" + specNum).on('show.bs.collapse', collapseShowHandler);
+    $("#one-shot-species-" + specNum).on('hide.bs.collapse', collapseHideHandler);
+    $("#ord-limits-species-" + specNum).on('show.bs.collapse', collapseShowHandler);
+    $("#ord-limits-species-" + specNum).on('hide.bs.collapse', collapseHideHandler);
+    $("#pois-limits-species-" + specNum).on('show.bs.collapse', collapseShowHandler);
+    $("#pois-limits-species-" + specNum).on('hide.bs.collapse', collapseHideHandler);
+}
 
 
 /*
@@ -76,15 +84,7 @@ function addSpeciesHandler() {
     $("#species-data").append(html_data);
 
     // initialize all event listeners for this new species
-    $(".add-cont" ).click(addContHandler);
-    $(".del-cont" ).click(delContHandler);
-    $(".add-oneshot" ).click(addOneShotHandler);
-    $(".del-oneshot" ).click(delOneShotHandler);
-    $(".spec-name").change(specNameChangeHandler);
-    $('.collapse').on('shown.bs.collapse', collapseShowHandler(event));
-    $('.collapse').on('hidden.bs.collapse', collapseHideHandler(event));
-    $(".sol-conc").change(makeMatchingConcHandler);
-    // $(".species-col").change(enableFittingHandler);
+    bindSpeciesListeners(specNum);
     // $(".species-col").change(enableFittingHandler);
 
     // increment specNum and append to contAddNum and oneShotNum
@@ -122,15 +122,23 @@ function addContHandler() {
     const species = this.id.split("-")[3];
     // generate boilerplate html for the new addition form
     const addContHTML = makeContAddHTML(parseInt(species), contAddNum);
+    // make this solution concentration match others that are already set
+    // check if there is an existing addition. If not, use default value
+    const add_one_shot_0 = $("#rxn_info-species-" + species + "-one_shot-0-add_sol_conc")
+    const add_cont_0 = $("#rxn_info-species-" + species + "-cont_add-0-add_sol_conc")
     // append to the species data form
     $("#cont-add-species-" + species + "-rows").append(addContHTML);
 
-    // make this solution concentration match others that are already set
-    const curr_val = $("#rxn_info-species-" + species + "-cont_add-0-add_sol_conc").val();
-    $("#rxn_info-species-" + species + "-cont_add-" + contAddNum[parseInt(species)] + "-add_sol_conc").val(curr_val);
+    if (add_one_shot_0.length > 0) {
+        $("#rxn_info-species-" + species + "-cont_add-" + contAddNum[parseInt(species)] + "-add_sol_conc").val(add_one_shot_0.val());
+    }
+    else if (add_cont_0.length > 0) {
+        $("#rxn_info-species-" + species + "-cont_add-" + contAddNum[parseInt(species)] + "-add_sol_conc").val(add_cont_0.val());
+    }
 
     // add necessary event listeners
-    $(".sol-conc").change(makeMatchingConcHandler);
+    $("#rxn_info-species-" + species + "-cont_add-" + contAddNum[parseInt(species)] + "-add_sol_conc").change(makeMatchingConcHandler);
+    // $(".sol-conc").change(makeMatchingConcHandler);
 
     // increment contAddNum
     contAddNum[parseInt(species)] += 1;
@@ -153,15 +161,23 @@ function addOneShotHandler() {
     const species = this.id.split("-")[3];
     // generate boilerplate html for the new addition form
     const oneShotHTML = makeOneShotHTML(parseInt(species), oneShotNum);
+    // make this solution concentration match others that are already set
+    // check if there is an existing addition. If not, use default value
+    const add_one_shot_0 = $("#rxn_info-species-" + species + "-one_shot-0-add_sol_conc")
+    const add_cont_0 = $("#rxn_info-species-" + species + "-cont_add-0-add_sol_conc")
     // append to the species data form
     $("#one-shot-species-" + species + "-rows").append(oneShotHTML);
 
-    // make this solution concentration match others that are already set
-    const curr_val = $("#rxn_info-species-" + species + "-one_shot-0-add_sol_conc").val();
-    $("#rxn_info-species-" + species + "-one_shot-" + oneShotNum[parseInt(species)] + "-add_sol_conc").val(curr_val);
+    if (add_one_shot_0.length > 0) {
+        $("#rxn_info-species-" + species + "-one_shot-" + oneShotNum[parseInt(species)] + "-add_sol_conc").val(add_one_shot_0.val());
+    }
+    else if (add_cont_0.length > 0) {
+        $("#rxn_info-species-" + species + "-one_shot-" + oneShotNum[parseInt(species)] + "-add_sol_conc").val(add_cont_0.val());
+    }
 
     // add necessary event listeners
-    $(".sol-conc").change(makeMatchingConcHandler);
+    $("#rxn_info-species-" + species + "-one_shot-" + oneShotNum[parseInt(species)] + "-add_sol_conc").change(makeMatchingConcHandler);
+    // $(".sol-conc").change(makeMatchingConcHandler);
 
     // increment contAddNum
     oneShotNum[parseInt(species)] += 1;
@@ -361,7 +377,7 @@ function makeSpeciesHTML(specNum) {
         <!--  Specify Ord Limits [0-1] [ord_lim]: [checkbox]
           This should be made collapsible.
         -->
-        <div id="ord-limits-species-${specNum}" class="collapse" aria-labelledby="ord-control" data-parent="#limits-container-species-${specNum}">
+        <div id="ord-limits-species-${specNum}" class="collapse" aria-labelledby="ord-control-species-${specNum}" data-parent="#limits-container-species-${specNum}">
           <div class="form-row m-1">
             <!--Est Order [ord_val] (default 1): float-->
             <div class="form-group col">
@@ -384,7 +400,7 @@ function makeSpeciesHTML(specNum) {
         <!--  Specify Poison Limits [0-1] [pois_lim]: [checkbox]
               This should also be made collapsible
         -->
-        <div id="pois-limits-species-${specNum}" class="collapse" aria-labelledby="pois-control" data-parent="#limits-container-species-${specNum}">
+        <div id="pois-limits-species-${specNum}" class="collapse" aria-labelledby="pois-control-species-${specNum}" data-parent="#limits-container-species-${specNum}">
           <div class="form-row m-1">
             <!--Est Poisoning [pois_val] (default 0): float-->
             <div class="form-group col">
