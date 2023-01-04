@@ -338,7 +338,10 @@ class CakeFormMulti(FlaskForm):
             stoich.append(spec['stoich'])
             mol0.append(spec['mol_init'])
             mol_end.append(spec['mol_end'])
-            col.append(spec['col'] - 1)
+            if spec['col'] is not None:
+                col.append(spec['col'] - 1)
+            else:
+                col.append(spec['col'])
             ord_lim.append(format_ord(spec))
             pois_lim.append(format_pois(spec))
 
