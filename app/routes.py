@@ -335,7 +335,7 @@ def run_cake_multi_wrapper(form):
 
 
 def sim_cake_multi_wrapper(form):
-    data = form.prepare_data()
+    data = form.prepare_data(sim=True)
     # remove unnecessary excel data
     for key in ['sim', 'xl', 'sheet_name', 't_col', 'col', 'scale_avg_num']:
         data.pop(key)

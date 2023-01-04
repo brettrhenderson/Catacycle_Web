@@ -206,8 +206,10 @@ class SpeciesForm(Form):
     for_fitting = BooleanField("Use For Fitting", description="Use this species to perform CAKE fitting. Must specify column to enable")
 
 
-def format_ord(data_dict):
-    if data_dict['ord_val'] is None:
+def format_ord(data_dict, sim=False):
+    if sim:
+        order = data_dict['ord_val']
+    elif data_dict['ord_val'] is None:
         order = data_dict['ord_val']
     elif data_dict['ord_min'] is None or data_dict['ord_max'] is None:
         order = data_dict['ord_val']
@@ -216,8 +218,10 @@ def format_ord(data_dict):
     return order
 
 
-def format_pois(data_dict):
-    if data_dict['pois_val'] is None:
+def format_pois(data_dict, sim=False):
+    if sim:
+        pois = data_dict['pois_val']
+    elif data_dict['pois_val'] is None:
         pois = data_dict['pois_val']
     elif data_dict['pois_min'] is None or data_dict['pois_max'] is None:
         pois = data_dict['pois_val']
@@ -315,7 +319,7 @@ class CakeFormMulti(FlaskForm):
     submit = SubmitField('Fit', id='fit-submit')
 
     # TODO: Data Formatters to Prepare data in the proper structures for cake_fitting.py
-    def prepare_data(self):
+    def prepare_data(self, sim=False):
         data = self.data
         react_vol_init = data['rxn_info']['react_vol_init']
         t_param = (data['upload']['t_init'], data['upload']['t_final'], data['upload']['t_interval'])
@@ -342,8 +346,8 @@ class CakeFormMulti(FlaskForm):
                 col.append(spec['col'] - 1)
             else:
                 col.append(spec['col'])
-            ord_lim.append(format_ord(spec))
-            pois_lim.append(format_pois(spec))
+            ord_lim.append(format_ord(spec, sim))
+            pois_lim.append(format_pois(spec, sim))
 
             # fit aspect
             if spec['for_fitting']:
