@@ -87,6 +87,14 @@ function addSpeciesHandler() {
     bindSpeciesListeners(specNum);
     // $(".species-col").change(enableFittingHandler);
 
+    // if sim, diable bounds for order and poisoning
+    if (sim) {
+        $("#rxn_info-species-" + specNum + "-ord_min").prop("disabled", true);
+        $("#rxn_info-species-" + specNum + "-ord_max").prop("disabled", true);
+        $("#rxn_info-species-" + specNum + "-pois_min").prop("disabled", true);
+        $("#rxn_info-species-" + specNum + "-pois_max").prop("disabled", true);
+    }
+
     // increment specNum and append to contAddNum and oneShotNum
     specNum += 1;
     contAddNum.push(0);
@@ -387,12 +395,12 @@ function makeSpeciesHTML(specNum) {
             <!--Min Order [ord_min] (default 0): float-->
             <div class="form-group col">
               <label for="rxn_info-species-${specNum}-ord_min">Min Order</label>
-              <input class="form-control" data-toggle="tooltip" id="rxn_info-species-${specNum}-ord_min" name="rxn_info-species-${specNum}-ord_min" title="" type="text" value="0" data-original-title="Minimum species order search constraint">
+              <input class="form-control bounds-input" data-toggle="tooltip" id="rxn_info-species-${specNum}-ord_min" name="rxn_info-species-${specNum}-ord_min" title="" type="text" value="0" data-original-title="Minimum species order search constraint">
             </div>
             <!--Max Order [ord_max] (default 2): float-->
             <div class="form-group col">
               <label for="rxn_info-species-${specNum}-ord_max">Max Order</label>
-              <input class="form-control" data-toggle="tooltip" id="rxn_info-species-${specNum}-ord_max" name="rxn_info-species-${specNum}-ord_max" title="" type="text" value="2" data-original-title="Maximum species order search constraint">
+              <input class="form-control bounds-input" data-toggle="tooltip" id="rxn_info-species-${specNum}-ord_max" name="rxn_info-species-${specNum}-ord_max" title="" type="text" value="2" data-original-title="Maximum species order search constraint">
             </div>
           </div>
         </div>
@@ -410,12 +418,12 @@ function makeSpeciesHTML(specNum) {
             <!--Min Poisoning [pois_min] (default 0): float-->
             <div class="form-group col">
               <label for="rxn_info-species-${specNum}-pois_min">Min Poisoning</label>
-              <input class="form-control" data-toggle="tooltip" id="rxn_info-species-${specNum}-pois_min" name="rxn_info-species-${specNum}-pois_min" title="" type="text" value="" data-original-title="Minimum species poisoning search constraint">
+              <input class="form-control bounds-input" data-toggle="tooltip" id="rxn_info-species-${specNum}-pois_min" name="rxn_info-species-${specNum}-pois_min" title="" type="text" value="" data-original-title="Minimum species poisoning search constraint">
             </div>
             <!--Max Poisoning [pois_max] (default 0): float-->
             <div class="form-group col">
               <label for="rxn_info-species-${specNum}-pois_max">Max Poisoning</label>
-              <input class="form-control" data-toggle="tooltip" id="rxn_info-species-${specNum}-pois_max" name="rxn_info-species-${specNum}-pois_max" title="" type="text" value="" data-original-title="Maximum species poisoning search constraint">
+              <input class="form-control bounds-input" data-toggle="tooltip" id="rxn_info-species-${specNum}-pois_max" name="rxn_info-species-${specNum}-pois_max" title="" type="text" value="" data-original-title="Maximum species poisoning search constraint">
             </div>
           </div>
         </div>
