@@ -142,7 +142,7 @@
     <div class="container-fluid">
         <div class="row d-flex">
             <div class="pb-2 col-1 d-flex flex-column"></div>
-            <form enctype="multipart/form-data" onkeydown="return event.key != 'Enter';" class="px-3 pt-1 pb-2 col-5 d-flex flex-column align-items-center justify-content-start" id="cake-form" action="{{ url_for('download_cake_xlsx') }}" method="post">
+            <form enctype="multipart/form-data" onkeydown="return event.key != 'Enter';" class="px-3 pt-1 pb-2 col-5 d-flex flex-column align-items-center justify-content-start" id="cake-form" action="{{ url_for('download_cake_xlsx_old') }}" method="post">
                 {{ form.hidden_tag() }}
                 <div class="card">
                     <div class="card-header">

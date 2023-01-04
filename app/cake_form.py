@@ -210,7 +210,7 @@ def format_ord(data_dict):
     if data_dict['ord_val'] is None:
         order = data_dict['ord_val']
     elif data_dict['ord_min'] is None or data_dict['ord_max'] is None:
-        order = (data_dict['ord_val'])
+        order = data_dict['ord_val']
     else:
         order = (data_dict['ord_val'], data_dict['ord_min'], data_dict['ord_max'])
     return order
@@ -220,7 +220,7 @@ def format_pois(data_dict):
     if data_dict['pois_val'] is None:
         pois = data_dict['pois_val']
     elif data_dict['pois_min'] is None or data_dict['pois_max'] is None:
-        pois = (data_dict['pois_val'])
+        pois = data_dict['pois_val']
     else:
         pois = (data_dict['pois_val'], data_dict['pois_min'], data_dict['pois_max'])
     return pois
@@ -338,7 +338,7 @@ class CakeFormMulti(FlaskForm):
             stoich.append(spec['stoich'])
             mol0.append(spec['mol_init'])
             mol_end.append(spec['mol_end'])
-            col.append(spec['col'])
+            col.append(spec['col'] - 1)
             ord_lim.append(format_ord(spec))
             pois_lim.append(format_pois(spec))
 

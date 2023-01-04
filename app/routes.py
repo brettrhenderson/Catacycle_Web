@@ -30,6 +30,10 @@ def guide():
     return render_template('guide.html')
 
 
+##############################################
+# CATACYCLE
+##############################################
+
 @app.route('/graphs', methods=['GET', 'POST'])
 def graphs():
     form = RatesForm(request.form)  # initialize the backend of the web form
@@ -79,9 +83,9 @@ def download():
         return '', 204
 
 
-##########################################
-# CAKE
-##########################################
+##############################################
+# CAKE (Legacy Version)
+##############################################
 
 @app.route('/cake_old', methods=['GET', 'POST'])
 def cake_old():
@@ -111,48 +115,10 @@ def cake_old():
     return render_template('cake_old.html', form=form)
 
 
-@app.route('/cake', methods=['GET', 'POST'])
-def cake():
-    # form = CakeForm()  # initialize the backend of the web form
-    form = CakeFormMulti()  # initialize the backend of the web form
-    data = form.data
-    log.debug(f'\nFORM VALID? {form.validate()}\n')
-    log.debug(f'\nFORM VALIDATION ERRORS: {form.errors.items()}\n')
-    log.debug(f'\nFORM DATA {data}\n')
-
-    if request.method == 'POST' and form.validate_on_submit():
-        try:
-            sim = data['upload']['sim']
-            if sim:
-                sim_data, fit_asp = sim_cake_multi_wrapper(form)
-            else:
-                cake_data, df = run_cake_multi_wrapper(form)
-        except Exception as e:
-            raise e
-            # return e.__str__(), 400
-        if sim:
-            x_data_df, y_fit_conc_df, y_fit_rate_df = sim_data
-            html = ckm.plot_sim_results(x_data_df, y_fit_conc_df, fit_asp, f_format='svg', return_image=False)
-            results = "Simulation Completed."
-        else:
-            x_data_df, y_exp_df, y_fit_conc_df, y_fit_rate_df, k_val_est, k_fit, k_fit_err, \
-            ord_fit, ord_fit_err, pois_fit, pois_fit_err, ss_res, r_squared, col = cake_data
-
-            html = ckm.plot_fit_results(x_data_df, y_exp_df, y_fit_conc_df, col, f_format='svg', return_image=False)
-            results = ckm.pprint_cake(k_fit, k_fit_err, ord_fit, ord_fit_err, pois_fit, pois_fit_err, ss_res, r_squared)
-
-        return jsonify(data=[html, results])
-
-    return render_template('cake.html', form=form)
-
-
-@app.route('/download-cake-xlsx', methods=['GET', 'POST'])
-def download_cake_xlsx():
+@app.route('/download-cake-xlsx-old', methods=['GET', 'POST'])
+def download_cake_xlsx_old():
     log.debug(f"Downloading the Excel data")
-
     form = CakeForm()
-    # form = CakeFormMulti()
-
     if request.method == 'POST' and form.validate_on_submit():
         log.debug(f"Collected form data from user: {form.data}")
 
@@ -187,7 +153,6 @@ def download_cake_xlsx():
 
 @app.route('/download-cake-old', methods=['GET', 'POST'])
 def download_cake_old():
-    log.debug("INCORRECT ROUTING")
     form = CakeDownloadForm()
     # form = CakeDownloadMultiForm()
 
@@ -208,43 +173,6 @@ def download_cake_old():
         img = FileWrapper(img)
         response = make_response(Response(img, mimetype=mimetype, direct_passthrough=True))
         filename = secure_filename(f'cake.{form.f_format.data}')
-        response.headers.set('Content-Disposition', 'attachment', filename=filename)
-        return response
-    else:
-        log.debug("Not sending anything")
-        return '', 204
-
-
-@app.route('/download-cake', methods=['GET', 'POST'])
-def download_cake():
-    # form = CakeDownloadForm()
-    form = CakeDownloadMultiForm()
-    data = form.data
-    img_format = data.pop('f_format')
-
-    if request.method == 'POST' and form.validate_on_submit():
-        try:
-            sim = data['upload']['sim']
-            if sim:
-                sim_data, fit_asp = sim_cake_multi_wrapper(form)
-            else:
-                cake_data, df = run_cake_multi_wrapper(form)
-        except Exception as e:
-            raise e
-            # return e.__str__(), 400
-        if sim:
-            x_data_df, y_fit_conc_df, y_fit_rate_df = sim_data
-            img, mimetype = ckm.plot_sim_results(x_data_df, y_fit_conc_df, fit_asp, f_format=img_format, return_image=True)
-        else:
-            x_data_df, y_exp_df, y_fit_conc_df, y_fit_rate_df, k_val_est, k_fit, k_fit_err, \
-            ord_fit, ord_fit_err, pois_fit, pois_fit_err, ss_res, r_squared, col = cake_data
-
-            img, mimetype = ckm.plot_fit_results(x_data_df, y_exp_df, y_fit_conc_df, col, f_format=img_format, return_image=True)
-
-        img.seek(0)
-        img = FileWrapper(img)
-        response = make_response(Response(img, mimetype=mimetype, direct_passthrough=True))
-        filename = secure_filename(f'cake.{img_format}')
         response.headers.set('Content-Disposition', 'attachment', filename=filename)
         return response
     else:
@@ -273,8 +201,123 @@ def run_cake_wrapper(form):
                             cat_add_rate, form.t_inj.data, form.format_k_est(), form.format_r_ord(),
                             form.format_cat_ord(), form.format_t0_est(), t_col, None, r_col, p_col,
                             form.scale_avg_num.data, form.win.data, form.inc.data, form.fit_asp.data)
-
     return cake_data, df
+
+
+##############################################
+# CAKE (Development Version)
+##############################################
+
+@app.route('/cake', methods=['GET', 'POST'])
+def cake():
+    # form = CakeForm()  # initialize the backend of the web form
+    form = CakeFormMulti()  # initialize the backend of the web form
+    data = form.data
+    log.debug(f'\nFORM VALID? {form.validate()}\n')
+    log.debug(f'\nFORM VALIDATION ERRORS: {form.errors.items()}\n')
+    log.debug(f'\nFORM DATA {data}\n')
+
+    if request.method == 'POST' and form.validate_on_submit():
+        try:
+            sim = data['upload']['sim']
+            if sim:
+                sim_data, fit_asp, _ = sim_cake_multi_wrapper(form)
+            else:
+                cake_data, df, _ = run_cake_multi_wrapper(form)
+        except Exception as e:
+            raise e
+            # return e.__str__(), 400
+        if sim:
+            x_data_df, y_fit_conc_df, y_fit_rate_df = sim_data
+            html = ckm.plot_sim_results(x_data_df, y_fit_conc_df, fit_asp, f_format='svg', return_image=False)
+            results = "Simulation Completed."
+        else:
+            x_data_df, y_exp_df, y_fit_conc_df, y_fit_rate_df, k_val_est, k_fit, k_fit_err, \
+            ord_fit, ord_fit_err, pois_fit, pois_fit_err, ss_res, r_squared, col = cake_data
+
+            html = ckm.plot_fit_results(x_data_df, y_exp_df, y_fit_conc_df, col, f_format='svg', return_image=False)
+            results = ckm.pprint_cake(k_fit, k_fit_err, ord_fit, ord_fit_err, pois_fit, pois_fit_err, ss_res, r_squared)
+
+        return jsonify(data=[html, results])
+
+    return render_template('cake.html', form=form)
+
+
+@app.route('/download-cake-xlsx', methods=['GET', 'POST'])
+def download_cake_xlsx():
+    log.debug(f"Downloading the Excel data")
+    form = CakeFormMulti()
+    data = form.data
+    log.debug(f'\nFORM VALID? {form.validate()}\n')
+    log.debug(f'\nFORM VALIDATION ERRORS: {form.errors.items()}\n')
+    log.debug(f'\nFORM DATA {data}\n')
+    if request.method == 'POST' and form.validate_on_submit():
+        try:
+            sim = data['upload']['sim']
+            if sim:
+                sim_data, fit_asp, param_dict = sim_cake_multi_wrapper(form)
+            else:
+                cake_data, df, param_dict = run_cake_multi_wrapper(form)
+        except Exception as e:
+            raise e
+        log.debug(param_dict)
+        if sim:
+            x_data_df, y_fit_conc_df, y_fit_rate_df = sim_data
+            tmp_file, mimetype = ckm.write_sim_data_temp(None, param_dict, x_data_df, y_fit_conc_df, y_fit_rate_df)
+            filename = secure_filename('cake_sim.xlsx')
+        else:
+            x_data_df, y_exp_df, y_fit_conc_df, y_fit_rate_df, k_val_est, k_fit, k_fit_err, \
+            ord_fit, ord_fit_err, pois_fit, pois_fit_err, ss_res, r_squared, col = cake_data
+            tmp_file, mimetype = ckm.write_fit_data_temp(df, param_dict, x_data_df, y_exp_df, y_fit_conc_df,
+                                                         y_fit_rate_df, k_fit, k_fit_err, ord_fit, ord_fit_err,
+                                                         pois_fit, pois_fit_err, ss_res, r_squared)
+            filename = secure_filename('cake_fit.xlsx')
+
+        tmp_file.seek(0)
+        response = make_response(Response(FileWrapper(tmp_file), mimetype=mimetype, direct_passthrough=True))
+        response.headers.set('Content-Disposition', 'attachment', filename=filename)
+        log.debug(response)
+        return response
+    else:
+        log.debug("Not sending anything")
+        return '', 204
+
+
+@app.route('/download-cake', methods=['GET', 'POST'])
+def download_cake():
+    # form = CakeDownloadForm()
+    form = CakeDownloadMultiForm()
+    data = form.data
+    img_format = data.pop('f_format')
+
+    if request.method == 'POST' and form.validate_on_submit():
+        try:
+            sim = data['upload']['sim']
+            if sim:
+                sim_data, fit_asp, _ = sim_cake_multi_wrapper(form)
+            else:
+                cake_data, df, _ = run_cake_multi_wrapper(form)
+        except Exception as e:
+            raise e
+            # return e.__str__(), 400
+        if sim:
+            x_data_df, y_fit_conc_df, y_fit_rate_df = sim_data
+            img, mimetype = ckm.plot_sim_results(x_data_df, y_fit_conc_df, fit_asp, f_format=img_format, return_image=True)
+        else:
+            x_data_df, y_exp_df, y_fit_conc_df, y_fit_rate_df, k_val_est, k_fit, k_fit_err, \
+            ord_fit, ord_fit_err, pois_fit, pois_fit_err, ss_res, r_squared, col = cake_data
+
+            img, mimetype = ckm.plot_fit_results(x_data_df, y_exp_df, y_fit_conc_df, col, f_format=img_format, return_image=True)
+
+        img.seek(0)
+        img = FileWrapper(img)
+        response = make_response(Response(img, mimetype=mimetype, direct_passthrough=True))
+        filename = secure_filename(f'cake.{img_format}')
+        response.headers.set('Content-Disposition', 'attachment', filename=filename)
+        return response
+    else:
+        log.debug("Not sending anything")
+        return '', 204
 
 
 def run_cake_multi_wrapper(form):
@@ -287,7 +330,8 @@ def run_cake_multi_wrapper(form):
     spec_type = data.pop('spec_type')
     react_vol_init = data.pop('react_vol_init')
     output = ckm.fit_cake(df, spec_type, react_vol_init, **data)
-    return output, df
+    param_dict = ckm.make_param_dict(spec_type, react_vol_init, **data)
+    return output, df, param_dict
 
 
 def sim_cake_multi_wrapper(form):
@@ -300,4 +344,5 @@ def sim_cake_multi_wrapper(form):
     react_vol_init = data.pop('react_vol_init')
     t = data.pop('t_param')
     output = ckm.sim_cake(t, spec_type, react_vol_init, **data)
-    return output, data['fit_asp']
+    param_dict = ckm.make_param_dict(spec_type, react_vol_init, **data)
+    return output, data['fit_asp'], param_dict
