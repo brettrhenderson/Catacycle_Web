@@ -1,0 +1,15 @@
+.collapse-control i {
+   transition: all 0.5s;
+}
+
+.collapse-control.active i {
+
+	-webkit-transform: rotate(180deg);
+	-moz-transform: rotate(180deg);
+	transform: rotate(180deg);
+}
+
+a.collapse-control.active {
+    background-color: #33383c !important;
+    text-decoration: none;
+}

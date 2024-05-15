@@ -23,9 +23,35 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container pb-2 mt-4 mb-2 border-bottom">
-        <h1>Catalytic Cycle Generator</h1>
-    </div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="{{ url_for('index') }}">
+        <img src="{{url_for('.static', filename='images/cycle_icon.png')}}" width="50" height="50" class="d-inline-block align-center" alt="">
+        CataHub
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('index') }}"> All Tools </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="{{ url_for('graphs') }}"> Catacycle </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('cake') }}"> CAKE </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('guide') }}"> User Guide</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('aboutus') }}"> About Us</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <br>
     <div class="container-fluid">
         <div class="row d-flex">
             <!--<div class="col-md-1 col-lg-1"></div>-->
@@ -49,16 +75,16 @@
                         <div class="card-header">
                             <ul class="nav nav-tabs card-header-tabs">
                                 <li class="nav-item">
-                                    <a id="rateslink" class="nav-link active" data-toggle="tab" href="#ratestab">Steps</a>
+                                    <a id="rateslink" class="nav-link dummy active" data-toggle="tab" href="#ratestab">Steps</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a id="colorslink" class="nav-link" data-toggle="tab" href="#colorstab">Colors</a>
+                                    <a id="colorslink" class="nav-link dummy " data-toggle="tab" href="#colorstab">Colors</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a id="arrowslink" class="nav-link noticer" data-toggle="tab" href="#arrowsstyle">Styling</a>
+                                    <a id="arrowslink" class="nav-link dummy noticer" data-toggle="tab" href="#arrowsstyle">Styling</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a id="outsiderxnlink" class="nav-link" data-toggle="tab" href="#outsiderxns">Side Reactions</a>
+                                    <a id="outsiderxnlink" class="nav-link dummy" data-toggle="tab" href="#outsiderxns">Side Reactions</a>
                                 </li>
                             </ul>
                         </div>

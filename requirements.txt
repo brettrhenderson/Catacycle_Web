@@ -1,5 +1,9 @@
-matplotlib
+matplotlib==3.0.3
 numpy
+Pillow==9.0.1
 flask
 flask-bootstrap4
 flask-wtf
+xlrd
+pandas
+openpyxl
