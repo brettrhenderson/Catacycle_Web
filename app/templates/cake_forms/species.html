@@ -4,57 +4,57 @@
     <!--Greyed out if column is not given-->
     <div class="form-row">
       <div class="form-check">
-        {{ form.rxn_info.form.species[0].form.for_fitting(
-            title=form.rxn_info.form.species[0].form.for_fitting.description,
+        {{ form.system.form.species[0].form.for_fitting(
+            title=form.system.form.species[0].form.for_fitting.description,
             data_toggle='tooltip') }}
-        {{ form.rxn_info.form.species[0].form.for_fitting.label() }}
+        {{ form.system.form.species[0].form.for_fitting.label() }}
       </div>
     </div>
 
     <div class="form-row">
       <!-- Species Name [spec_name]: string (def. “Species X”) -->
       <div class="form-group col">
-        {{ form.rxn_info.form.species[0].form.spec_name.label() }}
-        {{ form.rxn_info.form.species[0].form.spec_name(class_="form-control spec-name",
-          title=form.rxn_info.form.species[0].form.spec_name.description,
+        {{ form.system.form.species[0].form.spec_name.label() }}
+        {{ form.system.form.species[0].form.spec_name(class_="form-control spec-name",
+          title=form.system.form.species[0].form.spec_name.description,
           data_toggle='tooltip', placeholder="Species 1") }}
       </div>
       <!--Species Type [spec_type]: “r”, “p”, or “c” -->
       <div class="form-group col">
-        {{ form.rxn_info.form.species[0].form.spec_type.label() }}
-        {{ form.rxn_info.form.species[0].form.spec_type(class_="form-control",
-          title=form.rxn_info.form.species[0].form.spec_type.description,
+        {{ form.system.form.species[0].form.spec_type.label() }}
+        {{ form.system.form.species[0].form.spec_type(class_="form-control",
+          title=form.system.form.species[0].form.spec_type.description,
           data_toggle='tooltip') }}
       </div>
       <!--Stoichiometry [stoich]: int (default 1 for r/p, None for c)-->
       <div class="form-group col">
-        {{ form.rxn_info.form.species[0].form.stoich.label() }}
-        {{ form.rxn_info.form.species[0].form.stoich(class_="form-control",
-          title=form.rxn_info.form.species[0].form.stoich.description,
+        {{ form.system.form.species[0].form.stoich.label() }}
+        {{ form.system.form.species[0].form.stoich(class_="form-control",
+          title=form.system.form.species[0].form.stoich.description,
           data_toggle='tooltip') }}
       </div>
     </div>
 
     <div class="form-row">
-      <!--Column [col]: int-->
+      <!--Column [gen_col]: int-->
       <div class="form-group col">
-        {{ form.rxn_info.form.species[0].form.col.label() }}
-        {{ form.rxn_info.form.species[0].form.col(class_="form-control species-col",
-          title=form.rxn_info.form.species[0].form.col.description, min=1,
+        {{ form.system.form.species[0].form.col.label() }}
+        {{ form.system.form.species[0].form.col(class_="form-control species-col",
+          title=form.system.form.species[0].form.col.description, min=1,
           data_toggle='tooltip') }}
       </div>
       <!--Initial Moles [mol_init]: float-->
       <div class="form-group col">
-        {{ form.rxn_info.form.species[0].form.mol_init.label() }}
-        {{ form.rxn_info.form.species[0].form.mol_init(class_="form-control",
-          title=form.rxn_info.form.species[0].form.mol_init.description,
+        {{ form.system.form.species[0].form.mol_init.label() }}
+        {{ form.system.form.species[0].form.mol_init(class_="form-control",
+          title=form.system.form.species[0].form.mol_init.description,
           data_toggle='tooltip') }}
       </div>
       <!--Final Moles [mol_end]: float-->
       <div class="form-group col">
-        {{ form.rxn_info.form.species[0].form.mol_end.label() }}
-        {{ form.rxn_info.form.species[0].form.mol_end(class_="form-control",
-          title=form.rxn_info.form.species[0].form.mol_end.description,
+        {{ form.system.form.species[0].form.mol_end.label() }}
+        {{ form.system.form.species[0].form.mol_end(class_="form-control",
+          title=form.system.form.species[0].form.mol_end.description,
           data_toggle='tooltip') }}
       </div>
     </div>
@@ -83,23 +83,23 @@
           <div class="form-row m-1">
             <!--Est Order [ord_val] (default 1): float-->
             <div class="form-group col">
-              {{ form.rxn_info.form.species[0].form.ord_val.label() }}
-              {{ form.rxn_info.form.species[0].form.ord_val(class_="form-control",
-                title=form.rxn_info.form.species[0].form.ord_val.description,
+              {{ form.system.form.species[0].form.ord_val.label() }}
+              {{ form.system.form.species[0].form.ord_val(class_="form-control",
+                title=form.system.form.species[0].form.ord_val.description,
                 data_toggle='tooltip') }}
             </div>
             <!--Min Order [ord_min] (default 0): float-->
             <div class="form-group col">
-              {{ form.rxn_info.form.species[0].form.ord_min.label() }}
-              {{ form.rxn_info.form.species[0].form.ord_min(class_="form-control bounds-input",
-                title=form.rxn_info.form.species[0].form.ord_min.description,
+              {{ form.system.form.species[0].form.ord_min.label() }}
+              {{ form.system.form.species[0].form.ord_min(class_="form-control bounds-input",
+                title=form.system.form.species[0].form.ord_min.description,
                 data_toggle='tooltip') }}
             </div>
             <!--Max Order [ord_max] (default 2): float-->
             <div class="form-group col">
-              {{ form.rxn_info.form.species[0].form.ord_max.label() }}
-              {{ form.rxn_info.form.species[0].form.ord_max(class_="form-control bounds-input",
-                title=form.rxn_info.form.species[0].form.ord_max.description,
+              {{ form.system.form.species[0].form.ord_max.label() }}
+              {{ form.system.form.species[0].form.ord_max(class_="form-control bounds-input",
+                title=form.system.form.species[0].form.ord_max.description,
                 data_toggle='tooltip') }}
             </div>
           </div>
@@ -112,23 +112,23 @@
           <div class="form-row m-1">
             <!--Est Poisoning [pois_val] (default 0): float-->
             <div class="form-group col">
-              {{ form.rxn_info.form.species[0].form.pois_val.label() }}
-              {{ form.rxn_info.form.species[0].form.pois_val(class_="form-control",
-                title=form.rxn_info.form.species[0].form.pois_val.description,
+              {{ form.system.form.species[0].form.pois_val.label() }}
+              {{ form.system.form.species[0].form.pois_val(class_="form-control",
+                title=form.system.form.species[0].form.pois_val.description,
                 data_toggle='tooltip') }}
             </div>
             <!--Min Poisoning [pois_min] (default 0): float-->
             <div class="form-group col">
-              {{ form.rxn_info.form.species[0].form.pois_min.label() }}
-              {{ form.rxn_info.form.species[0].form.pois_min(class_="form-control bounds-input",
-                title=form.rxn_info.form.species[0].form.pois_min.description,
+              {{ form.system.form.species[0].form.pois_min.label() }}
+              {{ form.system.form.species[0].form.pois_min(class_="form-control bounds-input",
+                title=form.system.form.species[0].form.pois_min.description,
                 data_toggle='tooltip') }}
             </div>
             <!--Max Poisoning [pois_max] (default 0): float-->
             <div class="form-group col">
-              {{ form.rxn_info.form.species[0].form.pois_max.label() }}
-              {{ form.rxn_info.form.species[0].form.pois_max(class_="form-control bounds-input",
-                title=form.rxn_info.form.species[0].form.pois_max.description,
+              {{ form.system.form.species[0].form.pois_max.label() }}
+              {{ form.system.form.species[0].form.pois_max(class_="form-control bounds-input",
+                title=form.system.form.species[0].form.pois_max.description,
                 data_toggle='tooltip') }}
             </div>
           </div>

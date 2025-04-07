@@ -1,0 +1,38 @@
+{% block body %}
+
+<!--Scaling Points [scale_avg_num]: int-->
+<!--Smoothing Window [win]: int-->
+<!--Interpolation Multiplier [inc]: int-->
+
+<div class="tab-pane" id="maniptab">
+    <div class="form-row">
+      <div class="form-group col">
+        {{ form.manip.form.breakpoint_lim.label() }}
+        {{ form.manip.form.breakpoint_lim(class_="form-control",
+          title=form.manip.form.breakpoint_lim.description, type='number', min=0, data_toggle='tooltip') }}
+      </div>
+      <div class="form-group col">
+        {{ form.manip.form.diffusion_delay.label() }}
+        {{ form.manip.form.diffusion_delay(class_="form-control", title=form.manip.form.diffusion_delay.description,
+        type='number', min=0, data_toggle='tooltip') }}
+      </div>
+      <div class="form-group col">
+        {{ form.manip.form.zero.label() }}
+        {{ form.manip.form.zero(title=form.manip.form.zero.description, data_toggle='tooltip') }}
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-4">
+        {{ form.manip.form.win.label() }}
+        {{ form.manip.form.win(class_="form-control", min=1, title=form.manip.form.win.description,
+          data_toggle='tooltip') }}
+      </div>
+      <div class="form-group col-4">
+        {{ form.manip.form.inc.label() }}
+        {{ form.manip.form.inc(class_="form-control", min=1, title=form.manip.form.inc.description,
+          data_toggle='tooltip') }}
+      </div>
+    </div>
+</div>
+
+{% endblock %}

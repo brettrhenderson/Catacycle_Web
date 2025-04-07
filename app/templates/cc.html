@@ -1,5 +1,5 @@
 {% extends "bootstrap/base.html" %}
-{% block title %}CAKE{% endblock %}
+{% block title %}Continuous Calibration{% endblock %}
 {% block styles %}
 {{super()}}
 <link rel="stylesheet" href="{{url_for('.static', filename='css/graphs.css')}}">
@@ -11,13 +11,13 @@
 {% block scripts %}
 {{super()}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
-<script src="{{url_for('.static', filename='js/cake.js')}}"></script>
-<script src="{{url_for('.static', filename='js/cake/upload.js')}}"></script>
-<script src="{{url_for('.static', filename='js/cake/species.js')}}"></script>
+<script src="{{url_for('.static', filename='js/cc.js')}}"></script>
+<script src="{{url_for('.static', filename='js/cc/upload.js')}}"></script>
+<script src="{{url_for('.static', filename='js/cc/fit.js')}}"></script>
+<script src="{{url_for('.static', filename='js/cc/species.js')}}"></script>
 <script type="text/javascript">
     var csrf_token = "{{ form.csrf_token._value() }}";
     $(document).ready(function() {
-        updateFinalProduct();
         downloadHandler();
         ExcelDownloadHandler();
         $('[data-toggle="tooltip"]').tooltip({
@@ -25,74 +25,12 @@
             trigger: "hover focus"
         });
         $.validator.messages.required = '*Required';
-        $("#cake-form").validate({
+        $("#cc-form").validate({
             ignore: [],
-            submitHandler: submitCakeHandler,
+            submitHandler: submitCCHandler,
             invalidHandler: highlightInvalidTabs,
-            rules: {
-                r_col: {
-                    required: function(element) {
-                        return $("#fit_asp").val().includes('r');
-                    }
-                },
-                p_col: {
-                    required: function(element) {
-                        return $("#fit_asp").val().includes('p');
-                    }
-                },
-                k_est_min: {
-                    lessEqThan: '#k_est_val',
-                    lessThan: '#k_est_max'
-                },
-                k_est_max: {
-                    greaterEqThan: '#k_est_val',
-                    greaterThan: '#k_est_min'
-                },
-                k_est_val: {
-                    greaterEqThan: '#k_est_min',
-                    lessEqThan: '#k_est_max'
-                },
-                r_ord_min: {
-                    lessEqThan: '#r_ord_val',
-                    lessThan: '#r_ord_max'
-                },
-                r_ord_max: {
-                    greaterEqThan: '#r_ord_val',
-                    greaterThan: '#r_ord_min'
-                },
-                r_ord_val: {
-                    greaterEqThan: '#r_ord_min',
-                    lessEqThan: '#r_ord_max'
-                },
-                cat_ord_min: {
-                    lessEqThan: '#c_ord_val',
-                    lessThan: '#c_ord_max'
-                },
-                cat_ord_max: {
-                    greaterEqThan: '#c_ord_val',
-                    greaterThan: '#c_ord_min'
-                },
-                cat_ord_val: {
-                    greaterEqThan: '#c_ord_min',
-                    lessEqThan: '#c_ord_max'
-                },
-                t0_est_min: {
-                    lessEqThan: '#t0_est_val',
-                    lessThan: '#t0_est_max'
-                },
-                t0_est_max: {
-                    greaterEqThan: '#t0_est_val',
-                    greaterThan: '#t0_est_min'
-                },
-                t0_est_val: {
-                    greaterEqThan: '#t0_est_min',
-                    lessEqThan: '#t0_est_max'
-                }
-            },
-            messages: {
-                r_col: "*Required if Reactant in 'Fit Aspect'",
-                p_col: "*Required if Product in 'Fit Aspect'"
-            }
+            rules: {},
+            messages: {}
         });
 
         $.ajaxSetup({
@@ -110,13 +48,13 @@
 {% include "navbar.html" %}
 <br>
 <!--    <div class="container pb-2 mt-4 mb-2 border-bottom">-->
-<!--        <h1>CAKE Kinetic Analysis</h1>-->
+<!--        <h1>Continuous Calibration</h1>-->
 <!--    </div>-->
     <div class="container-fluid">
         <h2 style="color:Tomato;">Warning: This page is under active development and may crash.</h2>
         <div class="row d-flex">
             <div class="pb-2 col-1 d-flex flex-column"></div>
-            <form enctype="multipart/form-data" onkeydown="return event.key != 'Enter';" class="px-3 pt-1 pb-2 col-5 d-flex flex-column align-items-center justify-content-center" id="cake-form" action="{{ url_for('download_cake_xlsx') }}" method="post">
+            <form enctype="multipart/form-data" onkeydown="return event.key != 'Enter';" class="px-3 pt-1 pb-2 col-5 d-flex flex-column align-items-center justify-content-center" id="cc-form" action="{{ url_for('download_cc_xlsx') }}" method="post">
                 {{ form.hidden_tag() }}
                 <div class="card">
                     <div class="card-header">
@@ -125,10 +63,13 @@
                                 <a id="uploadlink" class="nav-link active form-tab" data-toggle="tab" href="#uploadtab">Upload</a>
                             </li>
                             <li class="nav-item">
-                                <a id="datalink" class="nav-link form-tab" data-toggle="tab" href="#datatab">Rxn Data</a>
+                                <a id="datalink" class="nav-link form-tab" data-toggle="tab" href="#datatab">Parameters</a>
                             </li>
                             <li class="nav-item">
-                                <a id="maniplink" class="nav-link form-tab" data-toggle="tab" href="#maniptab">Data Manip</a>
+                                <a id="fitlink" class="nav-link form-tab" data-toggle="tab" href="#fittab">Fit Options</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="maniplink" class="nav-link form-tab" data-toggle="tab" href="#maniptab">Data Manipulation</a>
                             </li>
                             <li class="nav-item">
                                 <a id="outputlink" class="nav-link" data-toggle="tab" href="#outputtab">Output</a>
@@ -136,10 +77,11 @@
                         </ul>
                     </div>
                     <div class="card-body p-2">
-                        <div id="cake-card" class="tab-content">
-                            {% include "cake_forms/upload.html" %}
-                            {% include "cake_forms/system.html" %}
-                            {% include "cake_forms/manip.html" %}
+                        <div id="cc-card" class="tab-content">
+                            {% include "cc_forms/upload.html" %}
+                            {% include "cc_forms/system.html" %}
+                            {% include "cc_forms/fit.html" %}
+                            {% include "cc_forms/manip.html" %}
                             <div class="tab-pane" id="outputtab">
                                 <pre class="form-control" id="output-text">Fill in Parameters and click "Fit" to generate output.
                                 </pre>
@@ -152,16 +94,16 @@
                                 <input id="{{ form.submit.id }}" type="submit" class="form-control btn btn-primary" value="{{ form.submit.label.text }}">
                             </div>
                             <div class="form-group col">
-                                <input type="button" id="download-fit" class="form-control btn btn-primary" value="Download Fit">
+                                <input type="button" id="download-fit" class="form-control btn btn-primary" value="Download Calibration">
                             </div>
                         </div>
                     </div>
                 </div>
             </form>
             <div class="px-3 pt-1 pb-2 col-5 d-flex flex-column align-items-center justify-content-start max-vw-50">
-                <div id="cake-select" class="row"></div>
-                <img id='cake-result' class="d-block w-90 img-fluid max-vh-60" src="../static/images/cake_placeholder.svg" alt="Cake Analysis Here">
-                <form class="p-2" enctype="multipart/form-data" id="download-form" style="width: 100%;" action="/download-cake" method="post" nonvalidate>
+                <div id="cc-select" class="row"></div>
+                <img id='cc-result' class="d-block w-90 img-fluid max-vh-60" src="../static/images/cake_placeholder.svg" alt="Cake Analysis Here">
+                <form class="p-2" enctype="multipart/form-data" id="download-form" style="width: 100%;" action="/download-cc" method="post" nonvalidate>
                     <div class="form-group row">
                         <div class="col-3"></div>
                         <div class="col-3">

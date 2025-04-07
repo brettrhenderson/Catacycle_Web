@@ -1,39 +1,21 @@
 {% block body %}
 
-<!--Initial Reaction Volume [react_vol_init]: float-->
-<!--Specify Rate Constant [k_lim]:-->
-<!--Est Value [k_est_val]-->
-<!--Min Value [k_est_min]-->
-<!--Max Value [k_est_max]-->
+<!--Initial Reaction Volume [vol0]: float-->
 <!--Species [1+]: species-->
 
 
 <div class="tab-pane" id="datatab">
     <!--  Initial Reaction Volume  -->
     <div class="form-row">
-      <div class="form-group col">
-        {{ form.rxn_info.form.react_vol_init.label() }}
-        {{ form.rxn_info.form.react_vol_init(class_="form-control", title=form.rxn_info.form.react_vol_init.description,
-          data_toggle='tooltip') }}
+      <div class="form-group col-6">
+        {{ form.system.form.vol0.label() }}
+        {{ form.system.form.vol0(class_="form-control", title=form.system.form.vol0.description,
+          type='number', data_toggle='tooltip') }}
       </div>
-    </div>
-
-    <!--  Rate Constant Bounds  -->
-    <div class="form-row">
-      <div class="form-group col">
-        {{ form.rxn_info.form.k_est_val.label() }}
-        {{ form.rxn_info.form.k_est_val(class_="form-control", min=0, title=form.rxn_info.form.k_est_val.description,
-          data_toggle='tooltip', placeholder="Estimate") }}
-      </div>
-      <div class="form-group col">
-        {{ form.rxn_info.form.k_est_min.label() }}
-        {{ form.rxn_info.form.k_est_min(class_="form-control bounds-input", min=0, title=form.rxn_info.form.k_est_min.description,
-          data_toggle='tooltip', placeholder="Estimate * 1E-3") }}
-      </div>
-      <div class="form-group col">
-        {{ form.rxn_info.form.k_est_max.label() }}
-        {{ form.rxn_info.form.k_est_max(class_="form-control bounds-input", min=0, title=form.rxn_info.form.k_est_max.description,
-          data_toggle='tooltip', placeholder="Estimate * 1E3") }}
+      <div class="form-group col-6">
+        {{ form.system.form.sub_cont_rate.label() }}
+        {{ form.system.form.sub_cont_rate(class_="form-control", title=form.system.form.sub_cont_rate.description,
+          type='number', data_toggle='tooltip') }}
       </div>
     </div>
 
@@ -53,7 +35,7 @@
       <!-- Container for collapsible species data panels -->
       <div id="species-data">
         <div id="species-0" class="collapse form-control" aria-labelledby="species-0-control" data-parent="#species-container">
-          {% include "cake_forms/species.html" %}
+          {% include "cc_forms/species.html" %}
         </div>
       </div>
     </div>

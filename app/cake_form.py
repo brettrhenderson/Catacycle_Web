@@ -72,7 +72,7 @@ class CakeForm(FlaskForm):
                              description='Time at which catalyst injection began', default=0.0)
     inject_rate = FloatField('Injection Rate', [InputRequired()], id='inject_rate',
                              description='Rate of addition of catalyst solution to the reaction mixture')
-    react_vol_init = FloatField('Initial Rxn Solution Volume', [InputRequired()], id='react_vol_init',
+    vol_init = FloatField('Initial Rxn Solution Volume', [InputRequired()], id='vol_init',
                                 description='Initial volume of reactant solution to which catalyst is added')
     win = IntegerField('Smoothing Window', id='win', default=1, description="Number of points in smoothing window")
     inc = IntegerField('Interpolation Multiplier', id='inc',
@@ -266,7 +266,7 @@ class ReactionInformationForm(Form):
     Contains All of the information about a reaction needed to perform CAKE analysis
 
     """
-    react_vol_init = FloatField('Initial Reaction Volume', [InputRequired()], description="Initial volume of reactants.")
+    vol_init = FloatField('Initial Reaction Volume', [InputRequired()], description="Initial volume of reactants.")
 
     k_est_val = FloatField('Est Rate Constant', [optional()], id='k_est_val', description="Estimated rate constant")
     k_est_min = FloatField('Min Rate Constant', [optional()], id='k_est_min',
@@ -313,17 +313,17 @@ class CakeFormMulti(FlaskForm):
     """
 
     upload = FormField(UploadForm)
-    rxn_info = FormField(ReactionInformationForm)
-    data_manip = FormField(DataManipulationForm)
+    system = FormField(ReactionInformationForm)
+    manip = FormField(DataManipulationForm)
 
     submit = SubmitField('Fit', id='fit-submit')
 
     # TODO: Data Formatters to Prepare data in the proper structures for cake_fitting.py
     def prepare_data(self, sim=False):
         data = self.data
-        react_vol_init = data['rxn_info']['react_vol_init']
+        vol_init = data['system']['vol_init']
         t_param = (data['upload']['t_init'], data['upload']['t_final'], data['upload']['t_interval'])
-        k_lim = self.rxn_info.format_k_est()
+        k_lim = self.system.format_k_est()
 
         # reset column indices to 1-indexed
         t_col = None
@@ -333,7 +333,7 @@ class CakeFormMulti(FlaskForm):
         # go through each species in data
         spec_name, spec_type, stoich, mol0, mol_end, add_sol_conc, add_cont_rate = [], [], [], [], [], [], []
         add_one_shot, t_one_shot, t_cont, col, ord_lim, pois_lim, fit_asp = [], [], [], [], [], [], []
-        for i, spec in enumerate(data['rxn_info']['species']):
+        for i, spec in enumerate(data['system']['species']):
             if spec['spec_name']:
                 spec_name.append(spec['spec_name'])
             else:
@@ -397,7 +397,7 @@ class CakeFormMulti(FlaskForm):
                      "sheet_name": data['upload']['sheet_name'],
                      "spec_name": spec_name,
                      "spec_type": spec_type,
-                     "react_vol_init": react_vol_init,
+                     "vol_init": vol_init,
                      "stoich": stoich,
                      "mol0": mol0,
                      "mol_end": mol_end,
@@ -412,9 +412,9 @@ class CakeFormMulti(FlaskForm):
                      "ord_lim": ord_lim,
                      "pois_lim": pois_lim,
                      "fit_asp": fit_asp,
-                     "scale_avg_num": data["data_manip"]["scale_avg_num"],
-                     "win": data["data_manip"]["win"],
-                     "inc": data["data_manip"]["inc"]}
+                     "scale_avg_num": data["manip"]["scale_avg_num"],
+                     "win": data["manip"]["win"],
+                     "inc": data["manip"]["inc"]}
 
         return data_dict
 
@@ -423,4 +423,3 @@ class CakeDownloadMultiForm(CakeFormMulti):
     # File Format Tab
     f_format = StringField('f_format', default='.svg')
     image_index = IntegerField('image_index', default=0)
-

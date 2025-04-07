@@ -1,9 +1,32 @@
+# -e git+ssh://git@github.competerjhw07CAKE.git@c8a80aac2ed8e97cb2f28975da26d2926fa28144#egg=cake
+# click==8.1.3
+cycler==0.11.0
+# dominate==2.6.0
+et-xmlfile==1.1.0
+Flask==2.1.2
+Flask-Bootstrap4==4.0.2
+Flask-WTF==1.0.1
+importlib-metadata==4.11.4
+itsdangerous==2.1.2
+Jinja2==3.1.2
+kiwisolver==1.4.2
+MarkupSafe==2.1.1
 matplotlib==3.0.3
-numpy
+numpy==1.21.6
+openpyxl==3.0.9
+pandas==1.1.5
 Pillow==9.0.1
-flask
-flask-bootstrap4
-flask-wtf
-xlrd
-pandas
-openpyxl
+pwlf==2.4.0
+pyparsing==3.0.9
+python-dateutil==2.8.2
+pytz==2022.1
+scikit-learn==1.0.2
+scipy==1.7.3
+six==1.16.0
+statsmodels==0.13.5
+typing_extensions==4.2.0
+visitor==0.1.3
+Werkzeug==2.1.2
+WTForms==3.0.1
+xlrd==2.0.1
+zipp==3.8.0

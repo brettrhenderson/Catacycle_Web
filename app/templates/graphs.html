@@ -23,38 +23,11 @@
 {% endblock %}
 
 {% block content %}
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="{{ url_for('index') }}">
-        <img src="{{url_for('.static', filename='images/cycle_icon.png')}}" width="50" height="50" class="d-inline-block align-center" alt="">
-        CataHub
-      </a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('index') }}"> All Tools </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" href="{{ url_for('graphs') }}"> Catacycle </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('cake') }}"> CAKE </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('guide') }}"> User Guide</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('aboutus') }}"> About Us</a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-    <br>
+{% include "navbar.html" %}
+<br>
     <div class="container-fluid">
         <div class="row d-flex">
-            <!--<div class="col-md-1 col-lg-1"></div>-->
+            <!--<div class="gen_col-md-1 gen_col-lg-1"></div>-->
             <div class=" pt-1 pb-2 col-md-6 col-lg-6 d-flex flex-column align-items-center justify-content-center max-vw-50" style="overflow: auto;">
                 <div class="row" style="width: 90%">
                     <div id="cycle-radio" class="col-md-4 align-self-start btn-group btn-group-xs btn-group-toggle pb-2 pl-0" data-toggle="buttons">
@@ -635,98 +608,5 @@
         controls in the "Styling" tab.
     </div>
 
-    <!-- Footer.  This footer was adapted from mdbootstrap.com and is licensed under the MIT License.  Full License Text:
-    Copyright (c) 2019 MDBootstrap.com
-    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-    documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
-    rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-    permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
-    WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-    OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-    OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.-->
-    <footer class="page-footer font-small" style="background-color:#D3D3D3">
-
-        <!-- Footer Links -->
-        <div class="container text-center text-md-left">
-
-          <!-- Grid row -->
-          <div class="row">
-              <!-- Content -->
-              <h5 class="font-weight-bold text-uppercase mt-3 mb-4">About the Site</h5>
-              <p>The catalytic cycle generator is meant to be a smooth web interface to generate repeatable and
-                  standardized visualizations of the rates of various steps in a catalytic cycle.  Relative rates are
-                  assigned via drop-down boxes, resulting in arrow thicknesses that are proportional to the step rate.
-                  The user can customize arrow colors and styles through the Colors and Styling tabs as well as create
-                  single arrows for off-cycle reactions using the Side Reactions tab.  The generated graphic
-                  may be saved for annotation by the user to represent their chemistry in svg, png, eps, or pdf format.
-              </p>
-            <!-- Grid column -->
-
-          </div>
-          <!-- Grid row -->
-
-          <!-- Acknowledgements -->
-          <div class="row">
-            <!-- Grid column -->
-            <div class="col-md-6 mx-auto">
-              <br> 
-              <!-- Content -->
-              <p> Citation: DOI:  
-              <a href="https://pubs.acs.org/doi/10.1021/acs.organomet.9b00563" target="_blank" class="text-dark">10.1021/acs.organomet.9b00563</a> 
-              </p>
-              <p> Code: 
-              <a href="https://github.com/brettrhenderson/Catacycle" target="_blank" class="text-dark">https://github.com/brettrhenderson/Catacycle</a>
-              </p>
-
-            </div>
-            <!-- Grid column -->
-
-            <hr class="clearfix w-100 d-md-none">
-
-            <!-- Grid column -->
-            <div class="col-md-6 pt-3 d-flex flex-column justify-content-center">
-
-                <!-- Social buttons -->
-                <div class="wrapper">
-                    <ul class="social-icons icon-circle list-unstyled list-inline">
-                        <li>
-                            <a href="https://twitter.com/mcindoe?lang=en" target="_blank" class="btn">
-                                <i class="fa fa-twitter"> </i>
-                            </a>
-                        </li>
-                        <li class="ml-3">
-                            <a href="http://web.uvic.ca/~mcindoe/" target="_blank" class="btn btn-dark">
-                                McIndoe Group
-                            </a>
-                        </li>
-                        <li class="ml-3">
-                            <a href="https://pacilab.ca/" target="_blank" class="btn btn-dark">
-                                Paci Group
-                            </a>
-                        </li>
-                        <li class="ml-3">
-                            <a href="https://forms.gle/LDbjowhputK4UgA3A" target="_blank" class="btn btn-primary">
-                                Feedback
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <!-- Social buttons -->
-
-            </div>
-            <!-- Grid column -->
-
-          </div>
-          <!-- Grid row -->
-          </div>
-
-        </div>
-
-    </footer>
-    <!-- Footer -->
-
+{% include "footer.html" %}
 {% endblock %}

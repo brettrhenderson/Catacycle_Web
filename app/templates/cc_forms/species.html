@@ -1,0 +1,107 @@
+{% block body %}
+
+    <div class="form-row">
+      <!-- Species Name [spec_name]: string (def. “Species X”) -->
+      <div class="form-group col">
+        {{ form.system.form.species[0].form.spec_name.label() }}
+        {{ form.system.form.species[0].form.spec_name(class_="form-control spec-name",
+          title=form.system.form.species[0].form.spec_name.description,
+          data_toggle='tooltip', placeholder="Species 1") }}
+      </div>
+      <!--Initial Moles [mol0]: float-->
+      <div class="form-group col">
+        {{ form.system.form.species[0].form.mol0.label() }}
+        {{ form.system.form.species[0].form.mol0(class_="form-control",
+          title=form.system.form.species[0].form.mol0.description,
+          data_toggle='tooltip') }}
+      </div>
+      <!--Column [gen_col]: int-->
+      <div class="form-group col">
+        {{ form.system.form.species[0].form.gen_col.label() }}
+        {{ form.system.form.species[0].form.gen_col(class_="form-control",
+          title=form.system.form.species[0].form.gen_col.description,
+          data_toggle='tooltip') }}
+      </div>
+    </div>
+
+    <div class="collapse" id="apply_col">
+      <!--  Simulation Time Parameters. Use $('#apply_col').collapse() to initiate and
+      collapse('show'), .collapse('hide'), or .collapse('toggle') to control
+      -->
+      <div class="form-row">
+        <div class="form-group col-4">
+          {{ form.system.form.species[0].form.apply_col.label() }}
+          {{ form.system.form.species[0].form.apply_col(class_="form-control",
+            title=form.system.form.species[0].form.apply_col.description,
+            data_toggle='tooltip') }}
+        </div>
+      </div>
+
+    </div>
+
+    <!--
+    Group some lesser-used options into rows to save space
+      Continuous Addition | Instantaneous Addition
+    -->
+    <div id="additions-container-species-0">
+      <div class="form-row m-1">
+        <div class="col">
+          <a id="cont-add-control-species-0" class="btn btn-block btn-secondary collapse-control" data-toggle="collapse" href="#cont-add-species-0" role="button" aria-expanded="false" aria-controls="cont-add-species-0">
+            Continuous Addition
+          </a>
+        </div>
+        <div class="col">
+          <a id="one-shot-control-species-0" class="btn btn-block btn-secondary collapse-control" data-toggle="collapse" href="#one-shot-species-0" role="button" aria-expanded="false" aria-controls="one-shot-species-0">
+            Instantaneous Addition
+          </a>
+        </div>
+
+        <!--  Add Continuous Addition [0+]: [checkbox]
+          Should be made collapsible
+        -->
+        <div id="cont-add-species-0"  class="collapse" aria-labelledby="cont-add-control-species-0" data-parent="#additions-container-species-0">
+          <div id="cont-add-species-0-rows">
+
+          </div>
+          <div class="form-row px-3 pt-2">
+            <div class="col-sm-4">
+                <button type="button" class="btn btn-sm btn-outline-primary float-left add-cont" id="add-cont-species-0">
+                    <i class="fa fa-plus"></i> Addition
+                </button>
+            </div>
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <button type="button" class="btn btn-sm btn-outline-primary float-right del-cont" id="del-cont-species-0">
+                    <i class="fa fa-minus"></i> Addition
+                </button>
+            </div>
+          </div>
+        </div>
+
+        <!--  Add Instantaneous Addition [0+]: [checkbox]
+              Should be collabsible
+        -->
+        <div id="one-shot-species-0"  class="collapse" aria-labelledby="one-shot-control-species-0" data-parent="#additions-container-species-0">
+          <div id="one-shot-species-0-rows">
+
+          </div>
+          <div class="form-row px-3 pt-2">
+            <div class="col-sm-4">
+                <button type="button" class="btn btn-sm btn-outline-primary float-left add-oneshot" id="add-oneshot-species-0">
+                    <i class="fa fa-plus"></i> Addition
+                </button>
+            </div>
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <button type="button" class="btn btn-sm btn-outline-primary float-right del-oneshot" id="del-oneshot-species-0">
+                    <i class="fa fa-minus"></i> Addition
+                </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+{% endblock %}

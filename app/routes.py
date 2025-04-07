@@ -3,9 +3,16 @@ from werkzeug.utils import secure_filename
 from werkzeug.wsgi import FileWrapper
 from app.catacycle_form import RatesForm, DownloadForm
 from app.cake_form import CakeForm, CakeDownloadForm, CakeFormMulti, CakeDownloadMultiForm, format_ord, format_pois
+from app.cc_form import CCForm, CCDownloadForm
 from app.oboros import draw, draw_straight
+import app.outputs as outputs
 import cake as ck
 import cake.cake_fitting_multi as ckm
+from continuous_calibration.gen import gen as cc_gen
+from continuous_calibration.apply import apply as cc_apply
+from continuous_calibration.prep.raw_import import raw_import as cc_raw_import
+from continuous_calibration.prep.export import export_xlsx as cc_export_xlsx
+
 from app import app
 import os
 import logging
@@ -130,7 +137,7 @@ def download_cake_xlsx_old():
 
         t, r, p, fit, fit_p, fit_r, _, res_val, res_err, ss_res, r_squared, cat_pois, cat_pois_err = cake_data
         t_col, r_col, p_col = get_col_nums(form)
-        cat_add_rate = ck.get_cat_add_rate(form.cat_sol_conc.data, form.inject_rate.data, form.react_vol_init.data)
+        cat_add_rate = ck.get_cat_add_rate(form.cat_sol_conc.data, form.inject_rate.data, form.vol_init.data)
         param_dict = ck.make_param_dict(form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data,
                                           form.p_end.data, cat_add_rate, form.t_inj.data, form.format_k_est(),
                                           form.format_r_ord(), form.format_cat_ord(), form.format_t0_est(), t_col, None,
@@ -154,7 +161,6 @@ def download_cake_xlsx_old():
 @app.route('/download-cake-old', methods=['GET', 'POST'])
 def download_cake_old():
     form = CakeDownloadForm()
-    # form = CakeDownloadMultiForm()
 
     if request.method == 'POST' and form.validate_on_submit():
         log.debug(f"Collected form data from user: {form.data}")
@@ -196,7 +202,7 @@ def run_cake_wrapper(form):
     log.debug(f"Read Data from user-specified Excel sheet:\n {df.head(5)}")
     # reset column indices to 1-indexed
     t_col, r_col, p_col = get_col_nums(form)
-    cat_add_rate = ck.get_cat_add_rate(form.cat_sol_conc.data, form.inject_rate.data, form.react_vol_init.data)
+    cat_add_rate = ck.get_cat_add_rate(form.cat_sol_conc.data, form.inject_rate.data, form.vol_init.data)
     cake_data = ck.fit_cake(df, form.stoich_r.data, form.stoich_p.data, form.r0.data, form.p0.data, form.p_end.data,
                             cat_add_rate, form.t_inj.data, form.format_k_est(), form.format_r_ord(),
                             form.format_cat_ord(), form.format_t0_est(), t_col, None, r_col, p_col,
@@ -328,9 +334,9 @@ def run_cake_multi_wrapper(form):
     log.debug(f"FORMATTED DATA: {data}")
     df = ckm.read_data(data.pop('xl'), data.pop('sheet_name'), data['t_col'], data['col'], None, None)
     spec_type = data.pop('spec_type')
-    react_vol_init = data.pop('react_vol_init')
-    output = ckm.fit_cake(df, spec_type, react_vol_init, **data)
-    param_dict = ckm.make_param_dict(spec_type, react_vol_init, **data)
+    vol_init = data.pop('vol_init')
+    output = ckm.fit_cake(df, spec_type, vol_init, **data)
+    param_dict = ckm.make_param_dict(spec_type, vol_init, **data)
     return output, df, param_dict
 
 
@@ -341,8 +347,115 @@ def sim_cake_multi_wrapper(form):
         data.pop(key)
     log.debug(f"FORMATTED DATA: {data}")
     spec_type = data.pop('spec_type')
-    react_vol_init = data.pop('react_vol_init')
+    vol_init = data.pop('vol_init')
     t = data.pop('t_param')
-    output = ckm.sim_cake(t, spec_type, react_vol_init, **data)
-    param_dict = ckm.make_param_dict(spec_type, react_vol_init, **data)
+    output = ckm.sim_cake(t, spec_type, vol_init, **data)
+    param_dict = ckm.make_param_dict(spec_type, vol_init, **data)
     return output, data['fit_asp'], param_dict
+
+
+##############################################
+# Continuous Calibration
+##############################################
+
+@app.route('/cc', methods=['GET', 'POST'])
+def cc():
+    form = CCForm()  # initialize the backend of the web form
+    data = form.data
+    log.debug(f'\nFORM VALID? {form.validate()}\n')
+    log.debug(f'\nFORM VALIDATION ERRORS: {form.errors.items()}\n')
+    log.debug(f'\nFORM DATA {data}\n')
+
+    if request.method == 'POST' and form.validate_on_submit():
+        try:
+            dict, gen_df, gen_output, apply_df, apply_output = run_cc_wrapper(form)
+        except Exception as e:
+            raise e
+            # return e.__str__(), 400
+
+        if apply_output is not None:
+            html, _ = apply_output.plot_conc_vs_time(f_format='svg', return_img=False)
+        else:
+            html, _ = gen_output.plot_intensity_vs_conc(f_format='svg', return_img=False)
+
+        results = outputs.pprint_cc(gen_output)
+
+        return jsonify(data=[html, results])
+
+    return render_template('cc.html', form=form)
+
+
+@app.route('/download-cc-xlsx', methods=['GET', 'POST'])
+def download_cc_xlsx():
+    log.debug(f"Downloading the Excel data")
+    form = CCForm()
+    data = form.data
+    log.debug(f'\nFORM VALID? {form.validate()}\n')
+    log.debug(f'\nFORM VALIDATION ERRORS: {form.errors.items()}\n')
+    log.debug(f'\nFORM DATA {data}\n')
+    if request.method == 'POST' and form.validate_on_submit():
+        try:
+            dict, gen_df, gen_output, apply_df, apply_output = run_cc_wrapper(form)
+        except Exception as e:
+            raise e
+        log.debug(dict)
+        tmp_file, mimetype = outputs.write_cc_fit_data_temp(dict, gen_output, apply_output)
+        filename = secure_filename('cc.xlsx')
+
+        tmp_file.seek(0)
+        response = make_response(Response(FileWrapper(tmp_file), mimetype=mimetype, direct_passthrough=True))
+        response.headers.set('Content-Disposition', 'attachment', filename=filename)
+        log.debug(response)
+        return response
+    else:
+        log.debug("Not sending anything")
+        return '', 204
+
+
+@app.route('/download-cc', methods=['GET', 'POST'])
+def download_cc():
+    form = CCDownloadForm()
+    data = form.data
+    img_format = data['f_format']
+
+    if request.method == 'POST' and form.validate_on_submit():
+        try:
+            dict, gen_df, gen_output, apply_df, apply_output = run_cc_wrapper(form)
+        except Exception as e:
+            raise e
+
+        if apply_output is not None:
+            img, mimetype = apply_output.plot_conc_vs_time(f_format=img_format, return_img=True)
+        else:
+            img, mimetype = gen_output.plot_intensity_vs_conc(f_format=img_format, return_img=True)
+
+        img.seek(0)
+        img = FileWrapper(img)
+        response = make_response(Response(img, mimetype=mimetype, direct_passthrough=True))
+        filename = secure_filename(f'cc.{img_format}')
+        response.headers.set('Content-Disposition', 'attachment', filename=filename)
+        return response
+    else:
+        log.debug("Not sending anything")
+        return '', 204
+
+
+def run_cc_wrapper(form):
+    dict = form.prepare_data()
+
+    log.debug(f"FORMATTED DATA: {dict}")
+
+    gen_df = cc_raw_import(dict['gen_xl'], dict['gen_sheet_name'], dict['gen_t_col'], dict['gen_col'])
+    print(dict)
+    gen_output = cc_gen(gen_df, *[dict[key] for key in ['spec_name', 'gen_t_col', 'gen_col', 'mol0', 'vol0',
+        'add_sol_conc', 'add_cont_rate', 't_cont', 'add_one_shot', 't_one_shot', 'sub_cont_rate', 'path_length',
+        'fit_eq', 'intercept','lol_test', 'lol_method', 'p_thresh', 'sg_win', 'breakpoint_lim', 'diffusion_delay',
+        'zero', 'win', 'inc']])
+
+    if dict['apply_xl'] is not None:
+        apply_df = cc_raw_import(dict['apply_xl'], dict['apply_sheet_name'], dict['apply_t_col'], dict['apply_col'])
+        apply_output = gen_output.apply(apply_df, dict['spec_name'], dict['apply_col'], dict['apply_t_col'])
+    else:
+        apply_df, apply_output = None, None
+
+    return dict, gen_df, gen_output, apply_df, apply_output

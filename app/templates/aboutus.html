@@ -11,34 +11,7 @@
 {% endblock %}
 
 {% block content %}
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="{{ url_for('index') }}">
-    <img src="{{url_for('.static', filename='images/cycle_icon.png')}}" width="50" height="50" class="d-inline-block align-center" alt="">
-    CataHub
-  </a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('index') }}"> All Tools </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('graphs') }}"> Catacycle </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('cake') }}"> CAKE </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{{ url_for('guide') }}"> User Guide</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active" href="{{ url_for('aboutus') }}"> About Us</a>
-      </li>
-    </ul>
-  </div>
-</nav>
+{% include "navbar.html" %}
 <br>
 <div class="container">
     <h5 class="font-weight text-uppercase">About Catacycle</h5>
@@ -54,4 +27,6 @@
     <h5 class="font-weight text-uppercase">About CAKE</h5>
     SOME TEXT ABOUT CAKE>>>LET THEM EAT IT.
 </div>
+
+{% include "footer.html" %}
 {% endblock %}

@@ -1,0 +1,73 @@
+{% block body %}
+
+<!--Scaling Points [scale_avg_num]: int-->
+<!--Smoothing Window [win]: int-->
+<!--Interpolation Multiplier [inc]: int-->
+
+<div class="tab-pane" id="fittab">
+
+    <div class="form-row">
+      <div class="form-group col">
+        {{ form.fit.form.fit_eq.label() }}
+        {{ form.fit.form.fit_eq(class_="form-control", title=form.fit.form.fit_eq.description, data_toggle='tooltip') }}
+      </div>
+      <div class="form-group col">
+        {{ form.fit.form.intercept.label() }}
+        {{ form.fit.form.intercept(title=form.fit.form.intercept.description,
+        data_toggle='tooltip') }}
+      </div>
+    </div>
+
+    <div class="collapse" id="fitlol">
+      <div class="form-row">
+        <div class="form-group col">
+          {{ form.fit.form.lol.label() }}
+          {{ form.fit.form.lol(title=form.fit.form.lol.description, data_toggle='tooltip') }}
+        </div>
+        <div class="form-group col">
+          {{ form.fit.form.path_length.label() }}
+          {{ form.fit.form.path_length(class_="form-control", title=form.fit.form.path_length.description,
+          type='number', min=0.0, data_toggle='tooltip') }}
+        </div>
+      </div>
+    </div>
+
+    <div class="collapse" id="loltest">
+      <div class="form-row">
+        <!--LOL test [lol_test]: “Rainbow”, “Runs”, or “Harvey-Collier” -->
+        <div class="form-group col">
+          {{ form.fit.form.lol_test.label() }}
+          {{ form.fit.form.lol_test(class_="form-control",
+          title=form.fit.form.lol_test.description, data_toggle='tooltip') }}
+        </div>
+        <!--LOL method [lol_method]: “max”, “first”, or “last” -->
+        <div class="form-group col">
+          {{ form.fit.form.lol_method.label() }}
+          {{ form.fit.form.lol_method(class_="form-control",
+          title=form.fit.form.lol_method.description, data_toggle='tooltip') }}
+        </div>
+        <div class="form-group col">
+          {{ form.fit.form.p_thresh.label() }}
+          {{ form.fit.form.p_thresh(class_="form-control", title=form.fit.form.p_thresh.description,
+          type=number, min=0, max=1, data_toggle='tooltip') }}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group col-6">
+        {{ form.fit.form.sg.label() }}
+        {{ form.fit.form.sg(title=form.fit.form.sg.description, data_toggle='tooltip') }}
+      </div>
+      <div class="collapse" id="sg_win_collapse">
+        <div class="form-group col">
+          {{ form.fit.form.sg_win.label() }}
+          {{ form.fit.form.sg_win(class_="form-control", min=1, title=form.fit.form.sg_win.description,
+          data_toggle='tooltip') }}
+        </div>
+      </div>
+    </div>
+
+</div>
+
+{% endblock %}

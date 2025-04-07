@@ -1,0 +1,58 @@
+{% block body %}
+
+<!--Choose File [gen_xl]-->
+<!--Sheet Name [gen_sheet_name]: string-->
+<!--Time Column [gen_t_col]: int-->
+
+<div class="tab-pane active show" id="uploadtab">
+    <!--  Excel File, Sheet Name, and Time Column  -->
+    <div class="form-row">
+      <div class="form-group col-6 my-auto">
+        {{ form.upload.form.gen_xl.label }}
+        {{ form.upload.form.gen_xl(class_="form-control", placeholder="Upload Excel Data",
+          accept=".xlsx,.xls, .XLSX, .XLS", title=form.upload.form.gen_xl.description, data_toggle='tooltip') }}
+      </div>
+      <div class="form-group col-3 my-auto">
+        {{ form.upload.form.gen_sheet_name.label() }}
+        {{ form.upload.form.gen_sheet_name(class_="form-control", title=form.upload.form.gen_sheet_name.description,
+          data_toggle='tooltip') }}
+      </div>
+      <div class="form-group col-3 my-auto">
+        {{ form.upload.form.gen_t_col.label() }}
+        {{ form.upload.form.gen_t_col(class_="form-control", title=form.upload.form.gen_t_col.description,
+          data_toggle='tooltip') }}
+      </div>
+    </div>
+    <!--  Whether to Perform to Apply the Calibration  -->
+    <div class="form-row m-2">
+      <div class="form-check col">
+        {{ form.upload.form.apply(title=form.upload.form.apply.description, data_toggle='tooltip') }}
+        {{ form.upload.form.apply.label() }}
+      </div>
+    </div>
+    <!--  Simulation Time Parameters. Use $('#apply_upload').collapse() to initiate and
+          .collapse('show'), .collapse('hide'), or .collapse('toggle') to control
+    -->
+    <div class="collapse" id="apply_upload_collapse">
+      <div class="form-row">
+        <div class="form-group col-6 my-auto">
+          {{ form.upload.form.apply_xl.label }}
+          {{ form.upload.form.apply_xl(class_="form-control", placeholder="Upload Excel Data",
+            accept=".xlsx,.xls, .XLSX, .XLS", title=form.upload.form.apply_xl.description, data_toggle='tooltip') }}
+        </div>
+        <div class="form-group col-3 my-auto">
+          {{ form.upload.form.apply_sheet_name.label() }}
+          {{ form.upload.form.apply_sheet_name(class_="form-control", title=form.upload.form.apply_sheet_name.description,
+            data_toggle='tooltip') }}
+        </div>
+        <div class="form-group col-3 my-auto">
+          {{ form.upload.form.apply_t_col.label() }}
+          {{ form.upload.form.apply_t_col(class_="form-control", title=form.upload.form.apply_t_col.description,
+            data_toggle='tooltip') }}
+        </div>
+      </div>
+    </div>
+
+</div>
+
+{% endblock %}
