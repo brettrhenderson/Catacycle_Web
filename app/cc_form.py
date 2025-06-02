@@ -210,13 +210,6 @@ class CCForm(FlaskForm):
                 apply_t_col = data['upload']['apply_t_col']
         else:
             apply_xl, apply_sheet_name, apply_t_col, apply_col = None, None, None, None
-        if data['upload']['apply_t_col']:
-            try:
-                apply_t_col = int(data['upload']['apply_t_col']) - 1
-            except:
-                apply_t_col = data['upload']['apply_t_col']
-        else:
-            apply_t_col = data['upload']['apply_t_col']
 
         # go through each species in data
         spec_name, mol0, add_sol_conc, add_cont_rate = [], [], [], []
