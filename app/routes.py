@@ -446,15 +446,14 @@ def run_cc_wrapper(form):
     log.debug(f"FORMATTED DATA: {dict}")
 
     gen_df = cc_raw_import(dict['gen_xl'], dict['gen_sheet_name'], dict['gen_t_col'], dict['gen_col'])
-    print(dict)
-    gen_output = cc_gen(gen_df, *[dict[key] for key in ['spec_name', 'gen_t_col', 'gen_col', 'mol0', 'vol0',
-        'add_sol_conc', 'add_cont_rate', 't_cont', 'add_one_shot', 't_one_shot', 'sub_cont_rate', 'path_length',
-        'fit_eq', 'intercept','lol_test', 'lol_method', 'p_thresh', 'sg_win', 'breakpoint_lim', 'diffusion_delay',
-        'zero', 'win', 'inc']])
+    gen_output = cc_gen(gen_df, *[{**dict, 'fit_lim': None}[key] for key in ['spec_name', 'gen_t_col', 'gen_col', 'mol0',
+        'vol0', 'add_sol_conc', 'add_cont_rate', 't_cont', 'add_one_shot', 't_one_shot', 'sub_cont_rate', 'path_length',
+        'fit_eq', 'intercept', 'fit_lim', 'lof_test', 'lof_method', 'p_thresh', 'smooth_eq', 'sg_win', 'breakpoint_lim',
+        'diffusion_delay', 'zero', 'win', 'inc']])
 
     if dict['apply_xl'] is not None:
         apply_df = cc_raw_import(dict['apply_xl'], dict['apply_sheet_name'], dict['apply_t_col'], dict['apply_col'])
-        apply_output = gen_output.apply(apply_df, dict['spec_name'], dict['apply_col'], dict['apply_t_col'])
+        apply_output = gen_output.apply(apply_df, dict['apply_col'], dict['apply_t_col'])
     else:
         apply_df, apply_output = None, None
 

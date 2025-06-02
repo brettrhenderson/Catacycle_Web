@@ -9,7 +9,7 @@
     <div class="form-row">
       <div class="form-group col">
         {{ form.fit.form.fit_eq.label() }}
-        {{ form.fit.form.fit_eq(class_="form-control", title=form.fit.form.fit_eq.description, data_toggle='tooltip') }}
+        {{ form.fit.form.fit_eq(class_="form-control", id="fit_eq", title=form.fit.form.fit_eq.description, data_toggle='tooltip') }}
       </div>
       <div class="form-group col">
         {{ form.fit.form.intercept.label() }}
@@ -18,11 +18,11 @@
       </div>
     </div>
 
-    <div class="collapse" id="fitlol">
+    <div class="collapse" id="fitlof">
       <div class="form-row">
         <div class="form-group col">
-          {{ form.fit.form.lol.label() }}
-          {{ form.fit.form.lol(title=form.fit.form.lol.description, data_toggle='tooltip') }}
+          {{ form.fit.form.lof.label() }}
+          {{ form.fit.form.lof(title=form.fit.form.lof.description, data_toggle='tooltip') }}
         </div>
         <div class="form-group col">
           {{ form.fit.form.path_length.label() }}
@@ -32,35 +32,37 @@
       </div>
     </div>
 
-    <div class="collapse" id="loltest">
+    <div class="collapse" id="loftest">
       <div class="form-row">
-        <!--LOL test [lol_test]: “Rainbow”, “Runs”, or “Harvey-Collier” -->
-        <div class="form-group col">
-          {{ form.fit.form.lol_test.label() }}
-          {{ form.fit.form.lol_test(class_="form-control",
-          title=form.fit.form.lol_test.description, data_toggle='tooltip') }}
+        <!--LOF test [lof_test]: “RMSE”, “MAE”, “R2”, “Runs”, "Rainbow”, or “Harvey-Collier” -->
+        <div class="form-group col-4">
+          {{ form.fit.form.lof_test.label() }}
+          {{ form.fit.form.lof_test(class_="form-control", id="lof_test-options",
+          title=form.fit.form.lof_test.description, data_toggle='tooltip') }}
         </div>
-        <!--LOL method [lol_method]: “max”, “first”, or “last” -->
-        <div class="form-group col">
-          {{ form.fit.form.lol_method.label() }}
-          {{ form.fit.form.lol_method(class_="form-control",
-          title=form.fit.form.lol_method.description, data_toggle='tooltip') }}
+        <!--LOF method [lof_method]: “min”, “max”, “first”, or “last” -->
+        <div class="form-group col-4">
+          {{ form.fit.form.lof_method.label() }}
+          {{ form.fit.form.lof_method(class_="form-control", id="lof_method-options",
+          title=form.fit.form.lof_method.description, data_toggle='tooltip') }}
         </div>
-        <div class="form-group col">
-          {{ form.fit.form.p_thresh.label() }}
-          {{ form.fit.form.p_thresh(class_="form-control", title=form.fit.form.p_thresh.description,
-          type=number, min=0, max=1, data_toggle='tooltip') }}
+        <div class="form-group col-4">
+          <div class="collapse" id="pthresh">
+            {{ form.fit.form.p_thresh.label() }}
+            {{ form.fit.form.p_thresh(class_="form-control", title=form.fit.form.p_thresh.description,
+            type=number, min=0, max=1, data_toggle='tooltip') }}
+          </div>
         </div>
       </div>
     </div>
 
     <div class="form-row">
       <div class="form-group col-6">
-        {{ form.fit.form.sg.label() }}
-        {{ form.fit.form.sg(title=form.fit.form.sg.description, data_toggle='tooltip') }}
+        {{ form.fit.form.smooth_eq.label() }}
+        {{ form.fit.form.smooth_eq(class_="form-control", id="smooth_eq", title=form.fit.form.smooth_eq.description, data_toggle='tooltip') }}
       </div>
-      <div class="collapse" id="sg_win_collapse">
-        <div class="form-group col">
+      <div class="form-group col-6">
+        <div class="collapse" id="sg_win_collapse">
           {{ form.fit.form.sg_win.label() }}
           {{ form.fit.form.sg_win(class_="form-control", min=1, title=form.fit.form.sg_win.description,
           data_toggle='tooltip') }}

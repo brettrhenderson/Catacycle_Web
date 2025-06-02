@@ -81,9 +81,9 @@ function addSpeciesHandler() {
     bindSpeciesListeners(specNum);
 
     if (apply) {
-          $("[id^='calib_info-species-'][id$='-apply_col']").collapse('show');
+          $("[id^='system-species-'][id$='-apply_col']").collapse('show');
     } else {
-          $("[id^='calib_info-species-'][id$='-apply_col']").collapse('hide');
+          $("[id^='system-species-'][id$='-apply_col']").collapse('hide');
     }
 
     // increment specNum and append to contAddNum and oneShotNum
@@ -308,22 +308,22 @@ function makeSpeciesHTML(specNum) {
       </div>
       <!--Initial Moles [mol0]: float-->
       <div class="form-group col">
-        <label for="calib_info-species-${specNum}-mol0">Initial Moles</label>
-        <input class="form-control" data-toggle="tooltip" id="calib_info-species-${specNum}-mol0" name="calib_info-species-${specNum}-mol0" title="" type="number" value="0" data-original-title="Initial amount in moles">
+        <label for="system-species-${specNum}-mol0">Initial Moles</label>
+        <input class="form-control" data-toggle="tooltip" id="system-species-${specNum}-mol0" name="system-species-${specNum}-mol0" title="" type="number" value="0" data-original-title="Initial amount in moles">
       </div>
       <!--Column [col]: int-->
-      <div class="form-group col-6">
-        <label for="calib_info-species-${specNum}-col">Generation Column</label>
-        <input class="form-control" data-toggle="tooltip" id="calib_info-species-${specNum}-col" name="calib_info-species-${specNum}-col" title="" type="text" value="" data-original-title="Name or index, where 1 is the first column">
+      <div class="form-group col">
+        <label for="system-species-${specNum}-col">Generation Column</label>
+        <input class="form-control" data-toggle="tooltip" id="system-species-${specNum}-col" name="system-species-${specNum}-col" title="" type="text" value="" data-original-title="Name or index, where 1 is the first column">
       </div>
     </div>
 
-    <div class="collapse" id="calib_info-species-${specNum}-apply_col">
+    <div class="collapse" id="system-species-${specNum}-apply_col">
       <!--Column [col]: int-->
       <div class="form-row">
-        <div class="form-group col">
-            <label for="calib_info-species-${specNum}-col">Application Column</label>
-            <input class="form-control" data-toggle="tooltip" id="calib_info-species-${specNum}-col" name="calib_info-species-${specNum}-col-apply" title="" type="text" value="" data-original-title="Name or index, where 1 is the first column">
+        <div class="form-group col-4">
+            <label for="system-species-${specNum}-col">Application Column</label>
+            <input class="form-control" data-toggle="tooltip" id="system-species-${specNum}-col" name="system-species-${specNum}-col-apply" title="" type="text" value="" data-original-title="Name or index, where 1 is the first column">
         </div>
       </div>
     </div>

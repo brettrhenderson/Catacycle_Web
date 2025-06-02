@@ -10,8 +10,8 @@ def write_cc_fit_data(filename, param_dict, gen_data, apply_data):
         out_dict["Estimated t_cont"] = gen_data.est_t_cont
     if gen_data.fit_eq is not None:
         out_dict["Coefficients"] = gen_data.params
-        if gen_data.lol:
-            out_dict["Limit of Linearity"] = gen_data.lol
+        if gen_data.lof:
+            out_dict["Limit of Fitting"] = gen_data.lof
         if gen_data.mec:
             out_dict["Molar Extinction Coefficent"] = gen_data.mec
         if gen_data.mol0_fit is not None:
@@ -26,11 +26,11 @@ def write_cc_fit_data(filename, param_dict, gen_data, apply_data):
 
     writer = pd.ExcelWriter(filename, engine='openpyxl')
     if apply_data is not None:
-        apply_data.all_df.to_excel(writer, sheet_name='ApplicationData')
-    gen_data.all_df.to_excel(writer, sheet_name='GenerationData')
+        apply_data.all_df.to_excel(writer, sheet_name='ApplicationData', index=False)
+    gen_data.all_df.to_excel(writer, sheet_name='GenerationData', index=False)
     if out_dict:
-        pd.DataFrame.from_dict(out_dict).to_excel(writer, sheet_name='OutputParams')
-    pd.DataFrame.from_dict(param_dict).to_excel(writer, sheet_name='InputParams')
+        pd.DataFrame.from_dict(out_dict).to_excel(writer, sheet_name='OutputParams', index=False)
+    pd.DataFrame.from_dict(param_dict).to_excel(writer, sheet_name='InputParams', index=False)
     writer.save()
 
 
@@ -51,8 +51,8 @@ Est. Error +/-: { {item: f"{value:.2g}" for item, value in data.param_err[0].ite
 
         if data.breakpoint_lim:
             result += f"Estimated t_cont: {[f'{item:.4g}' for item in data.est_t_cont[0]]}\n"
-        if data.lol is not None:
-            result += f"Limits of Linearity: {data.lol[0]:.4g}\n"
+        if data.lof is not None:
+            result += f"Limits of Fitting: {data.lof[0]:.4g}\n"
         if data.mec is not None:
             result += f"Molar Extinction Coefficient: {data.mec[0]:.4g}\n"
         if data.mol0_fit is not None:

@@ -135,17 +135,18 @@ class FitForm(Form):
     Contains parameters for fitting calibration data
     """
     fit_eq = SelectField('Fit Equation', id='fit_eq', description='Equation type to fit data with',
-                         choices=[('Linear', 'Linear'), ('Exponential', 'Exponential'), ('Fourier', 'Fourier'), ('None', 'None')], default='None')
+                         choices=[('Linear', 'Linear'), ('Logarithm', 'Logarithm'), ('Exponential', 'Exponential'), ('Tangent', 'Tangent'), ('Michaelis-Menten', 'Michaelis-Menten'), ('Langmuir', 'Langmuir'), ('None', 'None')], default='None')
     intercept = BooleanField('Fit Intercept', id='intercept-box', description='Fit data with intercept', default=False)
 
-    lol = BooleanField('Fit Limit of Linearity', id='lol-box', description='Fit data with linear equation until no longer valid', default=False)
-    lol_test = SelectField('Test', description='Algorithm for estimating limit of linearity', id='lol_test',
-                          choices=[('Rainbow', 'Rainbow'), ('Runs', 'Runs'), ('Harvey-Collier', 'Harvey-Collier')])
-    lol_method = SelectField('Selection', description='Selection criterion for estimating limit of linearity', id='lol_method',
-                          choices=[('max', 'max'), ('first', 'first'), ('last', 'last')], default='last')
-    p_thresh = FloatField('Threshold', id='p_thresh', description='p-value threshold for estimating limit of linearity', default=0.05)
+    lof = BooleanField('Fit Limit of Fitting', id='lof-box', description='Fit data with equation until no longer valid', default=False)
+    lof_test = SelectField('Test', description='Algorithm for estimating limit of fitting', id='lof_test',
+                           choices=[('RMSE', 'RMSE'), ('MAE', 'MAE'), ('R2', 'R2'), ('Runs', 'Runs'), ('Rainbow', 'Rainbow'), ('Harvey-Collier', 'Harvey-Collier'), ('Shapiro-Wilk', 'Shapiro-Wilk')])
+    lof_method = SelectField('Selection', description='Selection criterion for estimating limit of fitting', id='lof_method',
+                             choices=[('min', 'min'), ('max', 'max'), ('first', 'first'), ('last', 'last')], default='min')
+    p_thresh = FloatField('Threshold', id='p_thresh', description='p-value threshold for estimating limit of fitting', default=0.05)
 
-    sg = BooleanField('Savitsky-Golay Fit', id='sg-box', description='Fit data with Savitsky-Golay filtering', default=False)
+    smooth_eq = SelectField('Smoothing Equation', id='smooth_eq-box', description='Fit data with a smoothed line',
+                            choices=[('monotonic', 'Monotonic GAM'), ('concave', 'Concave GAM'), ('Savitsky-Golay', 'Savitsky-Golay'), ('None', 'None')], default='concave')
     sg_win = IntegerField('Window', id='sg_win', description='Number of data points to use for Savitsky-Golay smoothing', default=11)
 
     path_length = FloatField('Path Length', [optional()], id='path_length', description='Length of light path in UV-Vis spectroscopy if desired')
@@ -197,6 +198,18 @@ class CCForm(FlaskForm):
             gen_t_col = int(data['upload']['gen_t_col']) - 1
         except:
             gen_t_col = data['upload']['gen_t_col']
+        if data['upload']['apply']:
+            apply_xl = data['upload']['apply_xl']
+            apply_sheet_name = data['upload']['apply_sheet_name']
+            if data['upload']['apply_t_col']:
+                try:
+                    apply_t_col = int(data['upload']['apply_t_col']) - 1
+                except:
+                    apply_t_col = data['upload']['apply_t_col']
+            else:
+                apply_t_col = data['upload']['apply_t_col']
+        else:
+            apply_xl, apply_sheet_name, apply_t_col, apply_col = None, None, None, None
         if data['upload']['apply_t_col']:
             try:
                 apply_t_col = int(data['upload']['apply_t_col']) - 1
@@ -218,7 +231,7 @@ class CCForm(FlaskForm):
                 gen_col.append(int(spec['gen_col']) - 1)
             except:
                 gen_col.append(spec['gen_col'])
-            if spec['apply_col']:
+            if data['upload']['apply'] and spec['apply_col']:
                 try:
                     apply_col.append(int(spec['apply_col']) - 1)
                 except:
@@ -267,16 +280,16 @@ class CCForm(FlaskForm):
             fit_eq = None
         else:
             fit_eq = data['fit']['fit_eq']
-        if data['fit']['lol']:
-            lol_test = data['fit']['lol_test']
-            lol_method = data['fit']['lol_method']
+        if data['fit']['lof']:
+            lof_test = data['fit']['lof_test']
+            lof_method = data['fit']['lof_method']
             p_thresh = data['fit']['p_thresh']
         else:
-            lol_test, lol_method, p_thresh = None, None, None
-        if not data['fit']['sg']:
-            sg_win = 1
+            lof_test, lof_method, p_thresh = None, None, None
+        if 'None' in data['fit']['smooth_eq']:
+            smooth_eq = None
         else:
-            sg_win = data['fit']['sg_win']
+            smooth_eq = data['fit']['smooth_eq']
 
         dict = {'gen_xl': data['upload']['gen_xl'],
                 'gen_sheet_name': data['upload']['gen_sheet_name'],
@@ -294,17 +307,18 @@ class CCForm(FlaskForm):
                 'fit_eq': fit_eq,
                 'intercept': data['fit']['intercept'],
                 'path_length': data['fit']['path_length'],
-                'lol_test': lol_test,
-                'lol_method': lol_method,
+                'lof_test': lof_test,
+                'lof_method': lof_method,
                 'p_thresh': p_thresh,
-                'sg_win': sg_win,
+                'smooth_eq': smooth_eq,
+                'sg_win': data['fit']['sg_win'],
                 'breakpoint_lim': data['manip']['breakpoint_lim'],
                 'diffusion_delay': data['manip']['diffusion_delay'],
                 'zero': data['manip']['zero'],
                 'win': data['manip']['win'],
                 'inc': data['manip']['inc'],
-                'apply_xl': data['upload']['apply_xl'],
-                'apply_sheet_name': data['upload']['apply_sheet_name'],
+                'apply_xl': apply_xl,
+                'apply_sheet_name': apply_sheet_name,
                 'apply_t_col': apply_t_col,
                 'apply_col': apply_col}
 
