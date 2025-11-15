@@ -36,18 +36,11 @@
     </div>
 
     <div class="form-row">
-      <!--Column [gen_col]: int-->
+      <!--Initial Moles [mol0]: float-->
       <div class="form-group col">
-        {{ form.system.form.species[0].form.col.label() }}
-        {{ form.system.form.species[0].form.col(class_="form-control species-col",
-          title=form.system.form.species[0].form.col.description, min=1,
-          data_toggle='tooltip') }}
-      </div>
-      <!--Initial Moles [mol_init]: float-->
-      <div class="form-group col">
-        {{ form.system.form.species[0].form.mol_init.label() }}
-        {{ form.system.form.species[0].form.mol_init(class_="form-control",
-          title=form.system.form.species[0].form.mol_init.description,
+        {{ form.system.form.species[0].form.mol0.label() }}
+        {{ form.system.form.species[0].form.mol0(class_="form-control",
+          title=form.system.form.species[0].form.mol0.description,
           data_toggle='tooltip') }}
       </div>
       <!--Final Moles [mol_end]: float-->
@@ -55,6 +48,13 @@
         {{ form.system.form.species[0].form.mol_end.label() }}
         {{ form.system.form.species[0].form.mol_end(class_="form-control",
           title=form.system.form.species[0].form.mol_end.description,
+          data_toggle='tooltip') }}
+      </div>
+      <!--Column [gen_col]: int-->
+      <div class="form-group col">
+        {{ form.system.form.species[0].form.col.label() }}
+        {{ form.system.form.species[0].form.col(class_="form-control species-col",
+          title=form.system.form.species[0].form.col.description, min=1,
           data_toggle='tooltip') }}
       </div>
     </div>
@@ -111,21 +111,21 @@
         <div id="pois-limits-species-0" class="collapse" aria-labelledby="pois-control-species-0" data-parent="#limits-container-species-0">
           <div class="form-row m-1">
             <!--Est Poisoning [pois_val] (default 0): float-->
-            <div class="form-group col">
+            <div class="form-group col-4">
               {{ form.system.form.species[0].form.pois_val.label() }}
               {{ form.system.form.species[0].form.pois_val(class_="form-control",
                 title=form.system.form.species[0].form.pois_val.description,
                 data_toggle='tooltip') }}
             </div>
             <!--Min Poisoning [pois_min] (default 0): float-->
-            <div class="form-group col">
+            <div class="form-group col-4">
               {{ form.system.form.species[0].form.pois_min.label() }}
               {{ form.system.form.species[0].form.pois_min(class_="form-control bounds-input",
                 title=form.system.form.species[0].form.pois_min.description,
                 data_toggle='tooltip') }}
             </div>
             <!--Max Poisoning [pois_max] (default 0): float-->
-            <div class="form-group col">
+            <div class="form-group col-4">
               {{ form.system.form.species[0].form.pois_max.label() }}
               {{ form.system.form.species[0].form.pois_max(class_="form-control bounds-input",
                 title=form.system.form.species[0].form.pois_max.description,
@@ -139,7 +139,7 @@
 
     <!--
     Group some lesser-used options into rows to save space
-      2. Continuous Addition | Instantaneous Addition
+      2. Continuous Addition | Discrete Addition
     -->
     <div id="additions-container-species-0">
       <div class="form-row mt-2">
@@ -150,7 +150,7 @@
         </div>
         <div class="col">
           <a id="one-shot-control-species-0" class="btn btn-block btn-secondary collapse-control" data-toggle="collapse" href="#one-shot-species-0" role="button" aria-expanded="false" aria-controls="one-shot-species-0">
-            Instantaneous Addition
+            Discrete Addition
           </a>
         </div>
 
@@ -176,8 +176,8 @@
           </div>
         </div>
 
-        <!--  Add Instantaneous Addition [0+]: [checkbox]
-              Should be collabsible
+        <!--  Add Discrete Addition [0+]: [checkbox]
+              Should be collapsible
         -->
         <div id="one-shot-species-0"  class="collapse" aria-labelledby="one-shot-control-species-0" data-parent="#additions-container-species-0">
           <div id="one-shot-species-0-rows">
@@ -197,7 +197,6 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
 

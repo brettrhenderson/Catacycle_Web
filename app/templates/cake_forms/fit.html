@@ -1,0 +1,29 @@
+{% block body %}
+
+<div class="tab-pane" id="fittab">
+
+    <div class="form-row">
+      <div class="form-group col">
+        {{ form.fit.form.rate_eq_type.label() }}
+        {{ form.fit.form.rate_eq_type(class_="form-control", id="rate_eq_type", title=form.fit.form.rate_eq_type.description, data_toggle='tooltip') }}
+      </div>
+      <div class="form-group col">
+        {{ form.fit.form.rate_method.label() }}
+        {{ form.fit.form.rate_method(class_="form-control", id="rate_method", title=form.fit.form.rate_method.description, data_toggle='tooltip') }}
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group col">
+        {{ form.fit.form.rtol.label() }}
+        {{ form.fit.form.rtol(class_="form-control", title=form.fit.form.rtol.description, data_toggle='tooltip') }}
+      </div>
+      <div class="form-group col">
+        {{ form.fit.form.atol.label() }}
+        {{ form.fit.form.atol(class_="form-control", title=form.fit.form.atol.description, data_toggle='tooltip') }}
+      </div>
+    </div>
+
+</div>
+
+{% endblock %}

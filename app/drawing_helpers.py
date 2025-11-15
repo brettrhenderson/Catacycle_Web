@@ -270,7 +270,15 @@ def shift_path_by_vec(path, vec):
     return Path(shifted_vertices, path.codes)
 
 def set_ax_lims(ax, paths):
-    bbox_pts = mpath.get_paths_extents(paths).get_points()
+    # bbox_pts = mpath.get_paths_extents(paths).get_points()
+    bbox = None
+    for p in paths:
+        this = p.get_extents()
+        if bbox is None:
+            bbox = this
+        else:
+            bbox = transforms.Bbox.union([bbox, this])
+    bbox_pts = bbox.get_points()
     max_x_dim = np.max(bbox_pts[:, 0])
     max_y_dim = np.max(bbox_pts[:, 1])
     min_x_dim = np.min(bbox_pts[:, 0])

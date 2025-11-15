@@ -34,7 +34,7 @@ class FlaskRegexp(object):
         if not match:
             if message is None:
                 if self.message is None:
-                    message = field.gettext('Invalid input.')
+                    message = field.gettext('Invalid input')
                 else:
                     message = self.message
 
@@ -42,127 +42,18 @@ class FlaskRegexp(object):
         return match
 
 
-class CakeForm(FlaskForm):
-    xl = FileField('Select Data',
-                   [FileRequired(), FlaskRegexp(r'^[a-zA-Z0-9\s_.\-\(\):]+\.xlsx$', flags=re.IGNORECASE,
-                                                message="File must have .xslx extension.")],
-                   description='Upload Reaction Data in Excel file format.',
-                   id='excelUpload')
-    sheet_name = StringField('Sheet Name', [InputRequired()], id='sheet_name', description="Name of sheet in Excel file, case sensitive",
-                             default='Sheet1')
-    t_col = IntegerField('Time Column', [InputRequired()], id='t_col', description="Integer index, 1 is the first column")
-    r_col = IntegerField('Reactant Column', [optional()], id='r_col',
-                         description="Integer index, 1 is the first column")
-    p_col = IntegerField('Product Column', [optional()], id='p_col',
-                         description="Integer index, 1 is the first column")
-    fit_asp = SelectField('Fit Aspect', description="What trace to fit", id='fit_asp',
-                          choices=[('r', 'Reactant'), ('p', 'Product'), ('rp', 'Reactant + Product')])
-    scale_avg_num = IntegerField('Average Points', id='scale_avg_num', default=0,
-                                 description="Number of data points from which to calculate r0 and p_end. Default 0 (no scaling).")
-    stoich_r = IntegerField('Reactant Coefficient', [InputRequired()], id='stoich_r', description="Stoichiometric coefficient of reactant",
-                            default=1)
-    stoich_p = IntegerField('Product Coefficient', [InputRequired()], id='stoich_p', description="Stoichiometric coefficient of product",
-                            default=1)
-    r0 = FloatField('Starting Reactant Concentration', [optional()], id='r0', description="Initial reactant concentration")
-    p0 = FloatField('Starting Product Concentration', [optional()], id='p0', description="Initial product concentration", default=0.0)
-    p_end = FloatField('Final Product Concentration', [optional()], id='p_end', description="Final Product concentration")
-    cat_sol_conc = FloatField('Catalyst Concentration', [InputRequired()], id='cat_sol_conc',
-                              description='Concentration of the catalyst solution being added to the reaction')
-    t_inj = FloatField('Time of Injection', [InputRequired()], id='t_inj',
-                             description='Time at which catalyst injection began', default=0.0)
-    inject_rate = FloatField('Injection Rate', [InputRequired()], id='inject_rate',
-                             description='Rate of addition of catalyst solution to the reaction mixture')
-    vol_init = FloatField('Initial Rxn Solution Volume', [InputRequired()], id='vol_init',
-                                description='Initial volume of reactant solution to which catalyst is added')
-    win = IntegerField('Smoothing Window', id='win', default=1, description="Number of points in smoothing window")
-    inc = IntegerField('Interpolation Multiplier', id='inc',
-                       description='Number of points to interpolate between measurements', default=1)
-
-    k_est_val = FloatField('Est Rate Constant', [optional()], id='k_est_val', description="Estimated rate constant")
-    k_est_min = FloatField('Min Rate Constant', [optional()], id='k_est_min',
-                           description="Minimum rate constant search constraint")
-    k_est_max = FloatField('Max Rate Constant', [optional()], id='k_est_max',
-                           description="Maximum rate constant search constraint")
-
-    r_ord_val = FloatField('Est Reactant Order', [optional()], id='r_ord_val', default=1, description="Estimated reactant order")
-    r_ord_min = FloatField('Min Reactant Order', [optional()], id='r_ord_min', default=0,
-                           description="Minimum reactant order search constraint")
-    r_ord_max = FloatField('Max Reactant Order', [optional()], id='r_ord_max', default=2,
-                           description="Maximum reactant order search constraint")
-
-    cat_ord_val = FloatField('Est Catalyst Order', [optional()], id='c_ord_val', default=1, description="Estimated catalyst order")
-    cat_ord_min = FloatField('Min Catalyst Order', [optional()], id='c_ord_min', default=0,
-                             description="Minimum catalyst order search constraint")
-    cat_ord_max = FloatField('Max Catalyst Order', [optional()], id='c_ord_max', default=2,
-                             description="Maximum catalyst order search constraint")
-
-    t0_est_val = FloatField('Est Start Time', [optional()], id='t0_est_val', description="Estimated reaction start time")
-    t0_est_min = FloatField('Min Start Time', [optional()], id='t0_est_min',
-                            description="Minimum start time search constraint")
-    t0_est_max = FloatField('Max Start Time', [optional()], id='t0_est_max',
-                            description="Maximum start time search constraint")
-
-    submit = SubmitField('Fit', id='fit-submit')
-
-    def format_k_est(self):
-        if self.k_est_val.data is None:
-            k_est = self.k_est_val.data
-        elif self.k_est_min.data is None or self.k_est_max.data is None:
-            k_est = [self.k_est_val.data]
-        else:
-            k_est = [self.k_est_val.data, self.k_est_min.data, self.k_est_max.data]
-        return k_est
-
-    def format_r_ord(self):
-        if self.r_ord_val.data is None:
-            r_ord = self.r_ord_val.data
-        elif self.r_ord_min.data is None or self.r_ord_max.data is None:
-            r_ord = [self.r_ord_val.data]
-        else:
-            r_ord = [self.r_ord_val.data, self.r_ord_min.data, self.r_ord_max.data]
-        return r_ord
-
-    def format_cat_ord(self):
-        if self.cat_ord_val.data is None:
-            cat_ord = self.cat_ord_val.data
-        elif self.cat_ord_min.data is None or self.cat_ord_max.data is None:
-            cat_ord = [self.cat_ord_val.data]
-        else:
-            cat_ord = [self.cat_ord_val.data, self.cat_ord_min.data, self.cat_ord_max.data]
-        return cat_ord
-
-    def format_t0_est(self):
-        if self.t0_est_val.data is None:
-            t0_est = self.t0_est_val.data
-        elif self.t0_est_min.data is None or self.t0_est_max.data is None:
-            t0_est = [self.t0_est_val.data]
-        else:
-            t0_est = [self.t0_est_val.data, self.t0_est_min.data, self.t0_est_max.data]
-        return t0_est
-
-
-class CakeDownloadForm(CakeForm):
-    # File Format Tab
-    f_format = StringField('f_format', default='.svg')
-    image_index = IntegerField('image_index', default=0)
-
-
-#################################################
-# Modular Re-write for multiple-reactant fitting
-#################################################
-
 class ContinuousAdditionForm(Form):
     """Field Enclosure for parameters of continuous addition of a reagent"""
-    add_sol_conc = FloatField('Addition Solution Conc.', [optional()], description="Concentration of reagent added.")
-    add_cont_rate = FloatField('Rate of Addition', [optional()], description="Rate of addition in moles_unit volume_unit^-1 time_unit^-1.")
-    t_cont_rate = FloatField('After Time', [optional()], default=0.0, description="Time when addition began.")
+    add_sol_conc = FloatField('Addition Solution Conc', [optional()], description='Concentration of reagent added')
+    add_cont_rate = FloatField('Rate of Addition', [optional()], description='Rate of addition in moles_unit volume_unit^-1 time_unit^-1')
+    t_cont_rate = FloatField('After Time', [optional()], default=0.0, description='Time when addition began')
 
 
-class InstantaneousAdditionForm(Form):
-    """Field Enclosure for parameters of continuous addition of a reagent"""
-    add_sol_conc = FloatField('Addition Solution Conc.', [optional()], description="Concentration of reagent added.")
-    add_v_one_shot = FloatField('Volume Added', [optional()], description="Volume of solution added in volume_unit.")
-    t_one_shot = FloatField('At Time', [optional()], default=0.0, description="Time when addition occured.")
+class DiscreteAdditionForm(Form):
+    """Field Enclosure for parameters of discrete addition of a reagent"""
+    add_sol_conc = FloatField('Addition Solution Conc', [optional()], description='Concentration of reagent added')
+    add_v_one_shot = FloatField('Volume Added', [optional()], description='Volume of solution added in volume_unit')
+    t_one_shot = FloatField('At Time', [optional()], default=0.0, description='Time when addition occurred')
 
 
 class SpeciesForm(Form):
@@ -179,31 +70,31 @@ class SpeciesForm(Form):
         The type of species (reactant, product, or catalyst)
     stoich : :obj:`wtforms.IntegerField`
         Stoichiometric coefficient for this reaction species. Default 1.
-    mol_init : :obj:`wtforms.FloatField`, optional
+    mol0 : :obj:`wtforms.FloatField`, optional
         Initial amount of species in moles. If not given, excel values will be assumed to be given in moles.
     mol_end : :obj:`wtforms.FloatField`, optional
         Final amount of species in moles. If not given, excel values will be assumed to be given in moles.
 
     """
-    col = IntegerField('Column', [optional()], description="Integer index, 1 is the first column.")
-    spec_name = StringField('Species Name', [optional()], description="Name of species.")
-    spec_type = SelectField('Species Type', [InputRequired()], description="Type of Species (reactant, product, catalyst).",
+    spec_name = StringField('Species Name', [optional()], description='Name of species')
+    spec_type = SelectField('Species Type', [InputRequired()], description='Type of Species (reactant, product, catalyst)',
                             choices=[('r', 'Reactant'), ('p', 'Product'), ('c', 'Catalyst')])
-    stoich = IntegerField('Stoichiometry', [InputRequired()], description="Stoichiometric coefficient of species.", default=1)
-    mol_init = FloatField('Initial Moles', [optional()], description="Initial amount in moles.")
-    mol_end = FloatField('Final Moles', [optional()], description="Final amount in moles")
-    ord_val = FloatField('Est Order', [optional()], default=1, description="Estimated species order")
-    ord_min = FloatField('Min Order', [optional()], default=0, description="Minimum species order search constraint")
+    stoich = IntegerField('Stoichiometry', [InputRequired()], description='Stoichiometric coefficient of species', default=1)
+    mol0 = FloatField('Initial Moles', [optional()], description='Initial amount in mole_unit')
+    mol_end = FloatField('Final Moles', [optional()], description='Final amount in mole_unit')
+    col = IntegerField('Column', [optional()], description='Integer index, 1 is the first column')
+    ord_val = FloatField('Est Order', [optional()], default=1, description='Estimated species order')
+    ord_min = FloatField('Min Order', [optional()], default=0, description='Minimum species order search constraint')
     ord_max = FloatField('Max Order', [optional()], default=2,
-                         description="Maximum species order search constraint")
-    pois_val = FloatField('Est Poisoning', [optional()], default=0, description="Estimated species poisoning")
+                         description='Maximum species order search constraint')
+    pois_val = FloatField('Est Poisoning', [optional()], default=0, description='Estimated species poisoning in mole_unit')
     pois_min = FloatField('Min Poisoning', [optional()],
-                          description="Minimum species poisoning search constraint")
+                          description='Minimum species poisoning search constraint in mole_unit')
     pois_max = FloatField('Max Poisoning', [optional()],
-                          description="Maximum species poisoning search constraint")
+                          description='Maximum species poisoning search constraint in mole_unit')
     cont_add = FieldList(FormField(ContinuousAdditionForm), min_entries=0)
-    one_shot = FieldList(FormField(InstantaneousAdditionForm), min_entries=0)
-    for_fitting = BooleanField("Use For Fitting", description="Use this species to perform CAKE fitting. Must specify column to enable")
+    one_shot = FieldList(FormField(DiscreteAdditionForm), min_entries=0)
+    for_fitting = BooleanField('Use For Fitting', description='Use this species to perform CAKE fitting. Must specify column to enable')
 
 
 def format_ord(data_dict, sim=False):
@@ -230,9 +121,15 @@ def format_pois(data_dict, sim=False):
     return pois
 
 
+class DiscreteSubtractionForm(Form):
+    """Field Enclosure for parameters of discrete subtraction of a reagent"""
+    sub_aliq = FloatField('Volume Removed', [optional()], description='Volume of solution removed in volume_unit')
+    t_aliq = FloatField('At Time', [optional()], default=0.0, description='Time when removal occurred in time_unit')
+
+
 class UploadForm(Form):
     """
-    To be used as a FormField within a the overall reaction form.
+    To be used as a FormField within the overall reaction form.
 
     Attributes
     ----------
@@ -247,56 +144,92 @@ class UploadForm(Form):
     """
     xl = FileField('Select Data',
                    [optional(), FlaskRegexp(r'^[a-zA-Z0-9\s_.\-\(\):]+\.xlsx$', flags=re.IGNORECASE,
-                                                message="File must have .xslx extension.")],
-                   description='Upload Reaction Data in Excel file format.',
+                                                message='File must have .xslx extension')],
+                   description='Upload Reaction Data in Excel file format',
                    id='excelUpload')
     sheet_name = StringField('Sheet Name', [optional()], id='sheet_name',
-                             description="Name of sheet in Excel file, case sensitive",
+                             description='Name of sheet in Excel file, case sensitive',
                              default='Sheet1')
     t_col = IntegerField('Time Column', [optional()], id='t_col',
-                         description="Integer index, 1 is the first column")
-    sim = BooleanField("Simulate Reaction", id="sim-box", description="Simulate without reading actual reaction data from Excel.")
-    t_init = FloatField("Simulation Start", [optional()], description="Simulation start tike. Only used if sim==True")
-    t_final = FloatField("Simulation End", [optional()], description="Simulation end time. Only used if sim==True")
-    t_interval = FloatField("Simulation Time Interval", [optional()], description="Time interval for simulation run. Only used if sim==True")
+                         description='Integer index, 1 is the first column. Time column must be in time_unit')
+    sim = BooleanField('Simulate Reaction', id='sim-box', description='Simulate without reading experimental data from Excel')
+    t0 = FloatField('Simulation Start', [optional()], default=0.0, description='Simulation start time in time_unit')
+    t_end = FloatField('Simulation End', [optional()], description='Simulation end time in time_unit')
+    t_int = FloatField('Simulation Time Interval', [optional()], description='Time interval for simulation run in time_unit')
 
 
-class ReactionInformationForm(Form):
+class SystemForm(Form):
     """
-    Contains All of the information about a reaction needed to perform CAKE analysis
-
+    Contains all the information about a reaction needed to perform CAKE analysis
     """
-    vol_init = FloatField('Initial Reaction Volume', [InputRequired()], description="Initial volume of reactants.")
+    vol0 = FloatField('Initial Reaction Volume', [InputRequired()], description='Initial volume of reactants in volume_unit')
+    sub_cont_rate = FloatField('Continuous Volume Loss Rate', [optional()], default=0.0,
+                               description='Rate of continuous solution loss in volume_unit time_unit⁻¹')
 
-    k_est_val = FloatField('Est Rate Constant', [optional()], id='k_est_val', description="Estimated rate constant")
+    k_est_val = FloatField('Est Rate Constant', [optional()], id='k_est_val', description='Estimated rate constant')
     k_est_min = FloatField('Min Rate Constant', [optional()], id='k_est_min',
-                           description="Minimum rate constant search constraint")
+                           description='Minimum rate constant search constraint')
     k_est_max = FloatField('Max Rate Constant', [optional()], id='k_est_max',
-                           description="Maximum rate constant search constraint")
+                           description='Maximum rate constant search constraint')
+    k2_est_val = FloatField('Est Second Constant', [optional()], id='k2_est_val', description='Estimated constant')
+    k2_est_min = FloatField('Min Second Constant', [optional()], id='k2_est_min',
+                           description='Minimum constant search constraint')
+    k2_est_max = FloatField('Max Second Constant', [optional()], id='k2_est_max',
+                           description='Maximum constant search constraint')
     species = FieldList(FormField(SpeciesForm), min_entries=1)
 
-    def format_k_est(self):
-        if self.k_est_val.data is None:
-            k_est = self.k_est_val.data
-        elif self.k_est_min.data is None or self.k_est_max.data is None:
+    t_cont_sub = FloatField('After Time', [optional()], id='t_cont_sub', default=0.0, description='Time when removal began in time_unit')
+    aliq = FieldList(FormField(DiscreteSubtractionForm), min_entries=0)
+
+    temp0 = FloatField('Initial Temperature', [optional()], default=293.15, description='Initial temperature in K')
+    temp_cont = FloatField('Temperature Gradient', [optional()], default=0.0, description='Rate of temperature change in K time_unit⁻¹')
+    t_temp = FloatField('At Time', [optional()], default=0.0, description='Time when gradient began in time_unit')
+    temp_col = IntegerField('Temperature Column', [optional()], description='Integer index, 1 is the first column. Temperature column must be in K')
+
+    def format_k_est(self, rate_eq_type='standard'):
+        if self.k_est_min.data is None or self.k_est_max.data is None:
             k_est = [self.k_est_val.data]
         else:
             k_est = [self.k_est_val.data, self.k_est_min.data, self.k_est_max.data]
+        if 'standard' not in rate_eq_type.lower():
+            if self.k2_est_min.data is None or self.k2_est_max.data is None:
+                k_est.append(self.k2_est_val.data)
+            else:
+                k_est.append([self.k2_est_val.data, self.k2_est_min.data, self.k2_est_max.data])
         return k_est
+
+
+class FitForm(Form):
+    """
+    Contains all the parameters for rate equation
+    """
+    rate_eq_type = SelectField('Rate Equation', id='rate_eq', choices=[('standard', 'Standard'),
+                              ('Arrhenius', 'Arrhenius'), ('Eyring', 'Eyring'),
+                              ('Michaelis-Menten', 'Michaelis-Menten')], default='Standard',
+                               description='Equation type for calculating reaction rate')
+    rate_method = SelectField('Rate Algorithm', id='rate_eq', choices=[('RK45', 'RK45'), ('RK23', 'RK23'),
+                             ('DOP853', 'DOP853'), ('Radau', 'Radau'), ('BDF', 'BDF'), ('LSODA', 'LSODA')],
+                              default='Radau', description='Algorithm for caclulating reaction rate')
+    rtol = FloatField('Relative Tolerance', id='rtol', default=1E-6,
+                      description='Controls number of correct digits')
+    atol = FloatField('Absolute Tolerance', id='atol', default=1E-9,
+                       description='Controls number of correct decimal places')
 
 
 class DataManipulationForm(Form):
     """
-    Contains all parameters for smoothing and otherwise manipulating reaction data
+    Contains all parameters for manipulating reaction data
     """
     scale_avg_num = IntegerField('Average Points', id='scale_avg_num', default=0,
-                                 description="Number of data points from which to calculate r0 and p_end. Default 0 (no scaling).")
-    win = IntegerField('Smoothing Window', id='win', default=1, description="Number of points in smoothing window")
-    inc = IntegerField('Interpolation Multiplier', id='inc',
-                       description='Number of points to interpolate between measurements', default=1)
+                                 description='Number of data points from which to calculate r0 and p_end. Default 0 (no scaling)')
+    win = IntegerField('Smoothing Window', id='win', description='Number of points in smoothing window', default=1)
+    inc = FloatField('Interpolation Multiplier', id='inc', default=1,
+                       description='Fraction of points for fitting. Values < 1 use a fraction of experimental data. Values > 1 interpolate between data')
+    rand_fac = FloatField('Noise Addition', id='rand_fac', default=0,
+                          description='Noise as fraction of the most intense species maximum')
 
 
-class CakeFormMulti(FlaskForm):
+class CakeForm(FlaskForm):
     """
     A form collecting all attributes of a species participating in a reaction.
 
@@ -313,7 +246,8 @@ class CakeFormMulti(FlaskForm):
     """
 
     upload = FormField(UploadForm)
-    system = FormField(ReactionInformationForm)
+    system = FormField(SystemForm)
+    fit = FormField(FitForm)
     manip = FormField(DataManipulationForm)
 
     submit = SubmitField('Fit', id='fit-submit')
@@ -321,9 +255,8 @@ class CakeFormMulti(FlaskForm):
     # TODO: Data Formatters to Prepare data in the proper structures for cake_fitting.py
     def prepare_data(self, sim=False):
         data = self.data
-        vol_init = data['system']['vol_init']
-        t_param = (data['upload']['t_init'], data['upload']['t_final'], data['upload']['t_interval'])
-        k_lim = self.system.format_k_est()
+
+        k_lim = self.system.format_k_est(rate_eq_type=data['fit']['rate_eq_type'])
 
         # reset column indices to 1-indexed
         t_col = None
@@ -340,7 +273,7 @@ class CakeFormMulti(FlaskForm):
                 spec_name.append(f"Species {i + 1}")
             spec_type.append(spec['spec_type'])
             stoich.append(spec['stoich'])
-            mol0.append(spec['mol_init'])
+            mol0.append(spec['mol0'])
             mol_end.append(spec['mol_end'])
             if spec['col'] is not None:
                 col.append(spec['col'] - 1)
@@ -382,44 +315,67 @@ class CakeFormMulti(FlaskForm):
                 else:
                     log.debug(spec['one_shot'])
                     conc = spec['one_shot'][0]['add_sol_conc']
-                    one_shot_amts = []
+                    vols = []
                     times = []
                     for addition in spec['one_shot']:
-                        one_shot_amts.append(addition['add_v_one_shot'])
+                        vols.append(addition['add_v_one_shot'])
                         times.append(addition['t_one_shot'])
-                    add_one_shot.append(tuple(one_shot_amts))
+                    add_one_shot.append(tuple(vols))
                     t_one_shot.append(tuple(times))
                 add_sol_conc.append(conc)
 
-        data_dict = {"sim": data['upload']['sim'],
-                     "t_param": t_param,
-                     "xl": data['upload']['xl'],
-                     "sheet_name": data['upload']['sheet_name'],
-                     "spec_name": spec_name,
-                     "spec_type": spec_type,
-                     "vol_init": vol_init,
-                     "stoich": stoich,
-                     "mol0": mol0,
-                     "mol_end": mol_end,
-                     "add_sol_conc": add_sol_conc,
-                     "add_cont_rate": add_cont_rate,
-                     "t_cont": t_cont,
-                     "add_one_shot": add_one_shot,
-                     "t_one_shot": t_one_shot,
-                     "t_col": t_col,
-                     "col": col,
-                     "k_lim": k_lim,
-                     "ord_lim": ord_lim,
-                     "pois_lim": pois_lim,
-                     "fit_asp": fit_asp,
-                     "scale_avg_num": data["manip"]["scale_avg_num"],
-                     "win": data["manip"]["win"],
-                     "inc": data["manip"]["inc"]}
+        # Subtractions
+        sub_aliq, t_aliq = [], []
+        if not len(data['system']['aliq']):
+            sub_aliq.append(None)
+            t_aliq.append(None)
+        else:
+            for subtraction in data['system']['aliq']:
+                sub_aliq.append(subtraction['sub_aliq'])
+                t_aliq.append(subtraction['t_aliq'])
 
-        return data_dict
+        dict = {'sim': data['upload']['sim'],
+                't': (data['upload']['t0'], data['upload']['t_end'], data['upload']['t_int']),
+                'xl': data['upload']['xl'],
+                'sheet_name': data['upload']['sheet_name'],
+                'spec_name': spec_name,
+                'spec_type': spec_type,
+                'vol0': data['system']['vol0'],
+                'stoich': stoich,
+                'mol0': mol0,
+                'mol_end': mol_end,
+                'add_sol_conc': add_sol_conc,
+                'add_cont_rate': add_cont_rate,
+                't_cont': t_cont,
+                'add_one_shot': add_one_shot,
+                't_one_shot': t_one_shot,
+                't_col': t_col,
+                'col': col,
+                'k_lim': k_lim,
+                'ord_lim': ord_lim,
+                'pois_lim': pois_lim,
+                'fit_asp': fit_asp,
+                'sub_cont_rate': data['system']['sub_cont_rate'],
+                'sub_aliq': sub_aliq,
+                't_aliq': t_aliq,
+                'temp0': data['system']['temp0'],
+                'temp_cont': data['system']['temp_cont'],
+                't_temp': data['system']['t_temp'],
+                'temp_col': data['system']['temp_col'],
+                'rate_eq_type': data['fit']['rate_eq_type'],
+                'rate_method': data['fit']['rate_method'],
+                'rtol': data['fit']['rtol'],
+                'atol': data['fit']['atol'],
+                'scale_avg_num': data['manip']['scale_avg_num'],
+                'win': data['manip']['win'],
+                'inc': data['manip']['inc'],
+                'tic_col': None,
+                'time_unit': None,
+                'conc_unit': None}
+        return dict
 
 
-class CakeDownloadMultiForm(CakeFormMulti):
+class CakeDownloadForm(CakeForm):
     # File Format Tab
     f_format = StringField('f_format', default='.svg')
     image_index = IntegerField('image_index', default=0)

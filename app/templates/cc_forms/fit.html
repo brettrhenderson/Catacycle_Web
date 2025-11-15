@@ -70,6 +70,13 @@
       </div>
     </div>
 
+  <div class="form-row">
+      <div class="form-group col-6">
+        {{ form.fit.form.lod_stds.label() }}
+        {{ form.fit.form.lod_stds(class_="form-control", id="lod_stds", title=form.fit.form.lod_stds.description, data_toggle='tooltip') }}
+      </div>
+    </div>
+
 </div>
 
 {% endblock %}

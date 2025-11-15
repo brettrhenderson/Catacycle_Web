@@ -47,7 +47,7 @@ $(document).ready(function() {
     });
 
     // If line checkbox state changes, uncheck the exp checkbox show or hide the fitlof as appropriate
-    $( "#lof-box" ).change(function() {
+    $("#lof-box" ).change(function() {
         if(this.checked) {
             // show the time input for simulations
             $('#loftest').collapse('show');

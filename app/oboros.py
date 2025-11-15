@@ -262,7 +262,7 @@ def draw(data=None, startrange=0.15, stoprange=0.85, f_format='svg', figsize=(8,
     elif f_format == 'eps':
         mimetype = 'application/postscript'
     else:
-        raise ValueError('Image format {} not supported.'.format(format))
+        raise ValueError('Image format {} not supported'.format(format))
 
     plt.savefig(img, format=f_format, transparent=True)
     plt.close()
@@ -435,7 +435,7 @@ def draw_straight(data, startrange=0.15, stoprange=0.85, f_format='svg', figsize
     elif f_format == 'eps':
         mimetype = 'application/postscript'
     else:
-        raise ValueError('Image format {} not supported.'.format(format))
+        raise ValueError('Image format {} not supported'.format(format))
 
     # save the figure to the temporary file-like object
     plt.savefig(img, format=f_format, transparent=True)
@@ -468,8 +468,8 @@ def scaler(forward_rates, rev_rates, startrange=0.1, stoprange=0.8, scale_type='
     if scale_type not in ['Linear', 'Logarithmic', 'Preserve Multiples']:
         raise ValueError("scale_type must be Linear, Logarithmic, or Preserve Multiples")
 
-    forward_rates = np.array(forward_rates).astype(np.float)
-    rev_rates = np.array(rev_rates).astype(np.float)
+    forward_rates = np.array(forward_rates, dtype=float)
+    rev_rates = np.array(rev_rates, dtype=float)
 
     log.debug("original forward: {}".format(forward_rates))
     log.debug("original reverse: {}".format(rev_rates))

@@ -6,7 +6,7 @@ $.validator.addMethod("greaterThan", function (value, element, param) {
     return this.optional(element) || this.optional($otherElement[0]) || parseFloat(value, 10) > parseFloat($otherElement.val(), 10);
     }, function (param) {
         $otherElement = $(param)
-        return "Must be > " + $("label[for='" + $otherElement.attr('id') + "']").text() + " or left blank."
+        return "Must be > " + $("label[for='" + $otherElement.attr('id') + "']").text() + " or left blank"
     });
 
 $.validator.addMethod("lessThan", function (value, element, param) {
@@ -14,7 +14,7 @@ $.validator.addMethod("lessThan", function (value, element, param) {
     return this.optional(element) || this.optional($otherElement[0]) || parseFloat(value) < parseFloat($otherElement.val());
     }, function (param) {
         $otherElement = $(param)
-        return "Must be < " + $("label[for='" + $otherElement.attr('id') + "']").text() + " or left blank."
+        return "Must be < " + $("label[for='" + $otherElement.attr('id') + "']").text() + " or left blank"
     });
 
 $.validator.addMethod("greaterEqThan", function (value, element, param) {
@@ -22,7 +22,7 @@ $.validator.addMethod("greaterEqThan", function (value, element, param) {
     return this.optional(element) || this.optional($otherElement[0]) || parseFloat(value, 10) >= parseFloat($otherElement.val(), 10);
     }, function (param) {
         $otherElement = $(param)
-        return "Must be >= " + $("label[for='" + $otherElement.attr('id') + "']").text() + " or left blank."
+        return "Must be >= " + $("label[for='" + $otherElement.attr('id') + "']").text() + " or left blank"
     });
 
 $.validator.addMethod("lessEqThan", function (value, element, param) {
@@ -30,7 +30,7 @@ $.validator.addMethod("lessEqThan", function (value, element, param) {
     return this.optional(element) || this.optional($otherElement[0]) || parseFloat(value) <= parseFloat($otherElement.val());
     },function (param) {
         $otherElement = $(param)
-        return "Must be <= " + $("label[for='" + $otherElement.attr('id') + "']").text() + " or left blank."
+        return "Must be <= " + $("label[for='" + $otherElement.attr('id') + "']").text() + " or left blank"
     });
 
 function updateFinalProduct() {

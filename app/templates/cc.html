@@ -51,7 +51,6 @@
 <!--        <h1>Continuous Calibration</h1>-->
 <!--    </div>-->
     <div class="container-fluid">
-        <h2 style="color:Tomato;">Warning: This page is under active development and may crash.</h2>
         <div class="row d-flex">
             <div class="pb-2 col-1 d-flex flex-column"></div>
             <form enctype="multipart/form-data" onkeydown="return event.key != 'Enter';" class="px-3 pt-1 pb-2 col-5 d-flex flex-column align-items-center justify-content-center" id="cc-form" action="{{ url_for('download_cc_xlsx') }}" method="post">
@@ -83,7 +82,7 @@
                             {% include "cc_forms/fit.html" %}
                             {% include "cc_forms/manip.html" %}
                             <div class="tab-pane" id="outputtab">
-                                <pre class="form-control" id="output-text">Fill in Parameters and click "Fit" to generate output.
+                                <pre class="form-control" id="output-text">Fill in parameters and click "Calibrate" or "Download Calibration" to generate output.
                                 </pre>
                             </div>
                         </div>

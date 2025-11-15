@@ -36,7 +36,7 @@ class FlaskRegexp(object):
         if not match:
             if message is None:
                 if self.message is None:
-                    message = field.gettext('Invalid input.')
+                    message = field.gettext('Invalid input')
                 else:
                     message = self.message
 
@@ -46,16 +46,16 @@ class FlaskRegexp(object):
 
 class ContinuousAdditionForm(Form):
     """Field Enclosure for parameters of continuous addition of a reagent"""
-    add_sol_conc = FloatField('Addition Solution Conc.', description='Concentration of reagent added')
-    add_cont_rate = FloatField('Rate of Addition', description='Rate of addition in moles_unit volume_unit^-1 time_unit^-1')
-    t_cont_rate = FloatField('After Time', default=0.0, description='Time when addition began')
+    add_sol_conc = FloatField('Addition Solution Conc', description='Concentration of reagent added in moles_unit volume_unit⁻¹')
+    add_cont_rate = FloatField('Rate of Addition', description='Rate of addition in moles_unit volume_unit⁻¹ time_unit⁻¹')
+    t_cont_rate = FloatField('After Time', default=0.0, description='Time when addition began in time_unit')
 
 
-class InstantaneousAdditionForm(Form):
+class DiscreteAdditionForm(Form):
     """Field Enclosure for parameters of continuous addition of a reagent"""
-    add_sol_conc = FloatField('Addition Solution Conc.', description='Concentration of reagent added')
+    add_sol_conc = FloatField('Addition Solution Conc', description='Concentration of reagent added in moles_unit volume_unit⁻¹')
     add_v_one_shot = FloatField('Volume Added', description='Volume of solution added in volume_unit')
-    t_one_shot = FloatField('At Time', default=0.0, description='Time when addition occured')
+    t_one_shot = FloatField('At Time', default=0.0, description='Time when addition occurred in time_unit')
 
 
 class SpeciesForm(Form):
@@ -79,11 +79,11 @@ class SpeciesForm(Form):
 
     """
     spec_name = StringField('Species Name', description='Name of species')
-    mol0 = FloatField('Initial Moles', description='Initial amount in moles', default=0)
+    mol0 = FloatField('Initial Moles', description='Initial amount in mole_unit', default=0)
     gen_col = StringField('Generation Column', description='Input column name or index, where 1 is the first column')
     apply_col = StringField('Application Column', description='Input column name or index, where 1 is the first column')
     cont_add = FieldList(FormField(ContinuousAdditionForm), min_entries=0)
-    one_shot = FieldList(FormField(InstantaneousAdditionForm), min_entries=0)
+    one_shot = FieldList(FormField(DiscreteAdditionForm), min_entries=0)
 
 class UploadForm(Form):
     """
@@ -106,7 +106,7 @@ class UploadForm(Form):
     gen_sheet_name = StringField('Sheet Name', id='gen_sheet_name',
                                  description='Name of sheet in Excel file, case sensitive', default='Sheet1')
     gen_t_col = StringField('Time Column', id='gen_t_col',
-                            description='Time column name or index, where 1 is the first column')
+                            description='Time column name or index, where 1 is the first column. Time column must be in time_unit')
 
     apply = BooleanField('Apply Calibration', id='apply-box', description='Apply calibration to experimental data', default=False)
 
@@ -118,15 +118,15 @@ class UploadForm(Form):
     apply_sheet_name = StringField('Sheet Name', id='apply_sheet_name',
                                    description='Name of sheet in Excel file, case sensitive', default='Sheet1')
     apply_t_col = StringField('Time Column', id='apply_t_col',
-                              description='Time column name or index, where 1 is the first column')
+                              description='Time column name or index, where 1 is the first column. Time column must be in time_unit')
 
 class SystemForm(Form):
     """
     Contains parameters needed to generate the calibration
     """
     vol0 = FloatField('Initial Solution Volume', [InputRequired()], description='Initial volume of monitored solution')
-    sub_cont_rate = FloatField('Volume Loss Rate', [optional()],
-                               description='Rate of solution loss in volume_unit time_unit^-1', default=0.0)
+    sub_cont_rate = FloatField('Continuous Volume Loss Rate', [optional()],
+                               description='Rate of continuous solution loss in volume_unit time_unit⁻¹', default=0.0)
 
     species = FieldList(FormField(SpeciesForm), min_entries=1)
 
@@ -134,6 +134,8 @@ class FitForm(Form):
     """
     Contains parameters for fitting calibration data
     """
+    path_length = FloatField('Path Length', [optional()], id='path_length', description='Length of light path in absorption spectroscopy if desired')
+
     fit_eq = SelectField('Fit Equation', id='fit_eq', description='Equation type to fit data with',
                          choices=[('Linear', 'Linear'), ('Logarithm', 'Logarithm'), ('Exponential', 'Exponential'), ('Tangent', 'Tangent'), ('Michaelis-Menten', 'Michaelis-Menten'), ('Langmuir', 'Langmuir'), ('None', 'None')], default='None')
     intercept = BooleanField('Fit Intercept', id='intercept-box', description='Fit data with intercept', default=False)
@@ -149,16 +151,16 @@ class FitForm(Form):
                             choices=[('monotonic', 'Monotonic GAM'), ('concave', 'Concave GAM'), ('Savitsky-Golay', 'Savitsky-Golay'), ('None', 'None')], default='concave')
     sg_win = IntegerField('Window', id='sg_win', description='Number of data points to use for Savitsky-Golay smoothing', default=11)
 
-    path_length = FloatField('Path Length', [optional()], id='path_length', description='Length of light path in UV-Vis spectroscopy if desired')
+    lod_stds = FloatField('Limit of Detection Standard Deviations', id='lod_stds', description='Number of blank standard deviations from which to estimate limit of detection', default=3)
 
 
 class ManipulationForm(Form):
     """
     Contains parameters for manipulating calibration data
     """
-    breakpoint_lim = FloatField('Breakpoint time limit', id='breakpoint',
+    breakpoint_lim = FloatField('Breakpoint Time Limit', id='breakpoint',
                        description='Additional time in which continuous additions may have occurred', default=0.0)
-    diffusion_delay = FloatField('Diffusion delay', id='diffusion',
+    diffusion_delay = FloatField('Diffusion Delay', id='diffusion',
                        description='Additional time in which it takes for discrete addition diffusions to occur', default=0.0)
     zero = BooleanField('Zero', id='zero-box', description='Set minimum intensity to zero', default=False)
     win = IntegerField('Smoothing Window', id='win', description='Number of points in smoothing window', default=1)
@@ -259,12 +261,12 @@ class CCForm(FlaskForm):
                 else:
                     log.debug(spec['one_shot'])
                     conc = spec['one_shot'][0]['add_sol_conc']
-                    one_shot_amts = []
+                    vols = []
                     times = []
                     for addition in spec['one_shot']:
-                        one_shot_amts.append(addition['add_v_one_shot'])
+                        vols.append(addition['add_v_one_shot'])
                         times.append(addition['t_one_shot'])
-                    add_one_shot.append(one_shot_amts)
+                    add_one_shot.append(vols)
                     t_one_shot.append(times)
                 add_sol_conc.append(conc)
 
@@ -305,6 +307,7 @@ class CCForm(FlaskForm):
                 'p_thresh': p_thresh,
                 'smooth_eq': smooth_eq,
                 'sg_win': data['fit']['sg_win'],
+                'lod_stds': data['fit']['lod_stds'],
                 'breakpoint_lim': data['manip']['breakpoint_lim'],
                 'diffusion_delay': data['manip']['diffusion_delay'],
                 'zero': data['manip']['zero'],

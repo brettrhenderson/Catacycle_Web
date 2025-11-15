@@ -4,7 +4,7 @@
 <!--Sheet Name [gen_sheet_name]: string-->
 <!--Time Column [gen_t_col]: int-->
 <!--Simulation Duration [t_param]: -->
-<!--(t_init, t_final, dt)-->
+<!--(t0, t_end, dt)-->
 <!--Simulation Only [sim]: checkbox-->
 
 <div class="tab-pane active show" id="uploadtab">
@@ -42,18 +42,18 @@
     <div class="collapse" id="time_params">
       <div class="form-row">
         <div class="form-group col">
-          {{ form.upload.form.t_init.label() }}
-          {{ form.upload.form.t_init(class_="form-control", title=form.upload.form.t_init.description,
+          {{ form.upload.form.t0.label() }}
+          {{ form.upload.form.t0(class_="form-control", title=form.upload.form.t0.description,
             data_toggle='tooltip') }}
         </div>
         <div class="form-group col">
-          {{ form.upload.form.t_final.label() }}
-          {{ form.upload.form.t_final(class_="form-control", title=form.upload.form.t_final.description,
+          {{ form.upload.form.t_end.label() }}
+          {{ form.upload.form.t_end(class_="form-control", title=form.upload.form.t_end.description,
             data_toggle='tooltip') }}
         </div>
         <div class="form-group col">
-          {{ form.upload.form.t_interval.label() }}
-          {{ form.upload.form.t_interval(class_="form-control", title=form.upload.form.t_interval.description,
+          {{ form.upload.form.t_int.label() }}
+          {{ form.upload.form.t_int(class_="form-control", title=form.upload.form.t_int.description,
             data_toggle='tooltip') }}
         </div>
       </div>

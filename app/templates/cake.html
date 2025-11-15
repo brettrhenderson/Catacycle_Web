@@ -13,7 +13,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 <script src="{{url_for('.static', filename='js/cake.js')}}"></script>
 <script src="{{url_for('.static', filename='js/cake/upload.js')}}"></script>
+<script src="{{url_for('.static', filename='js/cake/system.js')}}"></script>
 <script src="{{url_for('.static', filename='js/cake/species.js')}}"></script>
+<script src="{{url_for('.static', filename='js/cake/fit.js')}}"></script>
 <script type="text/javascript">
     var csrf_token = "{{ form.csrf_token._value() }}";
     $(document).ready(function() {
@@ -113,7 +115,6 @@
 <!--        <h1>CAKE Kinetic Analysis</h1>-->
 <!--    </div>-->
     <div class="container-fluid">
-        <h2 style="color:Tomato;">Warning: This page is under active development and may crash.</h2>
         <div class="row d-flex">
             <div class="pb-2 col-1 d-flex flex-column"></div>
             <form enctype="multipart/form-data" onkeydown="return event.key != 'Enter';" class="px-3 pt-1 pb-2 col-5 d-flex flex-column align-items-center justify-content-center" id="cake-form" action="{{ url_for('download_cake_xlsx') }}" method="post">
@@ -125,10 +126,13 @@
                                 <a id="uploadlink" class="nav-link active form-tab" data-toggle="tab" href="#uploadtab">Upload</a>
                             </li>
                             <li class="nav-item">
-                                <a id="datalink" class="nav-link form-tab" data-toggle="tab" href="#datatab">Rxn Data</a>
+                                <a id="datalink" class="nav-link form-tab" data-toggle="tab" href="#datatab">System</a>
                             </li>
                             <li class="nav-item">
-                                <a id="maniplink" class="nav-link form-tab" data-toggle="tab" href="#maniptab">Data Manip</a>
+                                <a id="fitlink" class="nav-link form-tab" data-toggle="tab" href="#fittab">Fitting Options</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="maniplink" class="nav-link form-tab" data-toggle="tab" href="#maniptab">Data Manipulation</a>
                             </li>
                             <li class="nav-item">
                                 <a id="outputlink" class="nav-link" data-toggle="tab" href="#outputtab">Output</a>
@@ -139,9 +143,10 @@
                         <div id="cake-card" class="tab-content">
                             {% include "cake_forms/upload.html" %}
                             {% include "cake_forms/system.html" %}
+                            {% include "cake_forms/fit.html" %}
                             {% include "cake_forms/manip.html" %}
                             <div class="tab-pane" id="outputtab">
-                                <pre class="form-control" id="output-text">Fill in Parameters and click "Fit" to generate output.
+                                <pre class="form-control" id="output-text">Fill in parameters and click "Fit" or "Download Fit" to generate output.
                                 </pre>
                             </div>
                         </div>

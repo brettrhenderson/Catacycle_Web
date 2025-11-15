@@ -855,7 +855,7 @@ var ColorItem = function () {
       if (Array.isArray(formula)) {
         hues = formula;
       } else if (!ColorItem.colorFormulas.hasOwnProperty(formula)) {
-        throw new Error('No color formula found with the name \'' + formula + '\'.');
+        throw new Error('No color formula found with the name \'' + formula + '\'');
       } else {
         hues = ColorItem.colorFormulas[formula];
       }
@@ -5811,7 +5811,7 @@ var ColorHandler = function () {
       var color = new _ColorItem2.default(fallback, this.format);
 
       if (!color.isValid()) {
-        throw new Error('The fallback color is invalid.');
+        throw new Error('The fallback color is invalid');
       }
 
       return color;

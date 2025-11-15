@@ -1,6 +1,6 @@
 {% block body %}
 
-<!--Initial Reaction Volume [vol_init]: float-->
+<!--Initial Reaction Volume [vol0]: float-->
 <!--Specify Rate Constant [k_lim]:-->
 <!--Est Value [k_est_val]-->
 <!--Min Value [k_est_min]-->
@@ -9,32 +9,66 @@
 
 
 <div class="tab-pane" id="datatab">
-    <!--  Initial Reaction Volume  -->
+    <!--  Initial Reaction Volume | Continuous Volume Loss Rate  -->
     <div class="form-row">
-      <div class="form-group col">
-        {{ form.system.form.vol_init.label() }}
-        {{ form.system.form.vol_init(class_="form-control", title=form.system.form.vol_init.description,
-          data_toggle='tooltip') }}
+      <div class="form-group col-6">
+        {{ form.system.form.vol0.label() }}
+        {{ form.system.form.vol0(class_="form-control", title=form.system.form.vol0.description,
+          type='number', data_toggle='tooltip') }}
+      </div>
+      <div class="form-group col-6">
+        {{ form.system.form.sub_cont_rate.label() }}
+        {{ form.system.form.sub_cont_rate(class_="form-control", title=form.system.form.sub_cont_rate.description,
+          type='number', data_toggle='tooltip') }}
       </div>
     </div>
 
     <!--  Rate Constant Bounds  -->
     <div class="form-row">
-      <div class="form-group col">
+      <div class="form-group col-4">
         {{ form.system.form.k_est_val.label() }}
-        {{ form.system.form.k_est_val(class_="form-control", min=0, title=form.system.form.k_est_val.description,
+        {{ form.system.form.k_est_val(class_="form-control", title=form.system.form.k_est_val.description,
           data_toggle='tooltip', placeholder="Estimate") }}
       </div>
-      <div class="form-group col">
-        {{ form.system.form.k_est_min.label() }}
-        {{ form.system.form.k_est_min(class_="form-control bounds-input", min=0, title=form.system.form.k_est_min.description,
-          data_toggle='tooltip', placeholder="Estimate * 1E-3") }}
+      <div class="form-group col-4">
+          <div class="collapse show" id="k_min_hide">
+            {{ form.system.form.k_est_min.label() }}
+            {{ form.system.form.k_est_min(class_="form-control bounds-input", title=form.system.form.k_est_min.description,
+              data_toggle='tooltip', placeholder="Estimate * 1E-3") }}
+          </div>
       </div>
-      <div class="form-group col">
-        {{ form.system.form.k_est_max.label() }}
-        {{ form.system.form.k_est_max(class_="form-control bounds-input", min=0, title=form.system.form.k_est_max.description,
-          data_toggle='tooltip', placeholder="Estimate * 1E3") }}
+      <div class="form-group col-4">
+           <div class="collapse show" id="k_max_hide">
+            {{ form.system.form.k_est_max.label() }}
+            {{ form.system.form.k_est_max(class_="form-control bounds-input", title=form.system.form.k_est_max.description,
+              data_toggle='tooltip', placeholder="Estimate * 1E3") }}
+          </div>
       </div>
+    </div>
+
+    <!--  Rate Constant Bounds  -->
+    <div class="collapse" id="k2_hide">
+        <div class="form-row">
+          <div class="form-group col-4">
+            {{ form.system.form.k2_est_val.label() }}
+            {{ form.system.form.k2_est_val(class_="form-control", title=form.system.form.k2_est_val.description,
+              data_toggle='tooltip', placeholder="Estimate") }}
+          </div>
+          <div class="form-group col-4">
+              <div class="collapse show" id="k2_min_hide">
+                {{ form.system.form.k2_est_min.label() }}
+                {{ form.system.form.k2_est_min(class_="form-control bounds-input", title=form.system.form.k2_est_min.description,
+                  data_toggle='tooltip') }}
+              </div>
+          </div>
+          <div class="form-group col-4">
+               <div class="collapse show" id="k2_max_hide">
+                {{ form.system.form.k2_est_max.label() }}
+                {{ form.system.form.k2_est_max(class_="form-control bounds-input", title=form.system.form.k2_est_max.description,
+                  data_toggle='tooltip') }}
+              </div>
+          </div>
+        </div>
     </div>
 
     <!--  Species  -->
@@ -70,6 +104,76 @@
             <button type="button" class="btn btn-sm btn-outline-primary float-right" id="delspec">
                 <i class="fa fa-minus"></i> Species
             </button>
+        </div>
+    </div>
+
+        <!--
+    Group some lesser-used options into rows to save space
+      Temperature Alteraion | Discrete Subtraction
+    -->
+    <div id="subtractions-container">
+      <div class="form-row mt-2">
+        <div class="col-6">
+          <a id="temp-control" class="btn btn-block btn-secondary collapse-control" data-toggle="collapse" href="#temp" role="button" aria-expanded="false" aria-controls="temp">
+            Temperature Alteration
+          </a>
+        </div>
+        <div class="col-6">
+          <a id="aliq-control" class="btn btn-block btn-secondary collapse-control" data-toggle="collapse" href="#aliq" role="button" aria-expanded="false" aria-controls="aliq">
+            Discrete Subtraction
+          </a>
+        </div>
+      </div>
+        <div id="temp"  class="collapse" aria-labelledby="temp-control" data-parent="#temp-container">
+          <div class="form-row m-1">
+            <!--Initial Temperature [t0] (default 293.15): float-->
+            <div class="form-group col">
+              {{ form.system.form.temp0.label() }}
+              {{ form.system.form.temp0(class_="form-control",
+                title=form.system.form.temp0.description, data_toggle='tooltip') }}
+            </div>
+            <!--Temperature Gradient [temp_cont] (default 0): float-->
+            <div class="form-group col">
+              {{ form.system.form.temp_cont.label() }}
+              {{ form.system.form.temp_cont(class_="form-control",
+                title=form.system.form.temp_cont.description, data_toggle='tooltip') }}
+            </div>
+            <!--At Time [t_temp] (default 0): float-->
+            <div class="form-group col">
+              {{ form.system.form.t_temp.label() }}
+              {{ form.system.form.t_temp(class_="form-control",
+                title=form.system.form.t_temp.description, data_toggle='tooltip') }}
+            </div>
+          </div>
+          <div class="form-row m-1">
+            <!--Temperature column [temp_col]: int-->
+            <div class="form-group col-4">
+              {{ form.system.form.temp_col.label() }}
+              {{ form.system.form.temp_col(class_="form-control temp_col",
+                title=form.system.form.temp_col.description, data_toggle='tooltip') }}
+            </div>
+          </div>
+        </div>
+        <!--  Add Discrete Subtraction [0+]: [checkbox]
+              Should be collapsible
+        -->
+        <div id="aliq"  class="collapse" aria-labelledby="aliq-control" data-parent="#subtractions-container">
+          <div id="aliq-rows">
+
+          </div>
+          <div class="form-row px-3 pt-2">
+            <div class="col-sm-4">
+                <button type="button" class="btn btn-sm btn-outline-primary float-left add-aliq" id="add-aliq">
+                    <i class="fa fa-plus"></i> Subtraction
+                </button>
+            </div>
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4">
+                <button type="button" class="btn btn-sm btn-outline-primary float-right del-aliq" id="del-aliq">
+                    <i class="fa fa-minus"></i> Subtraction
+                </button>
+            </div>
+          </div>
         </div>
     </div>
 </div>

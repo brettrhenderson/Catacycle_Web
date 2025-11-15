@@ -42,9 +42,9 @@ function bindSpeciesListeners(specNum) {
     $("#add-cont-species-" + specNum).click(addContHandler);
     // If Del Cont Add Button is Pressed, remove continuous addition row if there are any
     $("#del-cont-species-" + specNum).click(delContHandler);
-    // If New One Shot Button is Pressed, add another instantaneous addition row
+    // If New One Shot Button is Pressed, add another discrete addition row
     $("#add-oneshot-species-" + specNum).click(addOneShotHandler);
-    // If Del One Shot Button is Pressed, remove instantaneous addition row if there are any
+    // If Del One Shot Button is Pressed, remove discrete addition row if there are any
     $("#del-oneshot-species-" + specNum).click(delOneShotHandler);
     // If a species name changes, update the name on it's corresponding drop-down button
     $("#system-species-" + specNum + "-spec_name").change(specNameChangeHandler);
@@ -79,16 +79,21 @@ function addSpeciesHandler() {
     }
     // actually add the button to the appropriate row
     $("#species-button-row-" + row).append(html_button);
+    $("#species-button-row-" + row + " [data-toggle='tooltip']").tooltip();
 
     // add the species data to the collapsible species container
     $("#species-data").append(html_data);
+    $("#species-data [data-toggle='tooltip']").tooltip();
 
     // initialize all event listeners for this new species
     bindSpeciesListeners(specNum);
     // $(".species-col").change(enableFittingHandler);
 
-    // if sim, diable bounds for order and poisoning
+    // if sim, disable column and bounds for order and poisoning
     if (sim) {
+        $("#system-species-" + specNum + "-for_fitting").prop("disabled", true);
+        $("#system-species-" + specNum + "-mol_end").prop("disabled", true);
+        $("#system-species-" + specNum + "-col").prop("disabled", true);
         $("#system-species-" + specNum + "-ord_min").prop("disabled", true);
         $("#system-species-" + specNum + "-ord_max").prop("disabled", true);
         $("#system-species-" + specNum + "-pois_min").prop("disabled", true);
@@ -136,6 +141,7 @@ function addContHandler() {
     const add_cont_0 = $("#system-species-" + species + "-cont_add-0-add_sol_conc")
     // append to the species data form
     $("#cont-add-species-" + species + "-rows").append(addContHTML);
+    $("#cont-add-species-" + species + "-rows [data-toggle='tooltip']").tooltip();
 
     if (add_one_shot_0.length > 0) {
         $("#system-species-" + species + "-cont_add-" + contAddNum[parseInt(species)] + "-add_sol_conc").val(add_one_shot_0.val());
@@ -175,6 +181,7 @@ function addOneShotHandler() {
     const add_cont_0 = $("#system-species-" + species + "-cont_add-0-add_sol_conc")
     // append to the species data form
     $("#one-shot-species-" + species + "-rows").append(oneShotHTML);
+    $("#one-shot-species-" + species + "-rows [data-toggle='tooltip']").tooltip();
 
     if (add_one_shot_0.length > 0) {
         $("#system-species-" + species + "-one_shot-" + oneShotNum[parseInt(species)] + "-add_sol_conc").val(add_one_shot_0.val());
@@ -266,17 +273,17 @@ function makeContAddHTML(specNum, contAddNum) {
      <!--Addition Solution Concentration [add_sol_conc]: float-->
      <div class="form-group col">
        <label for="system-species-${specNum}-cont_add-${contAddNumSpec}-add_sol_conc">Addition Solution Conc.</label>
-       <input class="form-control sol-conc sol-conc-species-${specNum}" data-toggle="tooltip" id="system-species-${specNum}-cont_add-${contAddNumSpec}-add_sol_conc" name="system-species-${specNum}-cont_add-${contAddNumSpec}-add_sol_conc" required="" title="" type="text" value="" data-original-title="Concentration of reagent added.">
+       <input class="form-control sol-conc sol-conc-species-${specNum}" data-toggle="tooltip" id="system-species-${specNum}-cont_add-${contAddNumSpec}-add_sol_conc" name="system-species-${specNum}-cont_add-${contAddNumSpec}-add_sol_conc" required="" title="" type="text" value="" data-original-title="Concentration of reagent added">
      </div>
      <!--At Continuous Rate [add_cont_rate]: float-->
      <div class="form-group col">
        <label for="system-species-${specNum}-cont_add-${contAddNumSpec}-add_cont_rate">Rate of Addition</label>
-       <input class="form-control" data-toggle="tooltip" id="system-species-${specNum}-cont_add-${contAddNumSpec}-add_cont_rate" name="system-species-${specNum}-cont_add-${contAddNumSpec}-add_cont_rate" required="" title="" type="text" value="" data-original-title="Rate of addition in moles_unit volume_unit^-1 time_unit^-1.">
+       <input class="form-control" data-toggle="tooltip" id="system-species-${specNum}-cont_add-${contAddNumSpec}-add_cont_rate" name="system-species-${specNum}-cont_add-${contAddNumSpec}-add_cont_rate" required="" title="" type="text" value="" data-original-title="Rate of addition in moles_unit volume_unit^-1 time_unit^-1">
      </div>
      <!--After Time [t_cont_rate]: float-->
      <div class="form-group col">
        <label for="system-species-${specNum}-cont_add-${contAddNumSpec}-t_cont_rate">After Time</label>
-       <input class="form-control" data-toggle="tooltip" id="system-species-${specNum}-cont_add-${contAddNumSpec}-t_cont_rate" name="system-species-${specNum}-cont_add-${contAddNumSpec}-t_cont_rate" title="" type="text" value="0.0" data-original-title="Time when addition began.">
+       <input class="form-control" data-toggle="tooltip" id="system-species-${specNum}-cont_add-${contAddNumSpec}-t_cont_rate" name="system-species-${specNum}-cont_add-${contAddNumSpec}-t_cont_rate" title="" type="text" value="0.0" data-original-title="Time when addition began">
      </div>
    </div>`;
 
@@ -291,17 +298,17 @@ function makeOneShotHTML(specNum, oneShotNum) {
      <!--Addition Solution Concentration [add_sol_conc]: float-->
      <div class="form-group col">
        <label for="system-species-${specNum}-one_shot-${oneShotNumSpec}-add_sol_conc">Addition Solution Conc.</label>
-       <input class="form-control sol-conc sol-conc-species-${specNum}" data-toggle="tooltip" id="system-species-${specNum}-one_shot-${oneShotNumSpec}-add_sol_conc" name="system-species-${specNum}-one_shot-${oneShotNumSpec}-add_sol_conc" required="" title="" type="text" value="" data-original-title="Concentration of reagent added.">
+       <input class="form-control sol-conc sol-conc-species-${specNum}" data-toggle="tooltip" id="system-species-${specNum}-one_shot-${oneShotNumSpec}-add_sol_conc" name="system-species-${specNum}-one_shot-${oneShotNumSpec}-add_sol_conc" required="" title="" type="text" value="" data-original-title="Concentration of reagent added">
      </div>
      <!--Volume Added [add_v_one_shot]: float-->
      <div class="form-group col">
        <label for="system-species-${specNum}-one_shot-${oneShotNumSpec}-add_v_one_shot">Volume Added</label>
-       <input class="form-control" data-toggle="tooltip" id="system-species-${specNum}-one_shot-${oneShotNumSpec}-add_v_one_shot" name="system-species-${specNum}-one_shot-${oneShotNumSpec}-add_v_one_shot" required="" title="" type="text" value="" data-original-title="Volume of solution added in volume_unit.">
+       <input class="form-control" data-toggle="tooltip" id="system-species-${specNum}-one_shot-${oneShotNumSpec}-add_v_one_shot" name="system-species-${specNum}-one_shot-${oneShotNumSpec}-add_v_one_shot" required="" title="" type="text" value="" data-original-title="Volume of solution added in volume_unit">
      </div>
      <!--At Time [t_one_shot]: float-->
      <div class="form-group col">
        <label for="system-species-${specNum}-one_shot-${oneShotNumSpec}-t_one_shot">At Time</label>
-       <input class="form-control" data-toggle="tooltip" id="system-species-${specNum}-one_shot-${oneShotNumSpec}-t_one_shot" name="system-species-${specNum}-one_shot-${oneShotNumSpec}-t_one_shot" title="" type="text" value="0.0" data-original-title="Time when addition occured.">
+       <input class="form-control" data-toggle="tooltip" id="system-species-${specNum}-one_shot-${oneShotNumSpec}-t_one_shot" name="system-species-${specNum}-one_shot-${oneShotNumSpec}-t_one_shot" title="" type="text" value="0.0" data-original-title="Time when addition occurred">
      </div>
    </div>`
 
@@ -324,7 +331,7 @@ function makeSpeciesHTML(specNum) {
     <!--Greyed out if column is not given-->
     <div class="form-row">
       <div class="form-check">
-        <input data-toggle="tooltip" id="system-species-${specNum}-for_fitting" name="system-species-${specNum}-for_fitting" title="" type="checkbox" value="y" data-original-title="Use this species to perform CAKE fitting.">
+        <input data-toggle="tooltip" id="system-species-${specNum}-for_fitting" name="system-species-${specNum}-for_fitting" title="" type="checkbox" value="y" data-original-title="Use this species to perform CAKE fitting">
         <label for="system-species-${specNum}-for_fitting">Use For Fitting</label>
       </div>
     </div>
@@ -333,35 +340,35 @@ function makeSpeciesHTML(specNum) {
       <!-- Species Name [spec_name]: string (def. “Species X”) -->
       <div class="form-group col">
         <label for="system-species-${specNum}-spec_name">Species Name</label>
-        <input class="form-control spec-name" data-toggle="tooltip" id="system-species-${specNum}-spec_name" name="system-species-${specNum}-spec_name" placeholder="Species ${specNum + 1}" title="" type="text" value="" data-original-title="Name of species.">
+        <input class="form-control spec-name" data-toggle="tooltip" id="system-species-${specNum}-spec_name" name="system-species-${specNum}-spec_name" placeholder="Species ${specNum + 1}" title="" type="text" value="" data-original-title="Name of species">
       </div>
       <!--Species Type [spec_type]: “r”, “p”, or “c” -->
       <div class="form-group col">
         <label for="system-species-${specNum}-spec_type">Species Type</label>
-        <select class="form-control" data-toggle="tooltip" id="system-species-${specNum}-spec_type" name="system-species-${specNum}-spec_type" required="" title="" data-original-title="Type of Species (reactant, product, catalyst)."><option value="r">Reactant</option><option value="p">Product</option><option value="c">Catalyst</option></select>
+        <select class="form-control" data-toggle="tooltip" id="system-species-${specNum}-spec_type" name="system-species-${specNum}-spec_type" required="" title="" data-original-title="Type of Species (reactant, product, catalyst)"><option value="r">Reactant</option><option value="p">Product</option><option value="c">Catalyst</option></select>
       </div>
       <!--Stoichiometry [stoich]: int (default 1 for r/p, None for c)-->
       <div class="form-group col">
         <label for="system-species-${specNum}-stoich">Stoichiometry</label>
-        <input class="form-control" data-toggle="tooltip" id="system-species-${specNum}-stoich" name="system-species-${specNum}-stoich" required="" title="" type="number" value="1" data-original-title="Stoichiometric coefficient of species.">
+        <input class="form-control" data-toggle="tooltip" id="system-species-${specNum}-stoich" name="system-species-${specNum}-stoich" required="" title="" type="number" value="1" data-original-title="Stoichiometric coefficient of species">
       </div>
     </div>
 
     <div class="form-row">
-      <!--Column [col]: int-->
+      <!--Initial Moles [mol0]: float-->
       <div class="form-group col">
-        <label for="system-species-${specNum}-col">Column</label>
-        <input class="form-control species-col" data-toggle="tooltip" id="system-species-${specNum}-col" min="1" name="system-species-${specNum}-col" title="" type="number" value="" data-original-title="Integer index, 1 is the first column.">
-      </div>
-      <!--Initial Moles [mol_init]: float-->
-      <div class="form-group col">
-        <label for="system-species-${specNum}-mol_init">Initial Moles</label>
-        <input class="form-control" data-toggle="tooltip" id="system-species-${specNum}-mol_init" name="system-species-${specNum}-mol_init" title="" type="text" value="" data-original-title="Initial amount in moles.">
+        <label for="system-species-${specNum}-mol0">Initial Moles</label>
+        <input class="form-control" data-toggle="tooltip" id="system-species-${specNum}-mol0" name="system-species-${specNum}-mol0" title="" type="text" value="" data-original-title="Initial amount in moles">
       </div>
       <!--Final Moles [mol_end]: float-->
       <div class="form-group col">
         <label for="system-species-${specNum}-mol_end">Final Moles</label>
         <input class="form-control" data-toggle="tooltip" id="system-species-${specNum}-mol_end" name="system-species-${specNum}-mol_end" title="" type="text" value="" data-original-title="Final amount in moles">
+      </div>
+      <!--Column [col]: int-->
+      <div class="form-group col">
+        <label for="system-species-${specNum}-col">Column</label>
+        <input class="form-control species-col" data-toggle="tooltip" id="system-species-${specNum}-col" min="1" name="system-species-${specNum}-col" title="" type="number" value="" data-original-title="Integer index, 1 is the first column">
       </div>
     </div>
 
@@ -411,17 +418,17 @@ function makeSpeciesHTML(specNum) {
         <div id="pois-limits-species-${specNum}" class="collapse" aria-labelledby="pois-control-species-${specNum}" data-parent="#limits-container-species-${specNum}">
           <div class="form-row m-1">
             <!--Est Poisoning [pois_val] (default 0): float-->
-            <div class="form-group col">
+            <div class="form-group col-4">
               <label for="system-species-${specNum}-pois_val">Est Poisoning</label>
               <input class="form-control" data-toggle="tooltip" id="system-species-${specNum}-pois_val" name="system-species-${specNum}-pois_val" title="" type="text" value="0" data-original-title="Estimated species poisoning">
             </div>
             <!--Min Poisoning [pois_min] (default 0): float-->
-            <div class="form-group col">
-              <label for="system-species-${specNum}-pois_min">Min Poisoning</label>
-              <input class="form-control bounds-input" data-toggle="tooltip" id="system-species-${specNum}-pois_min" name="system-species-${specNum}-pois_min" title="" type="text" value="" data-original-title="Minimum species poisoning search constraint">
+            <div class="form-group col-4">
+                <label for="system-species-${specNum}-pois_min">Min Poisoning</label>
+                <input class="form-control bounds-input" data-toggle="tooltip" id="system-species-${specNum}-pois_min" name="system-species-${specNum}-pois_min" title="" type="text" value="" data-original-title="Minimum species poisoning search constraint">
             </div>
             <!--Max Poisoning [pois_max] (default 0): float-->
-            <div class="form-group col">
+            <div class="form-group col-4">
               <label for="system-species-${specNum}-pois_max">Max Poisoning</label>
               <input class="form-control bounds-input" data-toggle="tooltip" id="system-species-${specNum}-pois_max" name="system-species-${specNum}-pois_max" title="" type="text" value="" data-original-title="Maximum species poisoning search constraint">
             </div>
@@ -433,7 +440,7 @@ function makeSpeciesHTML(specNum) {
 
     <!--
     Group some lesser-used options into rows to save space
-      2. Continuous Addition | Instantaneous Addition
+      2. Continuous Addition | Discrete Addition
     -->
     <div id="additions-container-species-${specNum}">
       <div class="form-row mt-2">
@@ -444,7 +451,7 @@ function makeSpeciesHTML(specNum) {
         </div>
         <div class="col">
           <a id="one-shot-control-species-${specNum}" class="btn btn-block btn-secondary collapse-control" data-toggle="collapse" href="#one-shot-species-${specNum}" role="button" aria-expanded="false" aria-controls="one-shot-species-${specNum}">
-            Instantaneous Addition
+            Discrete Addition
           </a>
         </div>
 
@@ -469,8 +476,8 @@ function makeSpeciesHTML(specNum) {
           </div>
         </div>
 
-        <!--  Add Instantaneous Addition [0+]: [checkbox]
-              Should be collabsible
+        <!--  Add Discrete Addition [0+]: [checkbox]
+              Should be collapsible
         -->
         <div id="one-shot-species-${specNum}" class="collapse" aria-labelledby="one-shot-control-species-${specNum}" data-parent="#additions-container-species-${specNum}">
           <div id="one-shot-species-${specNum}-rows">
