@@ -137,7 +137,7 @@ class FitForm(Form):
     path_length = FloatField('Path Length', [optional()], id='path_length', description='Length of light path in absorption spectroscopy if desired')
 
     fit_eq = SelectField('Fit Equation', id='fit_eq', description='Equation type to fit data with',
-                         choices=[('Linear', 'Linear'), ('Logarithm', 'Logarithm'), ('Exponential', 'Exponential'), ('Tangent', 'Tangent'), ('Michaelis-Menten', 'Michaelis-Menten'), ('Langmuir', 'Langmuir'), ('None', 'None')], default='None')
+                         choices=[('Linear', 'Linear'), ('Logarithmic', 'Logarithmic'), ('Exponential', 'Exponential'), ('Tangential', 'Tangential'), ('Michaelis-Menten', 'Michaelis-Menten'), ('Langmuir', 'Langmuir'), ('None', 'None')], default='None')
     intercept = BooleanField('Fit Intercept', id='intercept-box', description='Fit data with intercept', default=False)
 
     lof = BooleanField('Fit Limit of Fitting', id='lof-box', description='Fit data with equation until no longer valid', default=False)

@@ -32,6 +32,7 @@
       </p>
     </div>
   </div>
+
   <div class="pb-3">
     <a class="collapse-heading active title" data-toggle="collapse" href="#cakeGuide" role="button" aria-expanded="true" aria-controls="cakeGuide">
       <div class="d-flex col-3 align-items-center justify-content-between">
@@ -45,28 +46,50 @@
       </p>
     </div>
   </div>
-  <div class="row d-flex pb-5">
+  <div class="row d-flex pb-3">
     <div class="col-6 d-flex flex-column align-items-center">
-      <a class="btn btn-primary collapse-heading" style="width:50%" data-toggle="collapse" href="#inputData" role="button" aria-expanded="false" aria-controls="inputData">
+      <a class="btn btn-primary" style="width:50%" href="{{ url_for('static', filename='files/CAKE_example_sim.xlsx') }}" download>
         <div class="d-flex align-items-center justify-content-between">
-          Example Input Data
-          <i class="fa fa-chevron-down" aria-hidden="true"></i>
+          Download Simulated Data
         </div>
       </a>
-      <div class="collapse" id="inputData" style="width:100%">
-        <iframe width="100%" height="400px" frameborder="0" scrolling="no" src="https://uvic-my.sharepoint.com/personal/peterwilliams_uvic_ca/_layouts/15/Doc.aspx?sourcedoc={dd5bfad2-6d76-45a5-bcb3-07bcaa7eb0b0}&action=embedview&wdAllowInteractivity=False&wdDownloadButton=True&wdInConfigurator=True&wdInConfigurator=True&edesNext=false&resen=false"></iframe>
-      </div>
     </div>
     <div class="col-6 d-flex flex-column align-items-center">
-      <a class="btn btn-primary collapse-heading" style="width:50%" data-toggle="collapse" href="#exampleOutput" role="button" aria-expanded="false" aria-controls="exampleOutput">
+      <a class="btn btn-primary" style="width:50%" href="{{ url_for('static', filename='files/CAKE_example_fit.xlsx') }}" download>
         <div class="d-flex align-items-center justify-content-between">
-          Example Output
-          <i class="fa fa-chevron-down" aria-hidden="true"></i>
+          Download Fit Data
         </div>
       </a>
-      <div class="collapse" id="exampleOutput" style="width:100%">
-        <iframe width="100%" height="400px" frameborder="0" scrolling="no" src="https://uvic-my.sharepoint.com/personal/peterwilliams_uvic_ca/_layouts/15/Doc.aspx?sourcedoc={945b59a9-8499-43be-885e-68cf18b93423}&action=embedview&wdAllowInteractivity=False&ActiveCell='FitData'!B1&wdDownloadButton=True&wdInConfigurator=True&wdInConfigurator=True&edesNext=false&resen=false"></iframe>
+    </div>
+  </div>
+
+  <div class="pb-3">
+    <a class="collapse-heading active title" data-toggle="collapse" href="#ccGuide" role="button" aria-expanded="true" aria-controls="ccGuide">
+      <div class="d-flex col-5 align-items-center justify-content-between">
+        <h5 class="font-weight text-uppercase">Continuous Calibration User Guide</h5>
+        <i class="fa fa-chevron-down mb-2" aria-hidden="true"></i>
       </div>
+    </a>
+    <div class="collapse show" id="ccGuide">
+      <p align="center">
+        <iframe src="{{url_for('.static', filename='files/CC_WebApp_Guidance.pdf')}}" width="80%" height="400px"></iframe>
+      </p>
+    </div>
+  </div>
+  <div class="row d-flex pb-3">
+    <div class="col-6 d-flex flex-column align-items-center">
+      <a class="btn btn-primary" style="width:50%" href="{{ url_for('static', filename='files/CC_example_sim.xlsx') }}" download>
+        <div class="d-flex align-items-center justify-content-between">
+          Download Simulated Data
+        </div>
+      </a>
+    </div>
+    <div class="col-6 d-flex flex-column align-items-center">
+      <a class="btn btn-primary" style="width:50%" href="{{ url_for('static', filename='files/CC_example_fit.xlsx') }}" download>
+        <div class="d-flex align-items-center justify-content-between">
+          Download Fit Data
+        </div>
+      </a>
     </div>
   </div>
 </div>

@@ -23,6 +23,11 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/abouttools', methods=['GET', 'POST'])
+def abouttools():
+    return render_template('abouttools.html')
+
+
 @app.route('/aboutus', methods=['GET', 'POST'])
 def aboutus():
     return render_template('aboutus.html')
@@ -203,7 +208,7 @@ def run_cake_sim_wrapper(form):
 
     log.debug(f"FORMATTED DATA: {dict}")
 
-    blank_dict = {'rxns': None, 'rand_fac': None, 'scale': 1, 'time_unit':'time_unit',
+    blank_dict = {'rxns': None, 'scale': 1, 'time_unit':'time_unit',
                   'conc_unit':'moles_unit volume_unit$^{-1}$'}
     sim_output = ck.sim(*[{**dict, **blank_dict}[key] for key in ['t', 'spec_name', 'spec_type', 'stoich', 'rxns',
         'mol0', 'vol0', 'add_sol_conc', 'add_cont_rate', 't_cont', 'add_one_shot', 't_one_shot', 'sub_cont_rate',

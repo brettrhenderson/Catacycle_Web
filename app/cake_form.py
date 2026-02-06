@@ -369,6 +369,7 @@ class CakeForm(FlaskForm):
                 'scale_avg_num': data['manip']['scale_avg_num'],
                 'win': data['manip']['win'],
                 'inc': data['manip']['inc'],
+                'rand_fac': data['manip']['rand_fac'],
                 'tic_col': None,
                 'time_unit': None,
                 'conc_unit': None}
