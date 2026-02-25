@@ -22,7 +22,7 @@ $(document).ready(function() {
                 $('#lof_test-options option[value="Harvey-Collier"]').show()
             }
             fit_eq = 'Linear';
-        } else if (['Logarithm', 'Exponential', 'Tangent', 'Michaelis-Menten', 'Langmuir'].includes($(this).val())) {
+        } else if (['Logarithmic', 'Exponential', 'Tangential', 'Michaelis-Menten', 'Langmuir'].includes($(this).val())) {
             // show the time input for simulations
             $('#intercept-box').prop("disabled", false);
             $('#fitlof').collapse('show');
